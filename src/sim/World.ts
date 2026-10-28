@@ -3,6 +3,7 @@ import type { GameConfig } from '../data/types';
 import type { GameData } from '../data/validate';
 import { Item } from '../entities/Item';
 import { Player } from '../entities/Player';
+import { PLAYER_RADIUS } from '../entities/playerStyles';
 import {
   applyDamage,
   applyImpact,
@@ -12,10 +13,11 @@ import {
   WALL_HIT_SPEED,
 } from '../systems/damage';
 import { EventBus, type ZoneKind } from '../systems/EventBus';
-import type { Vec } from '../systems/geometry';
+import { dist, type Vec } from '../systems/geometry';
 import type { PlayerSlot } from '../systems/input/InputManager';
 import { DEFAULT_MOTOR, type MotorParams } from '../systems/PlayerMotor';
 import type { Random } from '../systems/Random';
+import { t } from '../data/i18n';
 import { popText } from '../ui/popText';
 import { Theme } from '../ui/theme';
 import { createBehaviors } from './behaviors';
@@ -37,6 +39,8 @@ const SCRAPES_PER_DAMAGE = 2;
 const ZONE_TRIP_MIN_SPEED = 1;
 /** Va nhẹ hơn mức này thì không báo cho hành vi đặc biệt (tránh chạm lướt). */
 const BEHAVIOR_MIN_IMPACT = 1.5;
+/** Thả mèo cách mép đồ chứa trong khoảng này thì mèo chui vào. */
+const CONTAIN_RANGE = 30;
 
 /**
  * Toàn bộ mô phỏng của một màn: tường, nhân vật, đồ vật, vùng nguy hiểm.
@@ -47,6 +51,10 @@ export class World {
   readonly items: Item[] = [];
   readonly walls: MatterJS.BodyType[] = [];
   readonly zones: Zone[] = [];
+  /** Chỗ nấp của mèo (do màn chơi đặt). */
+  hideSpots: Vec[] = [];
+  /** Mèo → đồ chứa đang nhốt nó. */
+  readonly containedIn = new Map<Item, Item>();
   readonly motorParams: MotorParams;
   readonly bus = new EventBus();
   readonly grab: GrabSystem;
@@ -133,6 +141,8 @@ export class World {
   removeItem(item: Item): void {
     const i = this.items.indexOf(item);
     if (i < 0) return;
+    for (const [cat, box] of this.containedIn) if (box === item) this.letOut(cat, false);
+    this.containedIn.delete(item);
     this.grab.releaseItem(item);
     this.items.splice(i, 1);
     this.itemByBody.delete(item.body);
@@ -182,9 +192,87 @@ export class World {
     popText(this.scene, at.x, at.y - 24 - this.popsThisTick++ * 22, text, color);
   }
 
-  /** Món đồ có nắm được không (P11: mèo đang trong lồng thì không). */
-  isGrabbable(_item: Item): boolean {
-    return true;
+  /** Món đồ có nắm được không (mèo đang trong lồng thì không). */
+  isGrabbable(item: Item): boolean {
+    return !item.hidden;
+  }
+
+  // ---------- Đồ chứa (lồng, thùng) ----------
+
+  /**
+   * Đồ chứa còn trống gần nhất để bỏ mèo vào: mèo ở gần đồ chứa, hoặc người thả đứng sát
+   * đồ chứa (mèo đang ôm phía sau lưng cũng bỏ vào được).
+   */
+  private containerNear(item: Item, by?: Player): Item | undefined {
+    let best: Item | undefined;
+    let bestD = Infinity;
+    for (const c of this.items) {
+      if (c === item || !c.def.container || c.hidden || this.contentsOf(c)) continue;
+      const fromCat = dist(c.position, item.position) - c.boundingRadius;
+      const fromHand = by
+        ? dist(c.position, by.position) - c.boundingRadius - PLAYER_RADIUS
+        : Infinity;
+      const d = Math.min(fromCat, fromHand);
+      if (d <= CONTAIN_RANGE && d < bestD) {
+        bestD = d;
+        best = c;
+      }
+    }
+    return best;
+  }
+
+  contentsOf(container: Item): Item | undefined {
+    for (const [cat, box] of this.containedIn) if (box === container) return cat;
+    return undefined;
+  }
+
+  /** Có người buông tay (bấm Nắm) một món đồ: mèo thả cạnh lồng/thùng thì chui vào. */
+  onItemReleased(item: Item, by: Player): void {
+    if (!item.def.ai) return;
+    const box = this.containerNear(item, by);
+    if (box) this.later(() => this.putInside(item, box));
+  }
+
+  putInside(cat: Item, box: Item): void {
+    if (cat.hidden) return;
+    this.grab.releaseItem(cat);
+    this.scene.matter.world.remove(cat.body);
+    cat.setHidden(true);
+    this.containedIn.set(cat, box);
+    box.setIcon('😺');
+    this.bus.emit({ type: 'catCaught', item: cat.uid, itemId: cat.id, container: box.uid });
+    this.pop(box.position, t('cat.caught'), '#7CFC8A');
+  }
+
+  /** Thả mèo ra khỏi đồ chứa (mèo tự nhảy ra, hoặc đồ chứa bị xóa). */
+  letOut(cat: Item, escaped = true): void {
+    const box = this.containedIn.get(cat);
+    if (!box) return;
+    this.containedIn.delete(cat);
+    box.setIcon(null);
+    const a = this.random.next() * Math.PI * 2;
+    const r = box.boundingRadius + cat.boundingRadius + 6;
+    const at = { x: box.position.x + Math.cos(a) * r, y: box.position.y + Math.sin(a) * r };
+    const mb = this.scene.matter.body;
+    mb.setPosition(cat.body, at, false);
+    this.scene.matter.world.add(cat.body);
+    mb.setVelocity(cat.body, { x: Math.cos(a) * 4, y: Math.sin(a) * 4 });
+    cat.setHidden(false);
+    if (escaped) {
+      this.bus.emit({ type: 'catEscaped', item: cat.uid, itemId: cat.id });
+      this.pop(at, t('cat.escaped'), '#ff8a80');
+    }
+  }
+
+  private updateContainers(dt: number): void {
+    for (const [cat, box] of this.containedIn) {
+      // Mèo đi theo đồ chứa (để khi nhảy ra thì ra đúng chỗ).
+      this.scene.matter.body.setPosition(cat.body, box.position, false);
+      const chance = box.def.container?.escapeChancePerSec ?? 0;
+      if (cat.hasBehavior('escapeBox') && chance > 0 && this.random.chance((chance * dt) / 1000)) {
+        this.later(() => this.letOut(cat));
+      }
+    }
   }
 
   playerOf(body: MatterJS.BodyType): Player | undefined {
@@ -254,8 +342,10 @@ export class World {
   step(dt: number, slots: readonly (PlayerSlot | null)[]): void {
     this.bus.tick++;
     this.timeMs += dt;
+    this.updateContainers(dt);
     for (const item of this.items) {
       item.beforeStep(dt);
+      if (item.hidden) continue;
       item.setSurfaceFactor(this.surfaceAt(item.position)?.effect.itemFriction ?? 1);
       for (const b of item.behaviors) b.onStep?.(dt);
     }
@@ -333,7 +423,8 @@ export class World {
   }
 
   private onItemContact(item: Item, other: MatterJS.BodyType, speed: number): void {
-    if (this.wallSet.has(other) && speed >= WALL_HIT_SPEED) {
+    // Mèo tự chạy đụng tường thì không tính là người chơi đập đồ vào tường.
+    if (this.wallSet.has(other) && speed >= WALL_HIT_SPEED && !item.def.ai) {
       const last = this.wallHitAt.get(item) ?? -Infinity;
       if (this.timeMs - last >= WALL_HIT_COOLDOWN_MS) {
         this.wallHitAt.set(item, this.timeMs);
@@ -375,6 +466,8 @@ export class World {
         state: i.carryState,
         carriers: i.carriers.size,
         pinned: i.pinned,
+        hidden: i.hidden,
+        status: i.status,
       })),
       zones: this.zones.map((z) => ({ kind: z.kind, x: Math.round(z.x), y: Math.round(z.y) })),
       events: this.bus.history.map((l) => l.event.type),

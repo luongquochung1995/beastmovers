@@ -89,5 +89,8 @@
   "behavior.beltOn": "Băng chuyền chạy!",
   "behavior.thud": "RẦM!",
   "behavior.plonk": "♪ Plinggg!",
-  "sandbox.scenarios": "Thử hành vi: 1 tủ lạnh · 2 chậu cây · 3 bể cá · 4 máy chạy bộ · 5 bàn bi-a · 6 giàn tạ · 7 thùng · 8 piano · 9 gương · 0 bể lớn"
+  "sandbox.scenarios": "Thử hành vi: 1 tủ lạnh · 2 chậu cây · 3 bể cá · 4 máy chạy bộ · 5 bàn bi-a · 6 giàn tạ · 7 thùng · 8 piano · 9 gương · 0 bể lớn",
+  "cat.meow": "Meo!",
+  "cat.caught": "Bắt được rồi!",
+  "cat.escaped": "Mèo xổng!"
 }

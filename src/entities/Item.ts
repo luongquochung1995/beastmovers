@@ -33,6 +33,10 @@ export class Item {
   readonly carriers = new Map<number, { slotIndex: number }>();
   carryState: CarryState;
   damage: DamageState;
+  /** Trạng thái AI hiện tại (mèo), để debug và kiểm thử. */
+  status = '';
+  /** Đang nằm trong đồ chứa (mèo trong lồng): không vẽ, không có trong thế giới vật lý. */
+  hidden = false;
   /** Hành vi đặc biệt (gắn bởi World khi tạo món đồ). */
   behaviors: BehaviorHooks[] = [];
   /** Còn bao lâu nữa vật vừa bị ném chạm sàn (ms). */
@@ -173,6 +177,16 @@ export class Item {
     return this.carryState === 'lifted';
   }
 
+  setHidden(hidden: boolean): void {
+    this.hidden = hidden;
+    this.view.setVisible(!hidden);
+    if (hidden) this.counter.setVisible(false);
+  }
+
+  hasBehavior(name: string): boolean {
+    return this.behaviors.some((b) => b.name === name);
+  }
+
   /** Đổi emoji trên món đồ (null = trở về emoji gốc trong data). */
   setIcon(text: string | null): void {
     this.icon?.setText(text ?? this.def.icon ?? '');
@@ -231,6 +245,7 @@ export class Item {
     this.shadow.setVisible(this.lifted).setPosition(down.x, down.y);
 
     if (this.drawnDurability !== this.damage.durability) this.drawDamage();
+    if (this.hidden) return;
 
     const n = this.carriers.size;
     const need = this.def.requiredGrabbers;

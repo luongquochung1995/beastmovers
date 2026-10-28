@@ -66,9 +66,16 @@ Giữ một hướng khoảng 0,6 giây thì nhân vật chuyển sang chạy (c
 | Enter / Space | Bắt đầu (ở menu)                                           |
 | I             | Màn thử điều khiển (ở menu)                                |
 | L             | Đổi ngôn ngữ English ↔ Tiếng Việt (ở menu)                 |
+| S             | Sandbox: thả thử đồ vật (ở menu)                           |
 | Esc           | Kết thúc màn / quay lại                                    |
 | F1            | Bật/tắt debug (FPS, số bước logic mỗi giây, khung va chạm) |
 | T             | Khi bật debug: cho mọi người vấp ngã                       |
+
+## Sandbox
+
+Bảng bên trái liệt kê mọi món đồ trong `items.json`. Click để đặt, chuột phải để xóa, lăn chuột hoặc `[` `]` để chọn, `C` để xóa hết. Phím `1`–`0` chạy sẵn 10 cảnh thử hành vi (tủ lạnh bật cửa, bể cá tràn, máy chạy bộ hất người…).
+
+Khi chơi: đứng gần món đồ (có viền sáng và chấm ở điểm nắm) rồi bấm **Nắm**; bấm lại để thả; **Ném** để ném đồ nhẹ. Đồ cần nhiều người hiện bộ đếm `x/y 👐`. Bắt mèo: lao vào cho mèo choáng, nắm lấy, mang tới lồng mèo rồi thả (thùng carton thì mèo có thể nhảy ra).
 
 ## Thêm hoặc sửa ngôn ngữ
 

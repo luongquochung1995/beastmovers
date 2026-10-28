@@ -31,6 +31,13 @@ export class SandboxScene extends PlayScene {
     this.world.addWall({ x: wallX, y: ROOM.y, w: 16, h: ROOM.h * 0.38 });
     this.world.addWall({ x: wallX, y: ROOM.y + ROOM.h * 0.62, w: 16, h: ROOM.h * 0.38 });
 
+    // Chỗ nấp của mèo: giữa các bức tường (góc phòng là ngõ cụt, nấp ở đó dễ bị dồn bắt).
+    this.world.hideSpots = [
+      { x: ROOM.x + 25, y: ROOM.y + ROOM.h / 2 },
+      { x: (ROOM.x + wallX) / 2, y: ROOM.y + 25 },
+      { x: (ROOM.x + wallX) / 2, y: ROOM.y + ROOM.h - 25 },
+      { x: ROOM.x + ROOM.w - 25, y: ROOM.y + ROOM.h / 2 },
+    ];
     this.add.rectangle(0, 0, PANEL_W, GAME_HEIGHT, 0x24212f).setOrigin(0).setDepth(8_000);
     this.add
       .text(16, 12, t('sandbox.title'), {

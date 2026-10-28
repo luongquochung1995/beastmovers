@@ -3,6 +3,7 @@ import type { BehaviorRef } from '../data/types';
 import type { Item } from '../entities/Item';
 import type { Player } from '../entities/Player';
 import type { BehaviorName } from '../systems/behaviors/names';
+import { type CatParams, createCatState, DEFAULT_CAT, stepCat, stunCat } from '../systems/catBrain';
 import { breakThreshold } from '../systems/damage';
 import type { ZoneKind } from '../systems/EventBus';
 import { PLAYER_RADIUS } from '../entities/playerStyles';
@@ -301,6 +302,91 @@ const keysSoundOnHit: BehaviorFactory = ({ world, item, params }) => {
   };
 };
 
+// ---------- Mèo ----------
+
+/** Mèo chạy trốn, nấp; bị lao trúng thì choáng. Thông số lấy từ `ai` trong data. */
+const fleeAI: BehaviorFactory = ({ world, item }) => {
+  const ai = item.def.ai;
+  const params: CatParams = {
+    ...DEFAULT_CAT,
+    speed: ai?.speed ?? 4.4,
+    fleeRadius: ai?.fleeRadius ?? 130,
+    dodgeChance: ai?.dodgeChance ?? DEFAULT_CAT.dodgeChance,
+  };
+  let state = createCatState();
+  return {
+    name: 'fleeAI',
+    onStep(dt) {
+      if (item.hidden || item.carriers.size > 0) {
+        item.status = item.hidden ? 'contained' : 'held';
+        return;
+      }
+      const threats = world.players.filter((p) => p.motor.mode !== 'fallen').map((p) => p.position);
+      const dashers = world.players
+        .filter((p) => p.motor.mode === 'dashing')
+        .map((p) => ({ id: p.slotIndex, pos: p.position, dir: p.motor.facing }));
+      const r = stepCat(
+        state,
+        {
+          pos: item.position,
+          threats,
+          dashers,
+          hideSpots: world.hideSpots,
+          canHide: ai?.hideSpots ?? false,
+        },
+        dt,
+        params,
+        () => world.random.next(),
+      );
+      state = r.state;
+      item.status = state.mode;
+      const v = item.body.velocity;
+      world.scene.matter.body.setVelocity(item.body, {
+        x: v.x + (r.velocity.x - v.x) * 0.3,
+        y: v.y + (r.velocity.y - v.y) * 0.3,
+      });
+      world.scene.matter.body.setAngularVelocity(item.body, 0);
+    },
+    onTouched(p) {
+      if (p.motor.mode === 'dashing' && state.mode !== 'stunned') {
+        state = stunCat(state);
+        world.pop(item.position, '😵');
+      }
+    },
+  };
+};
+
+/**
+ * Bế mèo thì thỉnh thoảng bị cào: tuột tay, mèo vọt đi.
+ * Mặc định trung bình khoảng 5 giây bị cào một lần, 1 giây đầu sau khi bế thì không cào.
+ */
+const scratchDrop: BehaviorFactory = ({ world, item, params }) => {
+  const chancePerSec = num(params.chancePerSec, 0.2);
+  const graceMs = num(params.graceMs, 1000);
+  let heldMs = 0;
+  return {
+    name: 'scratchDrop',
+    onStep(dt) {
+      heldMs = item.carriers.size > 0 ? heldMs + dt : 0;
+      if (heldMs < graceMs || !world.random.chance((chancePerSec * dt) / 1000)) return;
+      const holders = [...world.grab.holds].filter(([, h]) => h.item === item).map(([p]) => p);
+      for (const p of holders) world.grab.release(p, 'scratched');
+      world.bus.emit({ type: 'catEscaped', item: item.uid, itemId: item.id });
+      world.pop(item.position, t('cat.meow'), '#ff8a80');
+      const from = holders[0]?.position ?? item.position;
+      const away = sub(item.position, from);
+      const len = Math.hypot(away.x, away.y) || 1;
+      world.scene.matter.body.setVelocity(item.body, {
+        x: (away.x / len) * 5,
+        y: (away.y / len) * 5,
+      });
+    },
+  };
+};
+
+/** Đánh dấu mèo biết nhảy ra khỏi đồ chứa (xác suất do đồ chứa quyết định, xem World). */
+const escapeBox: BehaviorFactory = () => ({ name: 'escapeBox' });
+
 // ---------- Registry ----------
 
 /** Tên đặt sẵn trong plan → hành vi chung + tham số mặc định. */
@@ -383,9 +469,12 @@ export const BEHAVIORS: Partial<Record<BehaviorName, BehaviorFactory>> = {
   treadmillBelt,
   dropOnRelease,
   keysSoundOnHit,
+  fleeAI,
+  scratchDrop,
+  escapeBox,
 };
 
-/** Tạo các hành vi của một món đồ từ data. Tên chưa có cài đặt (hành vi của mèo, P11) bị bỏ qua. */
+/** Tạo các hành vi của một món đồ từ data. */
 export function createBehaviors(world: World, item: Item): BehaviorHooks[] {
   return (item.def.behaviors ?? []).flatMap((ref: BehaviorRef) => {
     const name = (typeof ref === 'string' ? ref : ref.type) as BehaviorName;

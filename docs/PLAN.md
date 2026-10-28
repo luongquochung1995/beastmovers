@@ -562,7 +562,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P08 | Khiêng nhiều người | B | ✔ | 5 ngày | ✅ | 2026-10-28 |
 | P09 | Độ bền và vỡ | B | ✔ | 3 ngày | ✅ | 2026-10-28 |
 | P10 | Hành vi đặc biệt của đồ | B | ✔ | 4 ngày | ✅ | 2026-10-28 |
-| P11 | Mèo AI | B | ✔ | 3 ngày | ⬜ | |
+| P11 | Mèo AI | B | ✔ | 3 ngày | ✅ | 2026-10-28 |
 | P12 | Bản đồ và level loader | C | ✔ | 4 ngày | ⬜ | |
 | P13 | Xe tải | C | ✔ | 3 ngày | ⬜ | |
 | P14 | Đồng hồ và điều kiện qua màn | C | ✔ | 2 ngày | ⬜ | |
@@ -594,7 +594,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P40 | Kiểm thử trình duyệt | G | | 2 ngày | ⬜ | |
 | P41 | Phát hành | G | | 2 ngày | ⬜ | |
 
-**Tiến độ:** 9/41 phase · Mốc A 🟨 · B 🟨 · C ⬜ · D ⬜ · E ⬜ · F ⬜ · G ⬜
+**Tiến độ:** 10/41 phase · Mốc A 🟨 · B ✅ · C ⬜ · D ⬜ · E ⬜ · F ⬜ · G ⬜
 
 ---
 
@@ -707,14 +707,18 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 - 📝 *Kiểm tra (Chromium): 10 cảnh thử ở sandbox (phím 1–0) đều ra đúng kết quả: tủ lạnh đập tường → văng đồ ăn; chậu cây → vùng đất; bể cá → nước + cá giãy; máy chạy bộ bị va → băng chạy, người sát máy bị hất ngã; bàn bi-a rơi → RẦM + bi lăn; giàn tạ rơi → tạ lăn; thùng ném mạnh → rách đáy, rơi sách; piano rơi → người đứng gần ngã + "♪ Plinggg!"; gương → mảnh kính; bể cá khổng lồ rơi → nước + cá. Đi vào tủ lạnh thì tủ trượt 182px (sofa 81px). Cách làm: 2 hành vi chung có tham số (`spawnOnImpact`, `spillZone`) + các tên trong plan là preset của chúng; data có thể ghi `{ "type": "spawnOnImpact", "item": "…", … }` để tạo hành vi mới không cần code. Ghi chú thiết kế: "đáy thùng rách" kích hoạt khi va mạnh (chưa có đồ chứa đồ); "nghiêng" = món đồ đang khiêng xoay nhanh. Thêm `weightsRoll`, `flop` (cá giãy), `keysSoundOnHit`. Âm thanh thật làm ở P37.*
 
 #### P11 · Mèo AI
-- [ ] Trạng thái: đi lang thang → chạy trốn khi có người lại gần (`fleeRadius`) → trốn vào chỗ nấp
-- [ ] Bế mèo có xác suất bị cào (`scratchDrop`)
-- [ ] Bỏ mèo vào thùng thì mèo có thể nhảy ra (`escapeBox`)
-- [ ] Phát sự kiện `catEscaped`
+- [x] Trạng thái: đi lang thang → chạy trốn khi có người lại gần (`fleeRadius`) → trốn vào chỗ nấp
+- [x] Bế mèo có xác suất bị cào (`scratchDrop`)
+- [x] Bỏ mèo vào thùng thì mèo có thể nhảy ra (`escapeBox`)
+- [x] Phát sự kiện `catEscaped`
 - **✅ Xong khi:** 2 người phải phối hợp mới bắt và đưa được mèo vào lồng trong vòng 1 phút.
+- 📝 *Kiểm tra (Chromium): người đi tới → mèo chạy/nấp; lao trúng → mèo choáng 1,2s rồi bắt được; bế trung bình ~5s bị cào tuột tay (1s đầu không cào); thả cạnh lồng → mèo vào lồng, 6s sau vẫn trong lồng; thả cạnh thùng carton → mèo nhảy ra sau vài giây. Bot điều khiển bằng phím thật (6 lượt, giới hạn 60s): 2 bot (một con chặn đầu) bắt và đưa vào lồng trong 3,4–4,0s; 1 bot mất 6,4–9,0s. ⚠️ Đạt vế "2 người bắt được trong 1 phút", nhưng 1 người (bot phản xạ hoàn hảo) vẫn bắt được → độ khó "bắt buộc phối hợp" cần playtest người thật và chỉnh ở P39. Thay đổi khi chỉnh: mèo chạy 4,4 (nhanh hơn người chạy 4,2), né cú lao 75% (`ai.dodgeChance`), đang nấp thì bỏ chạy khi người cách 120px; chỗ nấp không đặt ở góc phòng (ngõ cụt). 10 unit test "não" mèo.*
 
 **Ghi chú playtest mốc B:**
-_(ghi ở đây)_
+- Chưa playtest người thật; mọi kiểm tra là tự động (unit test + Chromium điều khiển bằng phím/tay cầm giả lập + bot).
+- Độ khó bắt mèo cho 1 người cần chỉnh khi playtest (xem P11).
+- Ném: vật bay ~0,45s gần như không ma sát; bể cá 25kg vẫn ném được (≤ 30kg) — cân nhắc lại khi playtest.
+- Sandbox có 10 cảnh thử hành vi (phím 1–0) để chỉnh thông số nhanh.
 
 ---
 

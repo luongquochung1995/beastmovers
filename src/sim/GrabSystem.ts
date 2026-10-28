@@ -33,7 +33,14 @@ interface Target {
   point: number;
 }
 
-export type ReleaseReason = 'released' | 'dropped' | 'thrown' | 'stretched' | 'removed';
+export type ReleaseReason =
+  | 'released'
+  | 'dropped'
+  | 'thrown'
+  | 'stretched'
+  | 'removed'
+  /** Mèo cào, tuột tay. */
+  | 'scratched';
 
 /** Nắm, thả, ném và khiêng đồ (một hay nhiều người). */
 export class GrabSystem {
@@ -122,8 +129,11 @@ export class GrabSystem {
     this.holds.delete(p);
     const ref = { item: hold.item.uid, itemId: hold.item.id };
     if (reason === 'dropped') this.world.bus.emit({ type: 'itemDropped', ...ref });
+    else if (reason === 'scratched')
+      this.world.bus.emit({ type: 'catScratch', ...ref, slot: p.slotIndex });
     else if (reason !== 'thrown')
       this.world.bus.emit({ type: 'itemReleased', ...ref, slot: p.slotIndex });
+    if (reason === 'released') this.world.onItemReleased(hold.item, p);
   }
 
   /** Thả hết người đang nắm một món đồ (vd. món đồ bị xóa). */

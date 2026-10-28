@@ -89,5 +89,8 @@
   "behavior.beltOn": "Belt's on!",
   "behavior.thud": "THUD!",
   "behavior.plonk": "♪ Plonk!",
-  "sandbox.scenarios": "Behavior tests: 1 fridge · 2 plant · 3 fish tank · 4 treadmill · 5 pool table · 6 weights · 7 box · 8 piano · 9 mirror · 0 aquarium"
+  "sandbox.scenarios": "Behavior tests: 1 fridge · 2 plant · 3 fish tank · 4 treadmill · 5 pool table · 6 weights · 7 box · 8 piano · 9 mirror · 0 aquarium",
+  "cat.meow": "Meow!",
+  "cat.caught": "Gotcha!",
+  "cat.escaped": "The cat got out!"
 }

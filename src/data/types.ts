@@ -139,6 +139,8 @@ export const itemSchema = obj({
       speed: num({ min: 0 }),
       fleeRadius: num({ min: 0 }),
       hideSpots: optional(bool()),
+      /** Xác suất né một cú lao (0..1). */
+      dodgeChance: optional(num({ min: 0, max: 1 })),
     }),
   ),
   /** Đồ chứa được mèo (thùng, lồng). */
