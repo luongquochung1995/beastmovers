@@ -30,6 +30,19 @@ export type OnlineSceneData = { mode?: 'create' } | { mode: 'join'; code: string
 const BAD = '#ff7b7b';
 const GOOD = '#7CFC8A';
 const CARD_W = 580;
+/** Tham số URL (kiểm thử, ngôn ngữ) giữ lại khi đưa mã phòng lên thanh địa chỉ. */
+const KEPT_PARAMS = [
+  'transport',
+  'relay',
+  'debug',
+  'lang',
+  'lag',
+  'jitter',
+  'predict',
+  'peerserver',
+  'fallback',
+  'renderer',
+];
 /** Máy khách chờ tìm host qua Trystero bao lâu trước khi thử kênh dự phòng PeerJS. */
 const FALLBACK_AFTER_MS = 8000;
 const CARD_H = 74;
@@ -279,17 +292,7 @@ export class OnlineScene extends Phaser.Scene {
   private keepParams(): string {
     const p = new URLSearchParams(window.location.search);
     let extra = '';
-    for (const k of [
-      'transport',
-      'relay',
-      'debug',
-      'lang',
-      'lag',
-      'jitter',
-      'predict',
-      'peerserver',
-      'fallback',
-    ]) {
+    for (const k of KEPT_PARAMS) {
       const v = p.get(k);
       if (v !== null) extra += `&${k}${v ? `=${encodeURIComponent(v)}` : ''}`;
     }

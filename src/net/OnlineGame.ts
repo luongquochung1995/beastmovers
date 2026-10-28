@@ -431,6 +431,7 @@ export class OnlineGame {
       recvBytes: this.receiver?.recvBytes ?? 0,
       recvCount: this.receiver?.recvCount ?? 0,
       dropped: this.receiver?.dropped ?? 0,
+      desyncs: this.receiver?.desyncs ?? 0,
       applied: this.mirror?.applied ?? 0,
       buffered: this.buffer.size,
       starved: this.buffer.starved,

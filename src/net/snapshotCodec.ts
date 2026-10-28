@@ -315,7 +315,61 @@ export function encodeSnapshot(
     w.u16(removed.length);
     for (const i of removed) w.u16(i.u);
   }
+  w.u32(snapshotChecksum(snap));
   return w.done();
+}
+
+/**
+ * Mã kiểm tra của một snapshot (đã lượng tử): host gửi kèm mỗi gói, máy khách tính lại trên
+ * trạng thái tự dựng từ các gói delta. Khác nhau = lệch đồng bộ.
+ */
+export function snapshotChecksum(s: Snapshot): number {
+  let h = 0x811c9dc5;
+  const mix = (v: number) => {
+    // Giá trị đã lượng tử: nhân lên thành số nguyên trước khi trộn.
+    let x = Math.round(v * 1000) | 0;
+    for (let k = 0; k < 4; k++) {
+      h ^= x & 0xff;
+      h = Math.imul(h, 0x01000193);
+      x >>>= 8;
+    }
+  };
+  const str = (t: string | null) => {
+    if (t === null) return mix(-1);
+    for (let k = 0; k < t.length; k++) mix(t.charCodeAt(k));
+  };
+  mix(s.tick);
+  for (const p of s.players) {
+    for (const v of [p.s, p.x, p.y, p.fx, p.fy, p.hold, p.vx, p.vy, p.ack]) mix(v);
+    str(p.mode);
+    mix(p.run ? 1 : 0);
+  }
+  for (const i of [...s.items].sort((a, b) => a.u - b.u)) {
+    for (const v of [i.u, i.x, i.y, i.a, i.carriers, i.dur, i.box]) mix(v);
+    str(i.d);
+    str(i.cs);
+    str(i.icon);
+    mix((i.broken ? 1 : 0) | (i.hidden ? 2 : 0) | (i.loaded ? 4 : 0));
+  }
+  s.doors.forEach(mix);
+  if (s.truck)
+    for (const v of [s.truck.ox, s.truck.oy, s.truck.used, s.truck.handbrake ? 1 : 0]) mix(v);
+  if (s.landlord) for (const v of [s.landlord.x, s.landlord.y, s.landlord.sat]) mix(v);
+  if (s.clock) {
+    mix(s.clock.left);
+    str(s.clock.phase);
+  }
+  s.required.forEach(mix);
+  return h >>> 0;
+}
+
+/** Mã kiểm tra host gửi ở cuối gói. */
+export function readChecksum(data: ArrayBuffer | Uint8Array): number {
+  const bytes = data instanceof Uint8Array ? data : new Uint8Array(data);
+  return new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength).getUint32(
+    bytes.byteLength - 4,
+    true,
+  );
 }
 
 export function snapshotKind(data: ArrayBuffer | Uint8Array): number {

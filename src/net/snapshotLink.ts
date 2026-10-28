@@ -1,5 +1,13 @@
 import type { Snapshot } from './snapshot';
-import { decodeSnapshot, encodeSnapshot, quantize, SNAP_FULL, snapshotKind } from './snapshotCodec';
+import {
+  decodeSnapshot,
+  encodeSnapshot,
+  quantize,
+  readChecksum,
+  SNAP_FULL,
+  snapshotChecksum,
+  snapshotKind,
+} from './snapshotCodec';
 import type { Payload, PeerId, Transport } from './Transport';
 
 /** Gửi snapshot đầy đủ định kỳ để chắc chắn mọi máy khớp với host. */
@@ -73,6 +81,8 @@ export class SnapshotReceiver {
   recvCount = 0;
   /** Gói delta tới khi chưa có gói gốc (bỏ qua, chờ gói đầy đủ). */
   dropped = 0;
+  /** Số gói mà trạng thái dựng lại ở máy này khác với host (mã kiểm tra không khớp). */
+  desyncs = 0;
 
   constructor(
     transport: Transport,
@@ -93,6 +103,12 @@ export class SnapshotReceiver {
     const snap = decodeSnapshot(bytes, base, this.defIds);
     if (!snap) {
       this.dropped++;
+      return;
+    }
+    if (snapshotChecksum(snap) !== readChecksum(bytes)) {
+      // Lệch: bỏ gói gốc, chờ gói đầy đủ kế tiếp (tối đa 2 giây) để dựng lại cho đúng.
+      this.desyncs++;
+      this.decoded = null;
       return;
     }
     this.decoded = snap;

@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import type { ItemSnap, Snapshot } from '../src/net/snapshot';
-import { decodeSnapshot, encodeSnapshot, quantize } from '../src/net/snapshotCodec';
+import {
+  decodeSnapshot,
+  encodeSnapshot,
+  quantize,
+  readChecksum,
+  snapshotChecksum,
+} from '../src/net/snapshotCodec';
 
 const defIds = ['box', 'sofa', 'cat'];
 const defIndex = new Map(defIds.map((d, i) => [d, i]));
@@ -96,6 +102,11 @@ describe('mã hóa snapshot nhị phân', () => {
     // Không đổi gì: gói delta chỉ còn phần đầu (2 người chơi, xe, đồng hồ…).
     const idle = encodeSnapshot(q2, q2, defIndex);
     expect(idle.byteLength).toBeLessThan(80);
+    // Mã kiểm tra: trạng thái dựng từ delta khớp với host; sai một chút là phát hiện được.
+    expect(snapshotChecksum(c2)).toBe(readChecksum(delta));
+    expect(
+      snapshotChecksum({ ...c2, items: [{ ...c2.items[0]!, dur: 1 }, ...c2.items.slice(1)] }),
+    ).not.toBe(readChecksum(delta));
     // Delta mà chưa có gói gốc thì bỏ qua.
     expect(decodeSnapshot(delta, null, defIds)).toBeNull();
   });

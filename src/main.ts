@@ -10,8 +10,14 @@ import { ResultScene } from './scenes/ResultScene';
 import { SandboxScene } from './scenes/SandboxScene';
 import { GAME_HEIGHT, GAME_WIDTH, Theme } from './ui/theme';
 
+/**
+ * `?renderer=none`: chạy game nhưng không vẽ (kiểm thử nhiều máy online trên một máy yếu):
+ * dùng Canvas để vẫn tạo được texture, rồi thay vòng lặp bằng bản không vẽ của Phaser.
+ */
+const NO_RENDER = new URLSearchParams(window.location.search).get('renderer') === 'none';
+
 const game = new Phaser.Game({
-  type: Phaser.AUTO,
+  type: NO_RENDER ? Phaser.CANVAS : Phaser.AUTO,
   parent: 'game',
   width: GAME_WIDTH,
   height: GAME_HEIGHT,
@@ -40,6 +46,12 @@ const game = new Phaser.Game({
     OnlineScene,
   ],
 });
+
+if (NO_RENDER) {
+  game.events.once(Phaser.Core.Events.READY, () => {
+    game.loop.callback = (time: number, delta: number) => game.headlessStep(time, delta);
+  });
+}
 
 // Cho kiểm thử tự động truy cập game khi chạy dev hoặc có `?debug` trên URL.
 if (import.meta.env.DEV || new URLSearchParams(window.location.search).has('debug')) {
