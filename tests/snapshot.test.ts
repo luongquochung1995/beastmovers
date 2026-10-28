@@ -8,9 +8,11 @@ const src: SnapshotSource = {
       slotIndex: 0,
       position: { x: 100.123, y: 200.456 },
       motor: { mode: 'normal', running: true, facing: { x: 0.70711, y: -0.70711 } },
+      body: { velocity: { x: 1.23456, y: 0 } },
     },
   ],
   holding: (s) => (s === 0 ? 7 : -1),
+  ackOf: () => 5,
   items: [
     {
       uid: 7,
@@ -46,6 +48,9 @@ describe('snapshot', () => {
       mode: 'normal',
       run: true,
       hold: 7,
+      vx: 1.235,
+      vy: 0,
+      ack: 5,
     });
     expect(s.items[0]).toMatchObject({
       u: 7,

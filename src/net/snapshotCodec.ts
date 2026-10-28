@@ -26,6 +26,10 @@ const qPos = (v: number) => Math.max(-32768, Math.min(32767, Math.round(v * POS_
 const dqPos = (q: number) => q / POS_SCALE;
 const wrapAngle = (a: number) => Math.atan2(Math.sin(a), Math.cos(a));
 const qAngle = (a: number) => Math.max(-127, Math.min(127, Math.round(wrapAngle(a) * ANGLE_SCALE)));
+/** Vận tốc: int16, 0,01 px/bước. */
+const VEL_SCALE = 100;
+const qVel = (v: number) => Math.max(-32768, Math.min(32767, Math.round(v * VEL_SCALE)));
+const dqVel = (q: number) => q / VEL_SCALE;
 const dqAngle = (q: number) => q / ANGLE_SCALE;
 
 /** Đưa snapshot về đúng lưới lượng tử (giá trị máy khách sẽ nhận được). */
@@ -40,6 +44,9 @@ export function quantize(s: Snapshot): Snapshot {
         y: dqPos(qPos(p.y)),
         fx: Math.cos(fa),
         fy: Math.sin(fa),
+        vx: dqVel(qVel(p.vx)),
+        vy: dqVel(qVel(p.vy)),
+        ack: p.ack >>> 0,
       };
     }),
     items: s.items.map((i) => ({
@@ -283,6 +290,9 @@ export function encodeSnapshot(
     w.i8(qAngle(Math.atan2(p.fy, p.fx)));
     w.u8(MODES.indexOf(p.mode) | (p.run ? 4 : 0));
     w.i16(p.hold);
+    w.i16(qVel(p.vx));
+    w.i16(qVel(p.vy));
+    w.u32(p.ack);
   }
 
   const prev = new Map((base?.items ?? []).map((i) => [i.u, i] as const));
@@ -349,6 +359,9 @@ export function decodeSnapshot(
       mode: MODES[flags & 3] ?? 'normal',
       run: (flags & 4) !== 0,
       hold: r.i16(),
+      vx: dqVel(r.i16()),
+      vy: dqVel(r.i16()),
+      ack: r.u32(),
     };
   });
 

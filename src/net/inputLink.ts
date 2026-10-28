@@ -9,13 +9,15 @@ import type { Payload, PeerId, Transport } from './Transport';
  */
 
 /**
- * Máy khách → host. `f`: [ô trên máy khách, mx, my, nút đang giữ, nút vừa nhấn].
- * "Vừa nhấn" gửi riêng để host không bỏ lỡ cú bấm khi gói "thả" và gói "nhấn lại" tới dồn.
+ * Máy khách → host. Gửi đủ input của từng bước logic (không chỉ bước cuối) để host chạy
+ * đúng từng bước như máy khách đã bấm, cú bấm nhanh không bị lọt, và máy khách biết chính
+ * xác host đã chạy tới bước nào (để dự đoán).
+ * `f`: [ô trên máy khách, số thứ tự bước của khung đầu, mx, my, nút, mx, my, nút…].
  */
 export type InputClientMsg =
   | { t: 'join'; local: number }
   | { t: 'leave'; local: number }
-  | { t: 'in'; seq: number; f: [number, number, number, number, number][] };
+  | { t: 'in'; f: [number, number, ...number[]][] };
 
 /** Host → máy khách. */
 export type InputHostMsg =
@@ -29,18 +31,37 @@ interface NetSlot extends SimSlot {
   local: number;
 }
 
+/**
+ * Hàng chờ input (đệm chống dao động mạng): gói tới dồn thì chờ, mỗi bước dùng một khung.
+ * Dài quá mức này (máy khách gửi nhanh hơn host chạy) thì bỏ bớt khung cũ, giữ lại cú bấm.
+ */
+const MAX_QUEUE = 30;
+/**
+ * Hàng chờ không lúc nào ngắn hơn mức này trong suốt `TRIM_WINDOW` bước thì bỏ phần dư,
+ * để độ trễ không đứng ở mức cao sau một lần mạng dồn gói (gói mất phải gửi lại, các gói
+ * sau phải chờ). Dự đoán ở máy khách lệch một chút và được kéo về mượt.
+ */
+const STANDING_QUEUE = 2;
+const TRIM_WINDOW = 10;
+
+interface QueuedFrame {
+  seq: number;
+  frame: InputFrame;
+}
+
 /** Host: gom input từ các máy thành các ô người chơi toàn cục. */
 export class HostInputHub implements SlotSource {
   readonly slots: (NetSlot | null)[];
-  /** Gói input mới nhất của từng ô. */
-  private readonly latest = new Map<number, InputFrame>();
-  /**
-   * Nút vừa nhấn kể từ lần mô phỏng đọc trước. Mạng dao động có thể đưa nhiều gói tới cùng
-   * lúc (nhấn, thả, nhấn lại): gộp lại để không cú bấm nào bị gói sau ghi đè mất.
-   */
-  private readonly pressedSincePoll = new Map<number, number>();
+  /** Khung input đang chờ của từng ô (mỗi bước mô phỏng dùng một khung). */
+  private readonly queues = new Map<number, QueuedFrame[]>();
+  /** Khung dùng gần nhất (hết hàng chờ thì dùng lại khung này). */
+  private readonly last = new Map<number, InputFrame>();
   private readonly pendingJoins: { peer: PeerId; local: number }[] = [];
-  private readonly lastSeq = new Map<PeerId, number>();
+  /** Độ dài ngắn nhất của hàng chờ trong cửa sổ hiện tại, và số bước đã đếm. */
+  private readonly queueMin = new Map<number, { min: number; n: number }>();
+  /** Ô → số thứ tự bước input mới nhất đã dùng (máy khách dự đoán phần sau). */
+  private readonly applied = new Map<number, number>();
+  private readonly joinCbs: ((peer: PeerId) => void)[] = [];
 
   constructor(
     private readonly transport: Transport,
@@ -52,7 +73,8 @@ export class HostInputHub implements SlotSource {
       for (const s of this.slots) {
         if (s?.owner === peer) {
           s.connected = false;
-          this.latest.delete(s.index);
+          this.queues.delete(s.index);
+          this.last.delete(s.index);
         }
       }
     });
@@ -73,6 +95,16 @@ export class HostInputHub implements SlotSource {
     };
   }
 
+  /** Một máy vừa xin ô (đã vào màn chơi, sẵn sàng nhận snapshot). */
+  onJoin(cb: (peer: PeerId) => void): void {
+    this.joinCbs.push(cb);
+  }
+
+  /** Số thứ tự bước input cuối cùng đã dùng cho ô `slot`. */
+  ackOf(slot: number): number {
+    return this.applied.get(slot) ?? 0;
+  }
+
   /** Ô của người chơi `local` trên máy `peer`. */
   slotOf(peer: PeerId, local: number): NetSlot | undefined {
     return this.slots.find((s): s is NetSlot => s?.owner === peer && s.local === local);
@@ -82,6 +114,7 @@ export class HostInputHub implements SlotSource {
     if (!isMsg(d)) return;
     const m = d as InputClientMsg;
     if (m.t === 'join') {
+      for (const cb of this.joinCbs) cb(from);
       const existing = this.slotOf(from, m.local);
       if (existing) {
         existing.connected = true;
@@ -93,14 +126,21 @@ export class HostInputHub implements SlotSource {
         this.pendingJoins.push({ peer: from, local: m.local });
       }
     } else if (m.t === 'in') {
-      // Gói cũ hơn gói đã nhận thì bỏ (phòng khi đổi kênh truyền).
-      if (m.seq <= (this.lastSeq.get(from) ?? -1)) return;
-      this.lastSeq.set(from, m.seq);
-      for (const [local, mx, my, buttons, pressed] of m.f) {
+      for (const [local, first, ...flat] of m.f) {
         const s = this.slotOf(from, local);
         if (!s) continue;
-        this.latest.set(s.index, { mx, my, buttons });
-        this.pressedSincePoll.set(s.index, (this.pressedSincePoll.get(s.index) ?? 0) | pressed);
+        let q = this.queues.get(s.index);
+        if (!q) this.queues.set(s.index, (q = []));
+        const newest = q[q.length - 1]?.seq ?? this.applied.get(s.index) ?? -1;
+        for (let k = 0; k * 3 + 2 < flat.length; k++) {
+          const seq = first + k;
+          // Khung đã có (gửi lại, đổi kênh truyền) thì bỏ.
+          if (seq <= newest) continue;
+          q.push({
+            seq,
+            frame: { mx: flat[k * 3]!, my: flat[k * 3 + 1]!, buttons: flat[k * 3 + 2]! },
+          });
+        }
       }
     } else if (m.t === 'leave') {
       const s = this.slotOf(from, m.local);
@@ -111,13 +151,35 @@ export class HostInputHub implements SlotSource {
   poll(allowJoin: boolean): SimSlot[] {
     for (const s of this.slots) {
       if (!s) continue;
-      const pressed = this.pressedSincePoll.get(s.index) ?? 0;
-      // Nút vừa nhấn lại trong khi lần đọc trước vẫn thấy đang giữ: coi như đã thả ở giữa.
-      s.prev = { ...s.cur, buttons: s.cur.buttons & ~pressed };
-      const last = this.latest.get(s.index);
+      s.prev = s.cur;
+      const q = this.queues.get(s.index) ?? [];
+      // Hàng chờ quá dài: bỏ khung cũ nhưng giữ các cú bấm trong đó.
+      let held = s.prev.buttons;
+      let pressed = 0;
+      const drop = () => {
+        const b = q.shift()!.frame.buttons;
+        pressed |= b & ~held;
+        held = b;
+      };
+      while (q.length > MAX_QUEUE) drop();
+      const w = this.queueMin.get(s.index) ?? { min: Infinity, n: 0 };
+      w.min = Math.min(w.min, q.length);
+      if (++w.n >= TRIM_WINDOW) {
+        for (let k = STANDING_QUEUE; k < w.min; k++) drop();
+        w.min = Infinity;
+        w.n = 0;
+      }
+      this.queueMin.set(s.index, w);
+      const next = q.shift();
+      if (next) {
+        this.last.set(s.index, next.frame);
+        this.applied.set(s.index, next.seq);
+      }
+      const frame = this.last.get(s.index);
       s.cur =
-        s.connected && last ? { ...last, buttons: last.buttons | pressed } : { ...EMPTY_FRAME };
-      this.pressedSincePoll.set(s.index, 0);
+        s.connected && frame ? { ...frame, buttons: frame.buttons | pressed } : { ...EMPTY_FRAME };
+      // Có cú bấm trong khung bị bỏ mà bước trước vẫn đang giữ nút: coi như đã thả ở giữa.
+      if (pressed) s.prev = { ...s.prev, buttons: s.prev.buttons & ~pressed };
     }
     const joined: SimSlot[] = [];
     while (this.pendingJoins.length > 0) {
@@ -145,15 +207,16 @@ export class HostInputHub implements SlotSource {
   destroy(): void {}
 }
 
-/** Máy khách: xin ô cho từng người chơi trên máy và gửi phím bấm định kỳ. */
+/** Máy khách: xin ô cho từng người chơi trên máy và gửi input của từng bước định kỳ. */
 export class ClientInputSender {
   /** Ô trên máy này → ô toàn cục host đã cấp. */
   readonly assigned = new Map<number, number>();
   private readonly requested = new Set<number>();
-  /** Nút vừa nhấn kể từ lần gửi trước (để cú bấm nhanh không bị lọt giữa hai lần gửi). */
-  private readonly pressedSince = new Map<number, number>();
+  /** Khung input chưa gửi của từng ô (mx, my, nút nối tiếp nhau) và số thứ tự khung đầu. */
+  private readonly pending = new Map<number, { from: number; frames: number[] }>();
   private sinceSendMs = 0;
-  private seq = 0;
+  /** Số thứ tự của bước logic vừa chạy (gửi kèm input; dùng cho dự đoán). */
+  tickSeq = -1;
 
   constructor(
     private readonly transport: Transport,
@@ -172,28 +235,34 @@ export class ClientInputSender {
   /** Gọi mỗi bước logic. */
   tick(dtMs: number, allowJoin: boolean): void {
     this.inputs.poll(allowJoin);
+    this.tickSeq++;
+    let any = false;
     for (const s of this.inputs.slots) {
       if (!s) continue;
-      if (!this.assigned.has(s.index) && !this.requested.has(s.index)) {
-        this.requested.add(s.index);
-        this.transport.send({ t: 'join', local: s.index } satisfies InputClientMsg, this.hostId);
+      if (!this.assigned.has(s.index)) {
+        if (!this.requested.has(s.index)) {
+          this.requested.add(s.index);
+          this.transport.send({ t: 'join', local: s.index } satisfies InputClientMsg, this.hostId);
+        }
+        continue;
       }
-      const edges = s.cur.buttons & ~s.prev.buttons;
-      this.pressedSince.set(s.index, (this.pressedSince.get(s.index) ?? 0) | edges);
+      const cur = s.connected ? s.cur : EMPTY_FRAME;
+      let buf = this.pending.get(s.index);
+      if (!buf) this.pending.set(s.index, (buf = { from: 0, frames: [] }));
+      if (buf.frames.length === 0) buf.from = this.tickSeq;
+      buf.frames.push(cur.mx, cur.my, cur.buttons);
+      any = true;
     }
+    if (!any) return;
     this.sinceSendMs += dtMs;
     if (this.sinceSendMs < 1000 / this.sendHz) return;
     this.sinceSendMs = 0;
-    const f: [number, number, number, number, number][] = [];
-    for (const s of this.inputs.slots) {
-      if (!s || !this.assigned.has(s.index)) continue;
-      const cur = s.connected ? s.cur : EMPTY_FRAME;
-      const pressed = s.connected ? (this.pressedSince.get(s.index) ?? 0) : 0;
-      f.push([s.index, cur.mx, cur.my, cur.buttons, pressed]);
-      this.pressedSince.set(s.index, 0);
+    const f: [number, number, ...number[]][] = [];
+    for (const [local, buf] of this.pending) {
+      if (buf.frames.length) f.push([local, buf.from, ...buf.frames]);
+      buf.frames = [];
     }
-    if (f.length > 0)
-      this.transport.send({ t: 'in', seq: this.seq++, f } satisfies InputClientMsg, this.hostId);
+    if (f.length > 0) this.transport.send({ t: 'in', f } satisfies InputClientMsg, this.hostId);
   }
 }
 
@@ -222,7 +291,7 @@ export class OnlineHostSlots implements SlotSource {
 
   constructor(
     private readonly inputs: InputManager,
-    private readonly hub: HostInputHub,
+    readonly hub: HostInputHub,
     /** Ô trên máy host → ô toàn cục. */
     private readonly localToGlobal: ReadonlyMap<number, number>,
   ) {

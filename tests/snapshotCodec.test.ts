@@ -25,8 +25,32 @@ const item = (u: number, d: string, x: number, y: number, extra: Partial<ItemSna
 const snap = (tick: number, items: ItemSnap[]): Snapshot => ({
   tick,
   players: [
-    { s: 0, x: 100.13, y: 200.9, fx: 0.6, fy: 0.8, mode: 'normal', run: true, hold: 3 },
-    { s: 5, x: 1500.2, y: 20, fx: -1, fy: 0, mode: 'fallen', run: false, hold: -1 },
+    {
+      s: 0,
+      x: 100.13,
+      y: 200.9,
+      fx: 0.6,
+      fy: 0.8,
+      mode: 'normal',
+      run: true,
+      hold: 3,
+      vx: 2.345,
+      vy: -1,
+      ack: 77,
+    },
+    {
+      s: 5,
+      x: 1500.2,
+      y: 20,
+      fx: -1,
+      fy: 0,
+      mode: 'fallen',
+      run: false,
+      hold: -1,
+      vx: 0,
+      vy: 0,
+      ack: 0,
+    },
   ],
   items,
   doors: [0.5, -1.2],
@@ -69,9 +93,9 @@ describe('mã hóa snapshot nhị phân', () => {
     expect(c2.items.map((i) => i.u).sort()).toEqual([1, 2, 4]);
     expect(c2.items.find((i) => i.u === 2)!.x).toBe(305);
     expect(c2.items.find((i) => i.u === 4)).toMatchObject({ d: 'box', dur: 3 });
-    // Không đổi gì: gói delta chỉ còn phần đầu (người chơi, xe, đồng hồ…).
+    // Không đổi gì: gói delta chỉ còn phần đầu (2 người chơi, xe, đồng hồ…).
     const idle = encodeSnapshot(q2, q2, defIndex);
-    expect(idle.byteLength).toBeLessThan(60);
+    expect(idle.byteLength).toBeLessThan(80);
     // Delta mà chưa có gói gốc thì bỏ qua.
     expect(decodeSnapshot(delta, null, defIds)).toBeNull();
   });

@@ -7,13 +7,12 @@ import type { Snapshot } from './snapshot';
 
 /**
  * Máy khách online: thế giới không chạy vật lý, chỉ đặt lại theo snapshot của host.
- * Vị trí cũ được giữ lại để vẽ nội suy giữa hai snapshot.
+ * Mỗi khung hình áp một trạng thái đã nội suy từ bộ đệm snapshot (xem `SnapshotBuffer`).
  */
 export class ClientMirror {
   /** Ô người chơi → uid món đang nắm (để vẽ "cánh tay"). */
   private readonly holds = new Map<number, number>();
   private readonly arms: Phaser.GameObjects.Graphics;
-  private lastTick = -1;
   applied = 0;
 
   constructor(
@@ -25,11 +24,9 @@ export class ClientMirror {
     this.arms = world.scene.add.graphics().setDepth(8_999);
   }
 
-  apply(s: Snapshot, logicHz: number, snapshotHz: number): void {
+  /** Áp một trạng thái (đã nội suy) để vẽ khung hình này. */
+  apply(s: Snapshot): void {
     const w = this.world;
-    const stepsSince =
-      this.lastTick < 0 ? logicHz / snapshotHz : Math.max(1, s.tick - this.lastTick);
-    this.lastTick = s.tick;
     this.applied++;
 
     for (const ps of s.players) {
@@ -38,7 +35,7 @@ export class ClientMirror {
         const at = this.spawnAt(ps.s);
         p = w.addPlayer(ps.s, at.x, at.y, this.lookOf(ps.s));
       }
-      p.applyRemote(ps, stepsSince);
+      p.applyRemote(ps);
       if (ps.hold >= 0) this.holds.set(ps.s, ps.hold);
       else this.holds.delete(ps.s);
     }
@@ -54,6 +51,7 @@ export class ClientMirror {
         w.scene.matter.world.remove(item.body);
       }
       item.applyRemote(is);
+      item.settle();
     }
     for (const item of [...w.items]) if (!seen.has(item.uid)) w.removeItem(item);
     w.containedIn.clear();

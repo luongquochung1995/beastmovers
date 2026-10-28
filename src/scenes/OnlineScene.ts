@@ -263,7 +263,7 @@ export class OnlineScene extends Phaser.Scene {
   private keepParams(): string {
     const p = new URLSearchParams(window.location.search);
     let extra = '';
-    for (const k of ['transport', 'relay', 'debug', 'lang']) {
+    for (const k of ['transport', 'relay', 'debug', 'lang', 'lag', 'jitter', 'predict']) {
       const v = p.get(k);
       if (v !== null) extra += `&${k}${v ? `=${encodeURIComponent(v)}` : ''}`;
     }

@@ -88,30 +88,40 @@ describe('Input qua mạng', () => {
     expect(hub.slots[0]!.cur.mx).toBe(0);
   });
 
-  it('hai gói tới cùng lúc (nhấn rồi thả) vẫn thấy cú bấm', () => {
+  it('host chạy từng khung đúng thứ tự; hàng chờ dài thì bỏ bớt nhưng giữ cú bấm', () => {
     const net = new LoopbackNetwork({ scheduler });
     const hub = new HostInputHub(net.join('host'), 8);
     const client = net.join('c1');
     client.send({ t: 'join', local: 0 });
     vi.advanceTimersByTime(0);
     hub.poll(true);
-    client.send({ t: 'in', seq: 0, f: [[0, 0, 0, Btn.Grab, Btn.Grab]] });
-    client.send({ t: 'in', seq: 1, f: [[0, 0, 0, 0, 0]] });
+    const G = Btn.Grab;
+    const pressedNow = () => {
+      const s = hub.slots[0]!;
+      return !!(s.cur.buttons & G) && !(s.prev.buttons & G);
+    };
+    // Hai khung tới cùng lúc: nhấn rồi thả → bước 1 thấy nhấn, bước 2 thấy thả.
+    client.send({ t: 'in', f: [[0, 0, 0, 0, G, 0, 0, 0]] });
     vi.advanceTimersByTime(0);
     hub.poll(true);
-    expect(hub.slots[0]!.cur.buttons & Btn.Grab).toBeTruthy();
+    expect(pressedNow()).toBe(true);
+    expect(hub.ackOf(0)).toBe(0);
     hub.poll(true);
-    expect(hub.slots[0]!.cur.buttons & Btn.Grab).toBeFalsy();
+    expect(hub.slots[0]!.cur.buttons & G).toBe(0);
+    expect(hub.ackOf(0)).toBe(1);
+    // Gửi lại khung cũ thì bỏ qua.
+    client.send({ t: 'in', f: [[0, 0, 0, 0, G, 0, 0, 0]] });
+    vi.advanceTimersByTime(0);
+    hub.poll(true);
+    expect(pressedNow()).toBe(false);
 
-    // Đang giữ; gói "thả" và gói "nhấn lại" tới dồn trong cùng một lần đọc → vẫn là cú bấm mới.
-    client.send({ t: 'in', seq: 2, f: [[0, 0, 0, Btn.Grab, Btn.Grab]] });
+    // 40 khung dồn một lúc, cú bấm nằm ở khung thứ 2 (bị bỏ vì hàng chờ quá dài).
+    const frames: number[] = [];
+    for (let k = 0; k < 40; k++) frames.push(0, 0, k === 1 ? G : 0);
+    client.send({ t: 'in', f: [[0, 2, ...frames]] });
     vi.advanceTimersByTime(0);
     hub.poll(true);
-    client.send({ t: 'in', seq: 3, f: [[0, 0, 0, 0, 0]] });
-    client.send({ t: 'in', seq: 4, f: [[0, 0, 0, Btn.Grab, Btn.Grab]] });
-    vi.advanceTimersByTime(0);
-    hub.poll(true);
-    const s = hub.slots[0]!;
-    expect(s.cur.buttons & Btn.Grab && !(s.prev.buttons & Btn.Grab)).toBeTruthy();
+    expect(pressedNow()).toBe(true);
+    expect(hub.ackOf(0)).toBe(12);
   });
 });

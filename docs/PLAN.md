@@ -574,7 +574,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P20 | Transport và phòng chơi | D | ✔ | 4 ngày | 🟨 | |
 | P21 | Lobby online | D | ✔ | 3 ngày | ✅ | 2026-10-28 |
 | P22 | Gửi input và snapshot | D | ✔ | 4 ngày | ✅ | 2026-10-28 |
-| P23 | Nội suy và dự đoán | D | ✔ | 4 ngày | ⬜ | |
+| P23 | Nội suy và dự đoán | D | ✔ | 4 ngày | ✅ | 2026-10-28 |
 | P24 | Đồng bộ sự kiện | D | ✔ | 2 ngày | ⬜ | |
 | P25 | Rớt mạng, lỗi kết nối, dự phòng | D | ✔ | 4 ngày | ⬜ | |
 | P26 | Test 8 người online | D | ✔ | 3 ngày | ⬜ | |
@@ -594,7 +594,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P40 | Kiểm thử trình duyệt | G | | 2 ngày | ⬜ | |
 | P41 | Phát hành | G | | 2 ngày | ⬜ | |
 
-**Tiến độ:** 20/41 phase · Mốc A 🟨 · B ✅ · C ✅ · D 🟨 · E ⬜ · F ⬜ · G ⬜
+**Tiến độ:** 21/41 phase · Mốc A 🟨 · B ✅ · C ✅ · D 🟨 · E ⬜ · F ⬜ · G ⬜
 
 ---
 
@@ -827,10 +827,11 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 - 📝 *Kiểm tra (Chromium): 4 trình duyệt riêng qua Trystero/WebRTC thật (relay nostr trên máy): lobby → vào màn; 3 máy khách đi bằng phím của mình, máy thứ 4 thấy đúng vị trí; **2 người ở 2 máy khác nhau cùng nắm hai đầu sofa** (cần 2 người) → nhấc lên "lifted", cùng đi → sofa di chuyển, mọi máy thấy "2 người nắm"; 3 món bắt buộc lên xe (host đặt bằng API debug cho nhanh) → HUD cả 4 máy "3/3", xe 3 chỗ, đồng hồ khớp; host Esc → xe chạy → **cả 4 máy hiện bảng kết quả** (tên/màu theo lobby). Thêm: máy khách tự đi tới thùng, nắm, khiêng vào xe chỉ bằng phím của mình → host và máy khách đều thấy đã lên xe. **Băng thông: 68–85 byte/snapshot → ~1,4–1,7 KB/s mỗi máy khách** (gói delta; đầy đủ mỗi 2 giây; tính toán 8 người + 40 món đồ: gói đầy đủ < 1 KB → tối đa ~20 KB/s nếu mọi thứ cùng chuyển động mỗi khung, thực tế thấp hơn nhiều). Mã hóa nhị phân: vị trí int16 (0,25 px), góc int8, delta theo từng máy khách, đồ mới/đồ mất: 3 unit test. Lỗi tìm thấy và đã sửa: (1) bấm nhanh hơn 1 khung hình bị mất phím → bộ đọc phím giữ cú bấm tới lần đọc kế; (2) gói "thả" và gói "nhấn lại" tới dồn trong một lần đọc thì host không thấy cú bấm mới (loopback 100ms ±30, mất 10%: chỉ nắm được 5–9/10 lần) → máy khách gửi riêng "nút vừa nhấn", host tự chèn một lần thả → 30/30; (3) mạng giả loopback có thể giao ngược thứ tự 2 gói cùng giờ (hẹn giờ trình duyệt làm tròn ms) → hàng đợi FIFO. ⚠️ Trong container, 4 trình duyệt dùng chung 4 nhân CPU và vẽ bằng phần mềm nên host chỉ ~4–9 FPS (mô phỏng chạy chậm lại) → chưa đo được cảm giác chơi thật; cần chơi thử trên máy thật. Máy khách hiện chỉ nội suy đơn giản giữa 2 snapshot, chưa dự đoán (P23); vũng nước/mảnh kính mới sinh, câu thoại chủ nhà, hiệu ứng chưa hiện ở máy khách (P24); hết màn chỉ có "rời phòng", chưa có "chơi tiếp cùng phòng".*
 
 #### P23 · Nội suy và dự đoán
-- [ ] Đệm snapshot, nội suy với độ trễ `interpolationDelayMs`
-- [ ] Dự đoán chuyển động nhân vật của chính mình phía client, kéo về dần khi lệch so với host
-- [ ] Món đồ đang nắm hiển thị mượt (không giật theo nhịp snapshot)
+- [x] Đệm snapshot, nội suy với độ trễ `interpolationDelayMs`
+- [x] Dự đoán chuyển động nhân vật của chính mình phía client, kéo về dần khi lệch so với host
+- [x] Món đồ đang nắm hiển thị mượt (không giật theo nhịp snapshot)
 - **✅ Xong khi:** với 150 ms trễ, điều khiển nhân vật không có cảm giác "dính", vật thể không giật.
+- 📝 *Kiểm tra: (1) **Mô phỏng trọn đường online 60 khung/giây, mạng 150 ms ± 30 mỗi chiều** (unit test, chạy thật bộ gom input, mã hóa snapshot, bộ đệm, dự đoán): bấm phím → nhân vật mình đi ngay trong ≤ 2 bước logic; khi đi: 0 lần giật lùi, 0 lần khựng; dự đoán lệch host tối đa 0,17 px; người khác nhìn thấy: 0 giật lùi, 0 khựng, bộ đệm không thiếu gói. (2) Chromium, 2 trình duyệt riêng qua Trystero, `?lag=150&jitter=30`: bấm → nhân vật mình đi sau 126–196 ms (≈ 1 khung hình ở 9 FPS của container) so với **1055–1182 ms khi tắt dự đoán** (`?predict=0`); khi đi 0 khựng 0 lùi. Cách làm: máy khách gửi input **từng bước logic** kèm số thứ tự; host chạy đúng từng khung (hàng chờ chống dao động, dư lâu thì bỏ bớt, giữ cú bấm) và báo lại bước cuối đã chạy; máy khách chạy lại các bước host chưa chạy bằng cùng logic di chuyển (va tường, xe, đồ nặng), phần lệch kéo về trong ~120 ms. Người/đồ khác vẽ chậm ~100 ms, nội suy giữa 2 snapshot; tốc độ phát tự chỉnh để giữ khoảng đệm (không cần đồng bộ đồng hồ, vẫn đúng khi host chạy chậm). Lỗi tìm thấy và đã sửa: snapshot đầu tiên tới trước khi máy khách vào màn → mất hết gói delta (giờ host chỉ gửi khi máy khách đã xin ô); dự đoán lệch tới 26–41 px vì host chỉ dùng khung cuối của mỗi gói → đổi sang gửi từng khung. ⚠️ Đang khiêng đồ hoặc bị ngã thì không dự đoán (vẽ theo host, chậm ~RTT/2 + 100 ms) nên khiêng đồ qua mạng chậm sẽ có cảm giác "nặng tay" hơn; container chỉ 8–9 FPS nên cảm giác thật cần thử trên máy thật. Thêm `?lag=…&jitter=…` để thử mạng chậm với kênh thật.*
 
 #### P24 · Đồng bộ sự kiện
 - [ ] Gửi qua mạng các sự kiện: `dialogue`, `itemBroken`, `itemLoaded`, `ping`, `timeLow`, `levelEnd`

@@ -176,19 +176,23 @@ export class Player {
   }
 
   /**
-   * Máy khách online: đặt vị trí và trạng thái theo snapshot. `stepsSince` là số bước logic
-   * kể từ snapshot trước, để ước lượng vận tốc (dùng cho hoạt ảnh lắc lư).
+   * Máy khách online: đặt vị trí, vận tốc (cho hoạt ảnh lắc lư) và trạng thái theo host
+   * (hoặc theo dự đoán của máy này). Vẽ đúng chỗ này, không nội suy thêm.
    */
-  applyRemote(
-    s: { x: number; y: number; fx: number; fy: number; mode: MotorState['mode']; run: boolean },
-    stepsSince: number,
-  ): void {
-    const p = this.position;
-    this.prevPos = p;
+  applyRemote(s: {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    fx: number;
+    fy: number;
+    mode: MotorState['mode'];
+    run: boolean;
+  }): void {
     const mb = this.scene.matter.body;
-    const k = 1 / Math.max(1, stepsSince);
-    mb.setVelocity(this.body, { x: (s.x - p.x) * k, y: (s.y - p.y) * k });
+    mb.setVelocity(this.body, { x: s.vx, y: s.vy });
     mb.setPosition(this.body, { x: s.x, y: s.y }, false);
+    this.prevPos = { x: s.x, y: s.y };
     this.motor = { ...this.motor, mode: s.mode, running: s.run, facing: { x: s.fx, y: s.fy } };
   }
 

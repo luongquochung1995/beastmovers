@@ -18,6 +18,11 @@ export interface PlayerSnap {
   run: boolean;
   /** uid món đang nắm, -1 nếu không. */
   hold: number;
+  /** Vận tốc (px/bước logic), để máy khách dự đoán nhân vật của mình. */
+  vx: number;
+  vy: number;
+  /** Số thứ tự gói input cuối cùng host đã dùng cho người này (máy khách dự đoán phần sau đó). */
+  ack: number;
 }
 
 export interface ItemSnap {
@@ -56,8 +61,11 @@ export interface SnapshotSource {
     slotIndex: number;
     position: { x: number; y: number };
     motor: { mode: MotorMode; running: boolean; facing: { x: number; y: number } };
+    body: { velocity: { x: number; y: number } };
   }[];
   holding(slotIndex: number): number;
+  /** Gói input cuối cùng đã dùng cho ô `slotIndex` (0 nếu là người trên máy host). */
+  ackOf(slotIndex: number): number;
   items: readonly {
     uid: number;
     id: string;
@@ -96,6 +104,9 @@ export function captureSnapshot(src: SnapshotSource): Snapshot {
       mode: p.motor.mode,
       run: p.motor.running,
       hold: src.holding(p.slotIndex),
+      vx: r3(p.body.velocity.x),
+      vy: r3(p.body.velocity.y),
+      ack: src.ackOf(p.slotIndex),
     })),
     items: src.items.map((i) => ({
       u: i.uid,

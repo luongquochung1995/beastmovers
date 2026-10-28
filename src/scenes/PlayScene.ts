@@ -163,8 +163,10 @@ export abstract class PlayScene extends Phaser.Scene {
     const frameMs = now - this.lastNow;
     this.lastSteps = this.loop.advance(frameMs, (dt) => this.fixedUpdate(dt));
     this.lastNow = now;
-    const alpha = this.online && !this.online.isHost ? this.online.renderAlpha() : this.loop.alpha;
-    this.world.render(alpha, frameMs);
+    // Máy khách online: thế giới được đặt theo bộ đệm snapshot + dự đoán, vẽ đúng chỗ đó.
+    const client = this.online && !this.online.isHost;
+    if (client) this.online!.renderFrame(frameMs);
+    this.world.render(client ? 1 : this.loop.alpha, frameMs);
     this.online?.renderExtras();
     if (this.online) this.netInfo = this.online.info();
     this.afterRender(frameMs);
@@ -212,7 +214,7 @@ export abstract class PlayScene extends Phaser.Scene {
 
   /** Ảnh chụp trạng thái để gửi cho máy khách. */
   snapshot(): Snapshot {
-    return snapshotWorld(this.world, this.levelRuntime());
+    return snapshotWorld(this.world, this.levelRuntime(), (s) => this.online?.ackOf(s) ?? 0);
   }
 
   /** Dùng cho kiểm thử tự động (Playwright) khi bật `?debug`. */
