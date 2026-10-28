@@ -173,6 +173,11 @@ export class Item {
     return this.carryState === 'lifted';
   }
 
+  /** Đổi emoji trên món đồ (null = trở về emoji gốc trong data). */
+  setIcon(text: string | null): void {
+    this.icon?.setText(text ?? this.def.icon ?? '');
+  }
+
   /** Vật vừa bị ném: bay gần như không ma sát sàn trong `ms`. */
   setAirborne(ms: number): void {
     this.airborneMs = ms;

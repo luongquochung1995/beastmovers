@@ -10,6 +10,7 @@ import {
   type Vec,
 } from '../systems/PlayerMotor';
 import { t } from '../data/i18n';
+import { popText } from '../ui/popText';
 import { Theme } from '../ui/theme';
 import { PLAYER_RADIUS, PLAYER_STYLES, playerTextureKey } from './playerStyles';
 
@@ -162,24 +163,7 @@ export class Player {
   }
 
   popText(text: string): void {
-    const t = this.scene.add
-      .text(this.view.x, this.view.y - PLAYER_RADIUS - 30, text, {
-        fontFamily: Theme.font,
-        fontSize: '18px',
-        fontStyle: 'bold',
-        color: Theme.accent,
-        stroke: '#000000',
-        strokeThickness: 4,
-      })
-      .setOrigin(0.5)
-      .setDepth(9_000);
-    this.scene.tweens.add({
-      targets: t,
-      y: t.y - 30,
-      alpha: 0,
-      duration: 900,
-      onComplete: () => t.destroy(),
-    });
+    popText(this.scene, this.view.x, this.view.y - PLAYER_RADIUS - 30, text);
   }
 
   destroy(): void {

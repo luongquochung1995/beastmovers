@@ -561,7 +561,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P07 | Nắm, thả, ném (1 người) | B | ✔ | 3 ngày | ✅ | 2026-10-28 |
 | P08 | Khiêng nhiều người | B | ✔ | 5 ngày | ✅ | 2026-10-28 |
 | P09 | Độ bền và vỡ | B | ✔ | 3 ngày | ✅ | 2026-10-28 |
-| P10 | Hành vi đặc biệt của đồ | B | ✔ | 4 ngày | ⬜ | |
+| P10 | Hành vi đặc biệt của đồ | B | ✔ | 4 ngày | ✅ | 2026-10-28 |
 | P11 | Mèo AI | B | ✔ | 3 ngày | ⬜ | |
 | P12 | Bản đồ và level loader | C | ✔ | 4 ngày | ⬜ | |
 | P13 | Xe tải | C | ✔ | 3 ngày | ⬜ | |
@@ -594,7 +594,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P40 | Kiểm thử trình duyệt | G | | 2 ngày | ⬜ | |
 | P41 | Phát hành | G | | 2 ngày | ⬜ | |
 
-**Tiến độ:** 8/41 phase · Mốc A 🟨 · B 🟨 · C ⬜ · D ⬜ · E ⬜ · F ⬜ · G ⬜
+**Tiến độ:** 9/41 phase · Mốc A 🟨 · B 🟨 · C ⬜ · D ⬜ · E ⬜ · F ⬜ · G ⬜
 
 ---
 
@@ -694,16 +694,17 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 - 📝 *Kiểm tra (Chromium): ném gương vào tường 3 lần → độ bền 2 → 1 → 0, vỡ; nhật ký debug ghi đúng `itemThrown → wallHit → itemDamaged` ×3 rồi `itemBroken → zoneSpawned glass`. Thêm: ném thùng vào gương → gương mất 1 độ bền (đồ va đồ); kéo lê sofa một mình 6s → mất 2 độ bền; rơi đồ đang khiêng = cú va mạnh theo khối lượng (`4 + kg/100`). Vùng sàn: mảnh kính (đi qua vấp 3/8 lần), nước/đất (trơn: thả phím trượt 22px so với 5px trên sàn khô, đồ vật trượt xa hơn). Người đi bộ va vào đồ không làm vỡ đồ. 6 unit test logic va chạm. Registry hành vi đã có khung + `shatterDebris` (gương, tượng); các hành vi còn lại ở P10.*
 
 #### P10 · Hành vi đặc biệt của đồ
-- [ ] `slippery` (tủ lạnh trượt)
-- [ ] `doorPopsOpen` (cửa tủ lạnh bật mở, rơi đồ ăn)
-- [ ] `spillSoil` / `spillWater`: tạo vùng sàn trơn
-- [ ] `escapeFish` (cá văng ra khỏi bể)
-- [ ] `treadmillBelt` (máy chạy bộ hất văng người)
-- [ ] `ballsRoll` (bàn bi-a nghiêng thì bi lăn ra)
-- [ ] `dropOnRelease` (đồ 8 người rơi khi có người buông)
-- [ ] `boxBottomTear` (đáy thùng rách khi chứa đồ nặng)
-- [ ] Hành vi gắn bằng tên trong JSON (registry), không hard-code theo `id`
+- [x] `slippery` (tủ lạnh trượt)
+- [x] `doorPopsOpen` (cửa tủ lạnh bật mở, rơi đồ ăn)
+- [x] `spillSoil` / `spillWater`: tạo vùng sàn trơn
+- [x] `escapeFish` (cá văng ra khỏi bể)
+- [x] `treadmillBelt` (máy chạy bộ hất văng người)
+- [x] `ballsRoll` (bàn bi-a nghiêng thì bi lăn ra)
+- [x] `dropOnRelease` (đồ 8 người rơi khi có người buông)
+- [x] `boxBottomTear` (đáy thùng rách khi chứa đồ nặng)
+- [x] Hành vi gắn bằng tên trong JSON (registry), không hard-code theo `id`
 - **✅ Xong khi:** mỗi hành vi có một cảnh test trong sandbox và chạy đúng.
+- 📝 *Kiểm tra (Chromium): 10 cảnh thử ở sandbox (phím 1–0) đều ra đúng kết quả: tủ lạnh đập tường → văng đồ ăn; chậu cây → vùng đất; bể cá → nước + cá giãy; máy chạy bộ bị va → băng chạy, người sát máy bị hất ngã; bàn bi-a rơi → RẦM + bi lăn; giàn tạ rơi → tạ lăn; thùng ném mạnh → rách đáy, rơi sách; piano rơi → người đứng gần ngã + "♪ Plinggg!"; gương → mảnh kính; bể cá khổng lồ rơi → nước + cá. Đi vào tủ lạnh thì tủ trượt 182px (sofa 81px). Cách làm: 2 hành vi chung có tham số (`spawnOnImpact`, `spillZone`) + các tên trong plan là preset của chúng; data có thể ghi `{ "type": "spawnOnImpact", "item": "…", … }` để tạo hành vi mới không cần code. Ghi chú thiết kế: "đáy thùng rách" kích hoạt khi va mạnh (chưa có đồ chứa đồ); "nghiêng" = món đồ đang khiêng xoay nhanh. Thêm `weightsRoll`, `flop` (cá giãy), `keysSoundOnHit`. Âm thanh thật làm ở P37.*
 
 #### P11 · Mèo AI
 - [ ] Trạng thái: đi lang thang → chạy trốn khi có người lại gần (`fleeRadius`) → trốn vào chỗ nấp

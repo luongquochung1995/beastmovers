@@ -16,6 +16,7 @@ import type { Vec } from '../systems/geometry';
 import type { PlayerSlot } from '../systems/input/InputManager';
 import { DEFAULT_MOTOR, type MotorParams } from '../systems/PlayerMotor';
 import type { Random } from '../systems/Random';
+import { popText } from '../ui/popText';
 import { Theme } from '../ui/theme';
 import { createBehaviors } from './behaviors';
 import { GrabSystem } from './GrabSystem';
@@ -34,6 +35,8 @@ const WALL_HIT_COOLDOWN_MS = 400;
 const SCRAPES_PER_DAMAGE = 2;
 /** Người đi chậm hơn mức này (px/bước) thì không vấp trên mảnh kính. */
 const ZONE_TRIP_MIN_SPEED = 1;
+/** Va nhẹ hơn mức này thì không báo cho hành vi đặc biệt (tránh chạm lướt). */
+const BEHAVIOR_MIN_IMPACT = 1.5;
 
 /**
  * Toàn bộ mô phỏng của một màn: tường, nhân vật, đồ vật, vùng nguy hiểm.
@@ -55,7 +58,11 @@ export class World {
   private readonly wallSet = new Set<MatterJS.BodyType>();
   private readonly wallHitAt = new Map<Item, number>();
   private readonly scrapes = new Map<Item, number>();
+  /** Việc chờ chạy sau bước vật lý (không thêm body giữa lúc Matter đang xử lý va chạm). */
+  private readonly deferred: (() => void)[] = [];
   private timeMs = 0;
+  private popTick = -1;
+  private popsThisTick = 0;
 
   constructor(
     readonly scene: Phaser.Scene,
@@ -148,6 +155,33 @@ export class World {
     this.zones.length = 0;
   }
 
+  /** Chạy `fn` ngay sau bước vật lý hiện tại. */
+  later(fn: () => void): void {
+    this.deferred.push(fn);
+  }
+
+  /** Văng `count` món đồ `id` ra quanh điểm `at`, mỗi món một hướng ngẫu nhiên. */
+  burst(id: string, at: Vec, count: number, spread: number, speed: [number, number]): void {
+    this.later(() => {
+      for (let i = 0; i < count; i++) {
+        const a = this.random.next() * Math.PI * 2;
+        const v = speed[0] + this.random.next() * (speed[1] - speed[0]);
+        const it = this.spawnItem(id, at.x + Math.cos(a) * spread, at.y + Math.sin(a) * spread, a);
+        this.scene.matter.body.setVelocity(it.body, { x: Math.cos(a) * v, y: Math.sin(a) * v });
+        it.setAirborne(300);
+      }
+    });
+  }
+
+  /** Chữ nổi ngắn ở vị trí `at`. Nhiều chữ trong cùng một bước thì xếp lệch nhau cho khỏi chồng. */
+  pop(at: Vec, text: string, color?: string): void {
+    if (this.popTick !== this.bus.tick) {
+      this.popTick = this.bus.tick;
+      this.popsThisTick = 0;
+    }
+    popText(this.scene, at.x, at.y - 24 - this.popsThisTick++ * 22, text, color);
+  }
+
   /** Món đồ có nắm được không (P11: mèo đang trong lồng thì không). */
   isGrabbable(_item: Item): boolean {
     return true;
@@ -176,7 +210,7 @@ export class World {
   /** Một cú va với tốc độ `speed` (px/bước): vượt ngưỡng thì trừ độ bền. */
   impact(item: Item, speed: number): void {
     this.applyResult(item, applyImpact(item.damage, speed, breakThreshold(item.def)), speed);
-    if (speed >= breakThreshold(item.def)) for (const b of item.behaviors) b.onImpact?.(speed);
+    if (speed >= BEHAVIOR_MIN_IMPACT) for (const b of item.behaviors) b.onImpact?.(speed);
   }
 
   /** Trừ thẳng độ bền (kéo lê, hành vi đặc biệt…). */
@@ -234,6 +268,7 @@ export class World {
     }
     this.grab.applyCarry(slots, dt);
     this.scene.matter.world.step(dt);
+    for (const fn of this.deferred.splice(0)) fn();
   }
 
   /** Vùng sàn ở vị trí `p` (vùng thêm sau ưu tiên hơn). */
@@ -283,6 +318,13 @@ export class World {
       const ia = this.itemByBody.get(bodyA);
       const ib = this.itemByBody.get(bodyB);
       if (!ia && !ib) continue;
+      // Người chạm vào đồ (vd. đẩy tủ lạnh trượt, đạp nút máy chạy bộ).
+      const toucher = pa ?? pb;
+      const touched = ia ?? ib;
+      if (toucher && touched) {
+        for (const b of touched.behaviors) b.onTouched?.(toucher);
+        continue;
+      }
       // Sự kiện collisionstart chạy trước khi Matter xử lý va chạm nên vận tốc còn là trước va.
       const speed = impactSpeed(bodyA.velocity, bodyB.velocity, pair.collision.normal);
       if (ia) this.onItemContact(ia, bodyB, speed);
@@ -291,8 +333,6 @@ export class World {
   }
 
   private onItemContact(item: Item, other: MatterJS.BodyType, speed: number): void {
-    // Người đi bộ va vào đồ không làm vỡ đồ; chỉ đồ bay, đồ va đồ, và đồ va tường.
-    if (this.playerByBody.has(other)) return;
     if (this.wallSet.has(other) && speed >= WALL_HIT_SPEED) {
       const last = this.wallHitAt.get(item) ?? -Infinity;
       if (this.timeMs - last >= WALL_HIT_COOLDOWN_MS) {

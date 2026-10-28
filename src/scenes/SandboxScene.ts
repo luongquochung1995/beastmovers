@@ -5,6 +5,7 @@ import type { Vec } from '../systems/geometry';
 import { GAME_HEIGHT, GAME_WIDTH, Theme } from '../ui/theme';
 import { SceneKeys } from './keys';
 import { PlayScene } from './PlayScene';
+import { SCENARIOS } from './sandboxScenarios';
 
 const PANEL_W = 270;
 const ROOM = { x: PANEL_W + 30, y: 30, w: GAME_WIDTH - PANEL_W - 60, h: GAME_HEIGHT - 90 };
@@ -66,7 +67,7 @@ export class SandboxScene extends PlayScene {
       })
       .setDepth(8_001);
     this.add
-      .text(ROOM.x + ROOM.w / 2, GAME_HEIGHT - 28, t('sandbox.help'), {
+      .text(ROOM.x + ROOM.w / 2, GAME_HEIGHT - 36, t('sandbox.help'), {
         fontFamily: Theme.font,
         fontSize: '14px',
         color: Theme.muted,
@@ -81,8 +82,28 @@ export class SandboxScene extends PlayScene {
     );
     this.input.keyboard?.on('keydown-OPEN_BRACKET', () => this.select(this.selected - 1));
     this.input.keyboard?.on('keydown-CLOSED_BRACKET', () => this.select(this.selected + 1));
-    this.input.keyboard?.on('keydown-C', () => this.world.clearItems());
+    this.input.keyboard?.on('keydown-C', () => {
+      this.world.clearItems();
+      this.world.clearZones();
+    });
+    this.add
+      .text(ROOM.x + ROOM.w / 2, GAME_HEIGHT - 10, t('sandbox.scenarios'), {
+        fontFamily: Theme.font,
+        fontSize: '12px',
+        color: Theme.muted,
+      })
+      .setOrigin(0.5, 1)
+      .setDepth(9_000);
+    for (const sc of SCENARIOS) {
+      this.input.keyboard?.on(`keydown-${sc.key}`, () => this.runScenario(sc.setup));
+    }
     this.select(0);
+  }
+
+  private runScenario(setup: (typeof SCENARIOS)[number]['setup']): void {
+    this.world.clearItems();
+    this.world.clearZones();
+    setup(this.world);
   }
 
   private select(i: number): void {

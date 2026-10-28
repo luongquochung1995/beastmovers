@@ -77,5 +77,17 @@
   "sandbox.stats": "{mass} kg · {people} people · {rule} · durability {durability}",
   "liftRule.free": "anyone can drag",
   "liftRule.drag": "drags if short-handed",
-  "liftRule.strict": "won't budge if short-handed"
+  "liftRule.strict": "won't budge if short-handed",
+  "behavior.shatter": "Crash!",
+  "behavior.doorPops": "Door popped open!",
+  "behavior.boxTear": "The bottom gave out!",
+  "behavior.fishOut": "Fish overboard!",
+  "behavior.balls": "Balls everywhere!",
+  "behavior.weights": "Loose weights!",
+  "behavior.soil": "Dirt everywhere!",
+  "behavior.water": "Splash!",
+  "behavior.beltOn": "Belt's on!",
+  "behavior.thud": "THUD!",
+  "behavior.plonk": "♪ Plonk!",
+  "sandbox.scenarios": "Behavior tests: 1 fridge · 2 plant · 3 fish tank · 4 treadmill · 5 pool table · 6 weights · 7 box · 8 piano · 9 mirror · 0 aquarium"
 }
