@@ -7,6 +7,8 @@ import { PING_ICONS } from '../systems/ping';
 import type { World } from '../sim/World';
 import { moodFace } from '../systems/dialogue';
 import { formatClock, TIME_LOW_MS } from '../systems/levelClock';
+import type { Vec } from '../systems/geometry';
+import { Tutorial } from '../systems/tutorial';
 import { GAME_HEIGHT, GAME_WIDTH, Theme } from './theme';
 
 const PANEL = 0x24212f;
@@ -18,6 +20,8 @@ const OBJECTIVE_MS = 7000;
 /** Chiều cao thanh HUD trên cùng (px màn hình). */
 export const HUD_TOP = 56;
 const ARROW_MARGIN = 28;
+/** Đi xa chỗ xuất hiện hơn mức này thì tính là đã biết di chuyển (bước hướng dẫn `move`). */
+const TUTORIAL_MOVE_PX = 80;
 
 /** Màu thanh hài lòng: đỏ → vàng → xanh. */
 function satisfactionColor(v: number): number {
@@ -41,6 +45,11 @@ export class GameHud {
   private readonly reqPanel: Phaser.GameObjects.Rectangle;
   private reqRows: Phaser.GameObjects.Text[] = [];
   private readonly objective: Phaser.GameObjects.Container;
+  private readonly objectiveBg: Phaser.GameObjects.Rectangle;
+  private readonly objectiveText: Phaser.GameObjects.Text;
+  /** Hướng dẫn từng bước (màn có `tutorial`); null khi không có hoặc đã xong. */
+  private tutorial: Tutorial | null = null;
+  private readonly startPos = new Map<number, Vec>();
   private readonly arrows: Phaser.GameObjects.Graphics;
   private readonly arrowLabels: Phaser.GameObjects.Text[] = [];
   private shownMs = 0;
@@ -101,6 +110,39 @@ export class GameHud {
       .setStrokeStyle(2, 0xffb347);
     // Đặt gần đáy màn hình để không che người chơi (camera luôn đặt người chơi ở giữa).
     this.objective = scene.add.container(GAME_WIDTH / 2, GAME_HEIGHT - 90, [bg, msg]);
+    this.objectiveBg = bg;
+    this.objectiveText = msg;
+
+    const steps = runtime.built.level.tutorial;
+    if (steps) {
+      this.tutorial = new Tutorial(steps);
+      world.bus.onAny((e) => this.advanceTutorial(e.type));
+      this.showStep();
+    }
+  }
+
+  private setBanner(s: string): void {
+    this.objectiveText.setText(s);
+    this.objectiveBg.setSize(this.objectiveText.width + 40, this.objectiveText.height + 24);
+  }
+
+  private showStep(): void {
+    const tut = this.tutorial!;
+    const step = tut.current;
+    if (!step) {
+      // Xong hướng dẫn: nhắc mục tiêu của màn rồi mờ dần như thường.
+      this.tutorial = null;
+      this.shownMs = 0;
+      this.setBanner(`${t('tutorial.done')}
+${t('hud.objective')}`);
+      return;
+    }
+    this.setBanner(`${tut.index + 1}/${tut.steps.length} · ${t(step.text)}`);
+    this.scene.tweens.add({ targets: this.objective, scale: { from: 1.12, to: 1 }, duration: 220 });
+  }
+
+  private advanceTutorial(what: string): void {
+    if (this.tutorial?.trigger(what)) this.showStep();
   }
 
   /** Người chơi ở ngoài khung hình: mũi tên màu ở mép màn hình chỉ về phía họ. */
@@ -217,6 +259,17 @@ export class GameHud {
 
     this.drawOffscreenArrows();
 
+    // Hướng dẫn: giữ dòng chữ tới khi làm xong bước đó.
+    if (this.tutorial) {
+      for (const p of this.world.players) {
+        const start = this.startPos.get(p.slotIndex);
+        if (!start) this.startPos.set(p.slotIndex, p.position);
+        else if (Math.hypot(p.position.x - start.x, p.position.y - start.y) > TUTORIAL_MOVE_PX)
+          this.advanceTutorial('move');
+      }
+      this.objective.setAlpha(1).setVisible(true);
+      return;
+    }
     // Dòng mục tiêu: hiện vài giây đầu màn rồi mờ dần.
     this.shownMs += frameMs;
     const a = Phaser.Math.Clamp((OBJECTIVE_MS - this.shownMs) / 800, 0, 1);

@@ -1,4 +1,4 @@
-import { type Dictionary, LOCALES, type Locale } from './i18n';
+import { type Dictionary, FALLBACK_LOCALE, LOCALES, type Locale } from './i18n';
 import { insideMap, type MapLayout, mapSchema, parseMap } from './map';
 import { type CheckContext, type Issue, report, type Schema, validateFile } from './schema';
 import {
@@ -338,6 +338,22 @@ function checkLinesParity(lines: Partial<Record<Locale, LinesFile>>, issues: Iss
   }
 }
 
+/** Dòng chữ hướng dẫn phải có trong file chữ giao diện (thiếu ở ngôn ngữ khác đã có kiểm tra riêng). */
+function checkTutorials(levels: readonly LevelDef[], dict: Dictionary, issues: Issue[]): void {
+  for (const lv of levels) {
+    lv.tutorial?.forEach((step, i) => {
+      if (!(step.text in dict)) {
+        issues.push({
+          file: DATA_FILES.levels,
+          path: `[${lv.id}].tutorial[${i}].text`,
+          code: 'i18nMismatch',
+          params: { key: step.text, missingIn: FALLBACK_LOCALE },
+        });
+      }
+    });
+  }
+}
+
 function checkI18nParity(dicts: Partial<Record<Locale, Dictionary>>, issues: Issue[]): void {
   const [base, ...others] = LOCALES;
   const ref = dicts[base!];
@@ -402,6 +418,7 @@ export function validateGameData(
   if (landlords && items) checkLandlords(landlords.valid, items.ids, lines, issues);
   checkLinesParity(lines, issues);
   checkI18nParity(i18n, issues);
+  if (levels && i18n[FALLBACK_LOCALE]) checkTutorials(levels.valid, i18n[FALLBACK_LOCALE], issues);
   const maps = levels ? checkMaps(levels.valid, raw, issues) : {};
 
   const complete =

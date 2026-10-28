@@ -1,3 +1,4 @@
+import { TUTORIAL_TRIGGERS } from '../systems/tutorial';
 import { LOCALES, type Locale } from './i18n';
 import {
   arr,
@@ -198,6 +199,10 @@ export const levelSchema = obj({
   modifiers: arr(oneOf(MODIFIERS)),
   stars: starsSchema,
   satisfactionMultiplier: num({ min: 0 }),
+  /** Hướng dẫn từng bước (khóa i18n + việc cần làm để sang bước kế). */
+  tutorial: optional(
+    arr(obj({ text: str({ minLen: 1 }), until: oneOf(TUTORIAL_TRIGGERS) }), { min: 1 }),
+  ),
   scaling: nullable(
     obj({
       basePlayers: int({ min: 1, max: 8 }),

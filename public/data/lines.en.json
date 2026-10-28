@@ -77,5 +77,163 @@
       "Silly me, the {item} too, dear.",
       "Just bring the {item} along for me."
     ]
+  },
+  "collector": {
+    "levelStart": [
+      "Every piece here is older than your grandparents. Act accordingly.",
+      "Touch with your eyes first. Then, reluctantly, with your hands.",
+      "That mirror survived two wars. Let's see if it survives you.",
+      "I've catalogued everything. I WILL notice.",
+      "Slowly. Antiques can smell fear."
+    ],
+    "itemBroken": [
+      "That was eighteenth century!",
+      "Priceless. It WAS priceless.",
+      "I need to sit down.",
+      "You've just made history. In the bad way.",
+      "I'm adding that to the invoice. In bold."
+    ],
+    "itemDropped": [
+      "Gravity is not your colleague!",
+      "Did it bounce? Tell me it didn't bounce.",
+      "Two hands. Two! You have them!",
+      "My heart just did the same thing.",
+      "Careful, that's patina, not dirt!"
+    ],
+    "wallHit": [
+      "That wall is listed heritage!",
+      "Mind the plaster, it's original.",
+      "Are you steering or bowling?",
+      "Another dent. Wonderful. Very authentic.",
+      "Corners, gentlemen. They have corners."
+    ],
+    "itemLoaded": [
+      "Mm. Acceptable.",
+      "Strap it. Then strap it again.",
+      "Gently into the truck. Like tucking in a baby.",
+      "One more relic saved.",
+      "Fine. Don't let it look out the window."
+    ],
+    "catEscaped": [
+      "Who let a cat into an antique shop?!",
+      "Not near the porcelain! NOT near the porcelain!",
+      "That cat is younger than everything here and twice as fragile.",
+      "Catch it before it appraises something.",
+      "Shoo! Shoo, you furry vandal!"
+    ],
+    "timeLow": [
+      "The truck won't wait. Neither will my lawyer.",
+      "Faster — but not THAT fast!",
+      "One minute. Prioritise the old stuff. All of it is old stuff.",
+      "Tick tock, like my grandfather clock. Which you'd better not break.",
+      "Hurry, gently. Gently, hurry!"
+    ],
+    "levelEnd": [
+      "I'll be checking every item with a magnifying glass.",
+      "Adequate. I've seen worse. Once. In 1974.",
+      "Leave your names. For the insurance company.",
+      "Well. The shop is empty, at least.",
+      "Next time I'm hiring museum staff."
+    ],
+    "bigLiftStart": [
+      "All together now — like a string quartet!",
+      "That piano has seen better days. Don't make it see worse.",
+      "Lift with your legs, not with my money.",
+      "Steady... steady... I'm not breathing until it's down.",
+      "Four hands, one rhythm!"
+    ],
+    "bigLiftFail": [
+      "Who let go?! I demand a name!",
+      "That was a chord I never want to hear again.",
+      "Teamwork! Look it up!",
+      "You dropped a century on my floor.",
+      "Again. And this time, all of you."
+    ],
+    "changeMind": [
+      "Actually, the {item} comes too. It's... sentimental.",
+      "On reflection, I can't live without the {item}.",
+      "Add the {item} to the list. Don't ask why.",
+      "The {item}! How could I forget the {item}!",
+      "I just remembered the {item} is worth a fortune."
+    ]
+  },
+  "celebrity": {
+    "levelStart": [
+      "Darlings! Make it quick, I have a photoshoot.",
+      "Please don't touch anything that's been on magazine covers.",
+      "Every item here has its own fan club.",
+      "The piano is insured for more than all of you combined.",
+      "Smile! You never know who's filming."
+    ],
+    "itemBroken": [
+      "That was a GIFT from a FAN!",
+      "Somebody call my publicist.",
+      "I can't look. Tell me when it's over.",
+      "This is going straight to my podcast.",
+      "Oh no, oh no, oh NO, darling!"
+    ],
+    "itemDropped": [
+      "Butterfingers is not a good look!",
+      "Pick it up like the cameras are rolling!",
+      "Ew. Floor.",
+      "That's not how we do things in this house.",
+      "Drama is MY job, not yours."
+    ],
+    "wallHit": [
+      "That wall is in my music video!",
+      "Mind the gold leaf, sweetie!",
+      "Bump the wall one more time and it's a lawsuit.",
+      "Gentle! The house has feelings too.",
+      "Ouch. I felt that in my soul."
+    ],
+    "itemLoaded": [
+      "Fabulous. Next!",
+      "That's going to look gorgeous in the new place.",
+      "Good job, babe. Not great. Good.",
+      "Put the logo facing out, please.",
+      "Mwah! Love that for us."
+    ],
+    "catEscaped": [
+      "Princess! Mommy's little princess, come back!",
+      "That cat has more followers than you!",
+      "Catch her! But don't mess up her fur!",
+      "If she gets out, the paparazzi will get her!",
+      "Someone bring the diamond cat carrier!"
+    ],
+    "timeLow": [
+      "One minute! My car is already here!",
+      "Faster, darlings, faster! Like a remix!",
+      "I'm going to be late and it'll be YOUR fault.",
+      "The paparazzi are waiting outside! Hurry!",
+      "Tick-tock, superstars!"
+    ],
+    "levelEnd": [
+      "Thank you, thank you, no autographs!",
+      "I'll rate you on my socials. Maybe.",
+      "Well, that was a show.",
+      "Air kisses! Don't call me, I'll call you.",
+      "That's a wrap, darlings!"
+    ],
+    "bigLiftStart": [
+      "All eight of you! Like a boy band!",
+      "Lift on three. One, two, FABULOUS!",
+      "My Grammy piano is in your hands. Literally.",
+      "Choreography, people! In sync!",
+      "Careful, that's going on tour!"
+    ],
+    "bigLiftFail": [
+      "Who dropped my piano?! Who?!",
+      "Eight people and not one brain?",
+      "That note was flat. The piano too, now.",
+      "I'm going to cry and it'll ruin my makeup.",
+      "Again! From the top! With feeling!"
+    ],
+    "changeMind": [
+      "Oh! The {item} is coming too. It matches my aura.",
+      "My stylist says the {item} stays with me.",
+      "Can't leave the {item}, it was in my last music video!",
+      "Add the {item}, darling. Don't argue with a star.",
+      "Wait wait wait — the {item}! I need the {item}!"
+    ]
   }
 }

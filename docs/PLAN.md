@@ -582,7 +582,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P28 | Màn chọn màn (khóa theo người và sao) | E | ✔ | 3 ngày | ✅ | 2026-10-28 |
 | P29 | Lưu tiến trình | E | ✔ | 2 ngày | ✅ | 2026-10-28 |
 | P30 | Ping nhanh và chỉ dẫn | E | ✔ | 3 ngày | ✅ | 2026-10-28 |
-| P31 | 5 màn MVP (1 màn mỗi cấp) và 3 chủ nhà | F | ✔ | 5 ngày | ⬜ | |
+| P31 | 5 màn MVP (1 màn mỗi cấp) và 3 chủ nhà | F | ✔ | 5 ngày | 🟨 | |
 | P32 | Màn Solo và Đôi còn lại | F | | 5 ngày | ⬜ | |
 | P33 | Màn Đội còn lại | F | | 5 ngày | ⬜ | |
 | P34 | Màn Đại đội và Full nhà còn lại | F | | 5 ngày | ⬜ | |
@@ -594,7 +594,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P40 | Kiểm thử trình duyệt | G | | 2 ngày | ⬜ | |
 | P41 | Phát hành | G | | 2 ngày | ⬜ | |
 
-**Tiến độ:** 27/41 phase · Mốc A 🟨 · B ✅ · C ✅ · D 🟨 · E ✅ · F ⬜ · G ⬜
+**Tiến độ:** 27/41 phase · Mốc A 🟨 · B ✅ · C ✅ · D 🟨 · E ✅ · F 🟨 · G ⬜
 
 ---
 
@@ -925,14 +925,15 @@ Chưa làm: playtest người thật; 2 máy ở 2 mạng khác nhau qua relay c
 ### 🅵 Mốc F — Nội dung
 
 #### P31 · 5 màn MVP (1 màn mỗi cấp) và 3 chủ nhà
-- [ ] 🟢 Màn 1 – Căn hộ studio (kèm hướng dẫn chơi)
-- [ ] 🔵 Màn 4 – Nhà phố 1 trệt
-- [ ] 🟣 Màn 7 – Tiệm đồ cổ
-- [ ] 🟠 Màn 12 – Quán bi-a
-- [ ] 🔴 Màn 16 – Biệt thự người nổi tiếng
-- [ ] 3 chủ nhà: bà cụ khó tính, ông chú đồ cổ, ngôi sao nổi tiếng; mỗi người ≥ 5 câu cho mỗi sự kiện, **cả tiếng Anh và tiếng Việt**
-- [ ] Đặt mốc sao cho cả 5 màn
+- [x] 🟢 Màn 1 – Căn hộ studio (kèm hướng dẫn chơi)
+- [x] 🔵 Màn 4 – Nhà phố 1 trệt
+- [x] 🟣 Màn 7 – Tiệm đồ cổ
+- [x] 🟠 Màn 12 – Quán bi-a
+- [x] 🔴 Màn 16 – Biệt thự người nổi tiếng
+- [x] 3 chủ nhà: bà cụ khó tính, ông chú đồ cổ, ngôi sao nổi tiếng; mỗi người ≥ 5 câu cho mỗi sự kiện, **cả tiếng Anh và tiếng Việt**
+- [x] Đặt mốc sao cho cả 5 màn
 - **✅ Xong khi:** đạt toàn bộ checklist mục 15.
+- 📝 *Kiểm tra (Chromium, bot điều khiển bằng tay cầm giả lập — nắm đúng điểm nắm, lái món đồ theo các điểm mốc; đồng hồ game chạy bằng tay vì khung trình duyệt bị ẩn): **màn 4** — 2 người khiêng tủ lạnh qua cửa bếp ra xe 14 giây; sofa kẹt ở cửa phòng ngủ 100 px như thiết kế, 2 người kéo ngược chiều xoay sofa 72° trong 0,6 giây rồi qua cửa và lên xe. **Màn 7** — 4 người khiêng piano đứng từ kho qua vòm 220 px ra xe 23 giây; két sắt (4 người) lên xe cùng piano được. **Màn 12** — 6 người khiêng bàn bi-a ra xe 14 giây (phải đẩy vào hẳn trong thùng). **Màn 16** — 8 người khiêng grand piano lên xe 18 giây. Hướng dẫn màn 1 đi đủ 5 bước (đi lại → nắm → đưa lên xe → ném → ping) rồi hiện mục tiêu màn. Bản đồ sinh bằng `tools/make-maps.py`, màn bằng `tools/make-levels.py` (kiểm tra đồ/điểm xuất hiện không đè tường, nằm trên sàn; tính mốc sao từ giá trị đồ: 1★ ≈ đồ bắt buộc + hài lòng vừa, 3★ ≈ thêm 60% đồ phụ). Chủ nhà mới: **Chú Bảy** (ông chú đồ cổ, `collector`, màn 7 và 12) và **Diva Lan Na** (`celebrity`, màn 16), mỗi người 11 sự kiện × 5 câu × 2 ngôn ngữ, viết lại cho hài theo từng ngôn ngữ (`tools/new-landlords.py`). Hướng dẫn trong màn là data: `levels.json › tutorial` (khóa chữ + việc cần làm), validate báo lỗi nếu khóa chữ không có. Mở khóa bằng sao: 0 / 1 / 3 / 5 / 7. Lỗi tìm thấy khi thử: (1) cửa bếp 100 px không qua được tủ lạnh vì 2 người khiêng đứng hai bên (~136 px) → cửa bếp 150, cửa chính 160 (cửa phòng ngủ vẫn 100 để sofa phải xoay); (2) bể cá khổng lồ đặt giữa đường đi chặn grand piano → dời vào góc; (3) **thùng xe 260×220 chỉ chứa được một món cần 6–8 người** (người khiêng phải vào được thùng): tượng đá sau grand piano không vào được → mỗi màn chỉ một món khổng lồ, bỏ tượng và bể cá khổng lồ khỏi màn 16 (để dành cho màn 15 ở P34; có thể cần xe to hơn). ⚠️ Chưa đạt "Xong khi": checklist mục 15 còn thiếu phần cần deploy (mở link là chơi) và chơi online qua mạng thật — xem mục 15. Mốc sao chưa cân bằng bằng người thật (P39). Đường đi của bot là "hoàn hảo"; người thật có thể khó hơn ở cửa 100 px.*
 
 **🎯 MỐC MVP: có thể phát hành bản demo tại đây.**
 
@@ -1034,14 +1035,14 @@ _(ghi ở đây)_
 
 ## 15. Định nghĩa hoàn thành MVP
 
-- [ ] Mở link là chơi được ngay, không cần cài đặt
-- [ ] Chơi chung máy 1–4 người (bàn phím + tay cầm)
-- [ ] Chơi online tới **8 người** bằng mã phòng hoặc link mời, P2P qua WebRTC
-- [ ] Cơ chế khiêng nhiều người: `requiredGrabbers` 1–8, `liftRule` `free`/`drag`/`strict`
-- [ ] Màn bị khóa khi không đủ `minPlayers`, hiển thị rõ cần thêm bao nhiêu người
-- [ ] Ít nhất 1 màn mỗi cấp (🟢🔵🟣🟠🔴), tức tối thiểu 5 màn; 10 loại đồ; 3 chủ nhà, toàn bộ lấy từ JSON
-- [ ] Tủ lạnh trượt, gương vỡ, mèo chạy trốn, đồ 8 người hoạt động đúng cả khi chơi chung máy lẫn online
-- [ ] Chủ nhà phản ứng bằng thoại theo sự kiện, mọi máy thấy cùng một câu
-- [ ] Toàn bộ giao diện có tiếng Anh và tiếng Việt, đổi được trong menu (hệ thống i18n đã có; mọi màn hình mới phải dùng)
-- [ ] Tính điểm, sao và lưu tiến trình bằng `localStorage`
-- [ ] Không tự vận hành bất kỳ server nào; ngoài file tĩnh chỉ dùng signaling/STUN/TURN công cộng
+- [ ] Mở link là chơi được ngay, không cần cài đặt — *bản build tĩnh chạy được (`vite preview`), còn chờ deploy GitHub Pages (P01)*
+- [x] Chơi chung máy 1–4 người (bàn phím + tay cầm) — *tay cầm mới thử giả lập*
+- [ ] Chơi online tới **8 người** bằng mã phòng hoặc link mời, P2P qua WebRTC — *8 người đã chạy qua WebRTC trên 1 máy (P26); chưa thử 2 mạng khác nhau qua relay công cộng*
+- [x] Cơ chế khiêng nhiều người: `requiredGrabbers` 1–8, `liftRule` `free`/`drag`/`strict`
+- [x] Màn bị khóa khi không đủ `minPlayers`, hiển thị rõ cần thêm bao nhiêu người
+- [x] Ít nhất 1 màn mỗi cấp (🟢🔵🟣🟠🔴), tức tối thiểu 5 màn; 10 loại đồ; 3 chủ nhà, toàn bộ lấy từ JSON
+- [x] Tủ lạnh trượt, gương vỡ, mèo chạy trốn, đồ 8 người hoạt động đúng cả khi chơi chung máy lẫn online
+- [x] Chủ nhà phản ứng bằng thoại theo sự kiện, mọi máy thấy cùng một câu
+- [x] Toàn bộ giao diện có tiếng Anh và tiếng Việt, đổi được trong menu (hệ thống i18n đã có; mọi màn hình mới phải dùng)
+- [x] Tính điểm, sao và lưu tiến trình bằng `localStorage`
+- [x] Không tự vận hành bất kỳ server nào; ngoài file tĩnh chỉ dùng signaling/STUN/TURN công cộng

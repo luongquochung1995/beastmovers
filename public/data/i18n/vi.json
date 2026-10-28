@@ -263,5 +263,11 @@
   "ping.drop": "Buông ra!",
   "ping.cat": "Bắt mèo!",
   "ping.door": "Mở cửa!",
-  "ping.need": "Cần thêm {n} người!"
+  "ping.need": "Cần thêm {n} người!",
+  "tutorial.move": "Đi lại: WASD · phím mũi tên · cần trái",
+  "tutorial.grab": "Đến gần thùng carton, bấm Nắm (Space · Enter · nút A) để nhặt lên",
+  "tutorial.load": "Mang ra xe tải ngoài sân, bấm Nắm lần nữa để thả vào thùng xe",
+  "tutorial.throw": "Mẹo: đang cầm đồ nhẹ thì bấm Ném (E · Shift phải · nút B). Ném trúng thùng xe cũng tính!",
+  "tutorial.ping": "Đồ to cần nhiều người. Bấm Ping (F · nút Y) để gọi đồng đội; giữ Ping để mở vòng ping",
+  "tutorial.done": "Xong phần hướng dẫn — giờ bạn là dân chuyển nhà rồi!"
 }

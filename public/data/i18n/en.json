@@ -263,5 +263,11 @@
   "ping.drop": "Let go!",
   "ping.cat": "Catch the cat!",
   "ping.door": "Open the door!",
-  "ping.need": "Need {n} more!"
+  "ping.need": "Need {n} more!",
+  "tutorial.move": "Walk around: WASD · arrow keys · left stick",
+  "tutorial.grab": "Walk up to a cardboard box and press Grab (Space · Enter · A) to pick it up",
+  "tutorial.load": "Carry it out to the truck in the yard and press Grab again to drop it in the cargo bed",
+  "tutorial.throw": "Tip: holding something light? Press Throw (E · Right Shift · B). Throwing it into the truck counts too!",
+  "tutorial.ping": "Big items need several people. Tap Ping (F · Y) to call for help; hold Ping for the ping wheel",
+  "tutorial.done": "Tutorial done — you're a mover now!"
 }

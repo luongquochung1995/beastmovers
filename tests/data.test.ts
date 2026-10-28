@@ -249,6 +249,18 @@ describe('Báo lỗi đúng file, đúng trường', () => {
     );
   });
 
+  it('bước hướng dẫn trỏ tới chữ không có', async () => {
+    const issues = await issuesFor(
+      reader({
+        'levels.json': (l: { tutorial?: { text: string }[] }[]) =>
+          (l[0]!.tutorial![1]!.text = 'tutorial.nope'),
+      }),
+    );
+    expect(issues).toContainEqual(
+      expect.objectContaining({ path: '[lv01_studio].tutorial[1].text', code: 'i18nMismatch' }),
+    );
+  });
+
   it('JSON sai cú pháp: báo đúng dòng', async () => {
     const broken = realText('landlords.json').replace('"voicePitch": 1.3,', '"voicePitch": 1.3,,');
     const issues = await issuesFor(reader({}, { 'landlords.json': broken }));

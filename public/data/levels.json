@@ -113,6 +113,28 @@
     "modifiers": [],
     "stars": [500, 900, 1300],
     "satisfactionMultiplier": 5,
+    "tutorial": [
+      {
+        "text": "tutorial.move",
+        "until": "move"
+      },
+      {
+        "text": "tutorial.grab",
+        "until": "itemGrabbed"
+      },
+      {
+        "text": "tutorial.load",
+        "until": "itemLoaded"
+      },
+      {
+        "text": "tutorial.throw",
+        "until": "itemThrown"
+      },
+      {
+        "text": "tutorial.ping",
+        "until": "ping"
+      }
+    ],
     "scaling": {
       "basePlayers": 1,
       "extraSpawnsPerPlayer": [
@@ -129,5 +151,451 @@
       "starsPerExtraPlayer": [150, 250, 350],
       "truckSlotsPerPlayer": 3
     }
+  },
+  {
+    "id": "lv04_townhouse",
+    "name": {
+      "en": "Ground-Floor Townhouse",
+      "vi": "Nhà phố 1 trệt"
+    },
+    "tier": "duo",
+    "minPlayers": 2,
+    "maxPlayers": 8,
+    "recommendedPlayers": 2,
+    "unlockStars": 1,
+    "timeLimitSec": 300,
+    "map": "maps/townhouse.json",
+    "landlord": "grandma",
+    "truck": {
+      "x": 1330,
+      "y": 460,
+      "slots": 24,
+      "hasHandbrake": false,
+      "facing": "left"
+    },
+    "spawns": [
+      {
+        "item": "sofa",
+        "x": 240,
+        "y": 760,
+        "required": true
+      },
+      {
+        "item": "fridge",
+        "x": 850,
+        "y": 700,
+        "required": true
+      },
+      {
+        "item": "box",
+        "x": 150,
+        "y": 120,
+        "required": true
+      },
+      {
+        "item": "box",
+        "x": 210,
+        "y": 120,
+        "required": true
+      },
+      {
+        "item": "box",
+        "x": 150,
+        "y": 180,
+        "required": false
+      },
+      {
+        "item": "box",
+        "x": 210,
+        "y": 180,
+        "required": false
+      },
+      {
+        "item": "box",
+        "x": 400,
+        "y": 610,
+        "required": false
+      },
+      {
+        "item": "box",
+        "x": 600,
+        "y": 880,
+        "required": false
+      },
+      {
+        "item": "mirror",
+        "x": 500,
+        "y": 50,
+        "required": false
+      },
+      {
+        "item": "plant",
+        "x": 940,
+        "y": 80,
+        "required": false
+      },
+      {
+        "item": "plant",
+        "x": 60,
+        "y": 880,
+        "required": false
+      },
+      {
+        "item": "plant",
+        "x": 960,
+        "y": 890,
+        "required": false
+      },
+      {
+        "item": "teddy",
+        "x": 120,
+        "y": 470,
+        "required": false
+      },
+      {
+        "item": "fish_tank",
+        "x": 700,
+        "y": 300,
+        "required": false
+      }
+    ],
+    "playerSpawns": [
+      [1090, 250],
+      [1140, 250],
+      [1090, 300],
+      [1140, 300],
+      [1090, 620],
+      [1140, 620],
+      [1090, 670],
+      [1140, 670]
+    ],
+    "modifiers": [],
+    "stars": [1050, 1250, 1500],
+    "satisfactionMultiplier": 6,
+    "scaling": null
+  },
+  {
+    "id": "lv07_antique_shop",
+    "name": {
+      "en": "Antique Shop",
+      "vi": "Tiệm đồ cổ"
+    },
+    "tier": "team",
+    "minPlayers": 4,
+    "maxPlayers": 8,
+    "recommendedPlayers": 4,
+    "unlockStars": 3,
+    "timeLimitSec": 360,
+    "map": "maps/antique_shop.json",
+    "landlord": "collector",
+    "truck": {
+      "x": 1330,
+      "y": 370,
+      "slots": 28,
+      "hasHandbrake": false,
+      "facing": "left"
+    },
+    "spawns": [
+      {
+        "item": "upright_piano",
+        "x": 300,
+        "y": 760,
+        "required": true
+      },
+      {
+        "item": "mirror",
+        "x": 500,
+        "y": 50,
+        "required": true
+      },
+      {
+        "item": "teddy",
+        "x": 900,
+        "y": 500,
+        "required": true
+      },
+      {
+        "item": "mirror",
+        "x": 280,
+        "y": 170,
+        "required": false
+      },
+      {
+        "item": "mirror",
+        "x": 720,
+        "y": 170,
+        "required": false
+      },
+      {
+        "item": "fish_tank",
+        "x": 500,
+        "y": 300,
+        "required": false
+      },
+      {
+        "item": "plant",
+        "x": 60,
+        "y": 520,
+        "required": false
+      },
+      {
+        "item": "plant",
+        "x": 950,
+        "y": 60,
+        "required": false
+      },
+      {
+        "item": "safe",
+        "x": 800,
+        "y": 820,
+        "required": false
+      },
+      {
+        "item": "box",
+        "x": 100,
+        "y": 640,
+        "required": false
+      },
+      {
+        "item": "box",
+        "x": 160,
+        "y": 640,
+        "required": false
+      },
+      {
+        "item": "box",
+        "x": 100,
+        "y": 700,
+        "required": false
+      }
+    ],
+    "playerSpawns": [
+      [1090, 180],
+      [1140, 180],
+      [1090, 230],
+      [1140, 230],
+      [1090, 560],
+      [1140, 560],
+      [1090, 610],
+      [1140, 610]
+    ],
+    "modifiers": [],
+    "stars": [1900, 2450, 3000],
+    "satisfactionMultiplier": 8,
+    "scaling": null
+  },
+  {
+    "id": "lv12_billiard_hall",
+    "name": {
+      "en": "Billiard Hall",
+      "vi": "Quán bi-a"
+    },
+    "tier": "squad",
+    "minPlayers": 6,
+    "maxPlayers": 8,
+    "recommendedPlayers": 6,
+    "unlockStars": 5,
+    "timeLimitSec": 420,
+    "map": "maps/billiard_hall.json",
+    "landlord": "collector",
+    "truck": {
+      "x": 1500,
+      "y": 470,
+      "slots": 36,
+      "hasHandbrake": false,
+      "facing": "left"
+    },
+    "spawns": [
+      {
+        "item": "pool_table",
+        "x": 500,
+        "y": 360,
+        "required": true
+      },
+      {
+        "item": "box",
+        "x": 100,
+        "y": 800,
+        "required": true
+      },
+      {
+        "item": "box",
+        "x": 160,
+        "y": 800,
+        "required": true
+      },
+      {
+        "item": "box",
+        "x": 300,
+        "y": 800,
+        "required": false
+      },
+      {
+        "item": "box",
+        "x": 100,
+        "y": 860,
+        "required": false
+      },
+      {
+        "item": "fridge",
+        "x": 1100,
+        "y": 800,
+        "required": false
+      },
+      {
+        "item": "mirror",
+        "x": 800,
+        "y": 1040,
+        "required": false
+      },
+      {
+        "item": "plant",
+        "x": 60,
+        "y": 60,
+        "required": false
+      },
+      {
+        "item": "plant",
+        "x": 1140,
+        "y": 60,
+        "required": false
+      },
+      {
+        "item": "teddy",
+        "x": 1140,
+        "y": 650,
+        "required": false
+      },
+      {
+        "item": "fish_tank",
+        "x": 1000,
+        "y": 1000,
+        "required": false
+      }
+    ],
+    "playerSpawns": [
+      [1260, 250],
+      [1310, 250],
+      [1260, 300],
+      [1310, 300],
+      [1260, 640],
+      [1310, 640],
+      [1260, 690],
+      [1310, 690]
+    ],
+    "modifiers": [],
+    "stars": [2150, 2500, 2850],
+    "satisfactionMultiplier": 10,
+    "scaling": null
+  },
+  {
+    "id": "lv16_celebrity_villa",
+    "name": {
+      "en": "Celebrity Villa",
+      "vi": "Biệt thự người nổi tiếng"
+    },
+    "tier": "full",
+    "minPlayers": 8,
+    "maxPlayers": 8,
+    "recommendedPlayers": 8,
+    "unlockStars": 7,
+    "timeLimitSec": 480,
+    "map": "maps/villa.json",
+    "landlord": "celebrity",
+    "truck": {
+      "x": 1650,
+      "y": 430,
+      "slots": 40,
+      "hasHandbrake": false,
+      "facing": "left"
+    },
+    "spawns": [
+      {
+        "item": "grand_piano",
+        "x": 500,
+        "y": 380,
+        "required": true
+      },
+      {
+        "item": "mirror",
+        "x": 1000,
+        "y": 50,
+        "required": true
+      },
+      {
+        "item": "teddy",
+        "x": 1150,
+        "y": 1000,
+        "required": true
+      },
+      {
+        "item": "fish_tank",
+        "x": 200,
+        "y": 100,
+        "required": false
+      },
+      {
+        "item": "fish_tank",
+        "x": 450,
+        "y": 980,
+        "required": false
+      },
+      {
+        "item": "mirror",
+        "x": 600,
+        "y": 1140,
+        "required": false
+      },
+      {
+        "item": "plant",
+        "x": 60,
+        "y": 720,
+        "required": false
+      },
+      {
+        "item": "plant",
+        "x": 1240,
+        "y": 720,
+        "required": false
+      },
+      {
+        "item": "sofa",
+        "x": 850,
+        "y": 660,
+        "required": false
+      },
+      {
+        "item": "mirror",
+        "x": 200,
+        "y": 1140,
+        "required": false
+      },
+      {
+        "item": "box",
+        "x": 1000,
+        "y": 900,
+        "required": false
+      },
+      {
+        "item": "box",
+        "x": 1060,
+        "y": 900,
+        "required": false
+      }
+    ],
+    "playerSpawns": [
+      [1400, 200],
+      [1450, 200],
+      [1400, 250],
+      [1450, 250],
+      [1400, 620],
+      [1450, 620],
+      [1400, 670],
+      [1450, 670]
+    ],
+    "modifiers": [],
+    "stars": [3900, 4350, 4850],
+    "satisfactionMultiplier": 12,
+    "scaling": null
   }
 ]

@@ -19,5 +19,50 @@
     },
     "favoriteItems": ["teddy"],
     "linesKey": "grandma"
+  },
+  {
+    "id": "collector",
+    "name": {
+      "en": "Uncle Bay",
+      "vi": "Chú Bảy"
+    },
+    "icon": "🧐",
+    "color": "#a1887f",
+    "voicePitch": 0.85,
+    "startSatisfaction": 45,
+    "sensitivity": {
+      "itemBroken": -20,
+      "itemDropped": -6,
+      "wallHit": -4,
+      "itemLoaded": 3,
+      "bigLiftFail": -10,
+      "catEscaped": -1,
+      "bigLiftStart": 2
+    },
+    "favoriteItems": ["mirror", "upright_piano", "safe"],
+    "linesKey": "collector"
+  },
+  {
+    "id": "celebrity",
+    "name": {
+      "en": "Diva Lana",
+      "vi": "Diva Lan Na"
+    },
+    "icon": "🕶️",
+    "color": "#f48fb1",
+    "voicePitch": 1.6,
+    "startSatisfaction": 55,
+    "sensitivity": {
+      "itemBroken": -18,
+      "itemDropped": -5,
+      "wallHit": -5,
+      "itemLoaded": 2,
+      "bigLiftFail": -12,
+      "catEscaped": -3,
+      "bigLiftStart": 3,
+      "timeLow": -2
+    },
+    "favoriteItems": ["grand_piano", "statue", "teddy"],
+    "linesKey": "celebrity"
   }
 ]
