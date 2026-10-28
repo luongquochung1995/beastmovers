@@ -27,7 +27,7 @@ export class HudScene extends Phaser.Scene {
     );
     this.eventLines = [];
     this.eventLog = this.add
-      .text(GAME_WIDTH - 8, 100, '', {
+      .text(GAME_WIDTH - 8, 150, '', {
         fontFamily: 'monospace',
         fontSize: '12px',
         color: '#c8f7c5',

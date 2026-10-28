@@ -125,5 +125,10 @@
   "titleDesc.thrower": "Threw {n} things",
   "titleDesc.backbone": "Carried stuff for {n} s",
   "titleDesc.spectator": "Carried stuff for just {n} s",
-  "titleDesc.mover": "Helped load {n} item(s)"
+  "titleDesc.mover": "Helped load {n} item(s)",
+  "hud.required": "Must take",
+  "hud.truck": "🚚 Truck {used}/{capacity}",
+  "hud.truckLeaving": "🚚 Truck's leaving!",
+  "hud.broken": "broken",
+  "hud.objective": "Get every item on the \"Must take\" list into the truck before time runs out!\nDon't break stuff — the landlord is watching."
 }

@@ -5,6 +5,7 @@ import { LevelRuntime } from '../sim/LevelRuntime';
 import { EMPTY_FRAME } from '../systems/input/InputFrame';
 import type { PlayerSlot } from '../systems/input/InputManager';
 import type { Vec } from '../systems/geometry';
+import { GameHud } from '../ui/GameHud';
 import { GAME_HEIGHT, GAME_WIDTH, Theme } from '../ui/theme';
 import type { HudScene } from './HudScene';
 import { RegistryKeys, SceneKeys } from './keys';
@@ -15,6 +16,8 @@ export class GameScene extends PlayScene {
   protected built!: BuiltLevel;
   runtime!: LevelRuntime;
   private leaving = false;
+  private hud: GameHud | null = null;
+  private lastFrameMs = 0;
 
   constructor() {
     super(SceneKeys.Game);
@@ -39,6 +42,7 @@ export class GameScene extends PlayScene {
   }
 
   override createHud(hud: HudScene): void {
+    this.hud = new GameHud(hud, this.runtime, this.world);
     hud.add
       .text(GAME_WIDTH / 2, GAME_HEIGHT - 14, t('game.hint'), {
         fontFamily: Theme.font,
@@ -54,7 +58,12 @@ export class GameScene extends PlayScene {
     return playerSpawn(this.levelDef, slotIndex);
   }
 
-  protected override afterRender(): void {
+  override updateHud(): void {
+    this.hud?.update(this.lastFrameMs);
+  }
+
+  protected override afterRender(frameMs: number): void {
+    this.lastFrameMs = frameMs;
     this.runtime.render(this.loop.alpha);
   }
 

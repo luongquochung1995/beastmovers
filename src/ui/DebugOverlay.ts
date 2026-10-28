@@ -29,7 +29,7 @@ export class DebugOverlay {
     private readonly countBodies: () => number = () => 0,
   ) {
     this.text = scene.add
-      .text(GAME_WIDTH - 8, 8, '', {
+      .text(GAME_WIDTH - 8, 64, '', {
         fontFamily: 'monospace',
         fontSize: '14px',
         color: Theme.text,

@@ -125,5 +125,10 @@
   "titleDesc.thrower": "Ném {n} món đồ",
   "titleDesc.backbone": "Khiêng đồ {n} giây",
   "titleDesc.spectator": "Chỉ khiêng đồ {n} giây",
-  "titleDesc.mover": "Góp tay đưa {n} món lên xe"
+  "titleDesc.mover": "Góp tay đưa {n} món lên xe",
+  "hud.required": "Đồ bắt buộc",
+  "hud.truck": "🚚 Xe tải {used}/{capacity}",
+  "hud.truckLeaving": "🚚 Xe chạy!",
+  "hud.broken": "đã vỡ",
+  "hud.objective": "Đưa hết \"Đồ bắt buộc\" lên xe tải trước khi hết giờ!\nĐừng làm vỡ đồ — chủ nhà đang nhìn đó."
 }

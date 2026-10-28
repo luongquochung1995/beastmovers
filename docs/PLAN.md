@@ -568,7 +568,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P14 | Đồng hồ và điều kiện qua màn | C | ✔ | 2 ngày | ✅ | 2026-10-28 |
 | P15 | Chủ nhà NPC | C | ✔ | 4 ngày | ✅ | 2026-10-28 |
 | P16 | Tính điểm và màn kết quả | C | ✔ | 3 ngày | ✅ | 2026-10-28 |
-| P17 | HUD trong game | C | ✔ | 3 ngày | ⬜ | |
+| P17 | HUD trong game | C | ✔ | 3 ngày | ✅ | 2026-10-28 |
 | P18 | Camera chung máy | C | ✔ | 2 ngày | ⬜ | |
 | P19 | Tách simulation host/client | D | ✔ | 4–5 ngày | ⬜ | |
 | P20 | Transport và phòng chơi | D | ✔ | 4 ngày | ⬜ | |
@@ -594,7 +594,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P40 | Kiểm thử trình duyệt | G | | 2 ngày | ⬜ | |
 | P41 | Phát hành | G | | 2 ngày | ⬜ | |
 
-**Tiến độ:** 15/41 phase · Mốc A 🟨 · B ✅ · C 🟨 · D ⬜ · E ⬜ · F ⬜ · G ⬜
+**Tiến độ:** 16/41 phase · Mốc A 🟨 · B ✅ · C 🟨 · D ⬜ · E ⬜ · F ⬜ · G ⬜
 
 ---
 
@@ -766,10 +766,11 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 - 📝 *Kiểm tra (Chromium, 2 người, màn 20s): P1 đưa gấu bông lên xe, ném 2 thùng, bỏ mèo vào lồng; P2 cầm gương rồi gương vỡ; 2 thùng đặt sát cửa thùng. Hết giờ → xe chạy đi 380px, 1/2 thùng sát cửa rơi ra ("Rơi mất!"). Kết quả: qua màn 3/3, đồ lên xe +79, đền −200 (gương), hài lòng 53% +265, thưởng đủ đồ bắt buộc +200, tổng 344, 0 sao (mốc 500/900/1300). Danh hiệu: P1 "Người thì thầm với mèo", P2 "Bàn tay vàng làm vỡ". Enter chơi lại, Esc về menu. 5 unit test điểm/danh hiệu. Thưởng đủ đồ bắt buộc = 200 (hằng số). Đồ vỡ không tính giá trị dù đã lên xe.*
 
 #### P17 · HUD trong game
-- [ ] Đồng hồ, thanh hài lòng có mặt biểu cảm, chỉ số thùng xe đã đầy bao nhiêu
-- [ ] Danh sách đồ bắt buộc kèm số người cần, tự gạch khi đã lên xe
-- [ ] Bong bóng thoại không che nhân vật
+- [x] Đồng hồ, thanh hài lòng có mặt biểu cảm, chỉ số thùng xe đã đầy bao nhiêu
+- [x] Danh sách đồ bắt buộc kèm số người cần, tự gạch khi đã lên xe
+- [x] Bong bóng thoại không che nhân vật
 - **✅ Xong khi:** người mới nhìn HUD hiểu được cần làm gì mà không cần giải thích.
+- 📝 *Kiểm tra (Chromium): thanh trên cùng có mặt + tên + thanh hài lòng của chủ nhà, đồng hồ m:ss (dưới 1 phút đỏ và đập nhịp; hết giờ hiện "🚚 Xe chạy!"), sức chứa xe "🚚 Xe tải 1/20" + thanh; bảng "Đồ bắt buộc 1/4" có ✓ khi lên xe, 👐n cho đồ cần nhiều người, tự thêm khi chủ nhà đổi ý; dòng mục tiêu 7 giây đầu màn. HUD nằm ở scene riêng nên không bị camera zoom. Bong bóng thoại đặt trên đầu chủ nhà. ⚠️ "Người mới hiểu ngay" cần người thật xem thử; hiện bảng đồ bắt buộc che góc trái trên bản đồ → xử lý ở P18 (camera).*
 
 #### P18 · Camera chung máy
 - [ ] Camera chung, tự zoom và di chuyển để thấy tất cả người chơi trên máy
