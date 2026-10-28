@@ -71,14 +71,21 @@ export class Player {
    * Chạy mỗi bước logic, trước `world.step`. Đang khiêng đồ thì không lao được,
    * và vận tốc sẽ bị bộ điều khiển khiêng ghi đè sau đó.
    */
-  fixedUpdate(prev: InputFrame, cur: InputFrame, dtMs: number, carrying = false): MotorEvent[] {
+  fixedUpdate(
+    prev: InputFrame,
+    cur: InputFrame,
+    dtMs: number,
+    carrying = false,
+    /** Thông số di chuyển riêng cho bước này (vd. đang đứng trên vũng nước thì trơn hơn). */
+    params: MotorParams = this.params,
+  ): MotorEvent[] {
     this.prevPos = this.position;
     const result = stepMotor(
       this.motor,
       { move: frameAxis(cur), dashPressed: justPressed(prev, cur, Btn.Dash), carrying },
       this.body.velocity,
       dtMs,
-      this.params,
+      params,
       this.random,
     );
     this.motor = result.state;

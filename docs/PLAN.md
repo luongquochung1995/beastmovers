@@ -560,7 +560,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P06 | Đồ vật dựng từ data | B | ✔ | 2 ngày | ✅ | 2026-10-28 |
 | P07 | Nắm, thả, ném (1 người) | B | ✔ | 3 ngày | ✅ | 2026-10-28 |
 | P08 | Khiêng nhiều người | B | ✔ | 5 ngày | ✅ | 2026-10-28 |
-| P09 | Độ bền và vỡ | B | ✔ | 3 ngày | ⬜ | |
+| P09 | Độ bền và vỡ | B | ✔ | 3 ngày | ✅ | 2026-10-28 |
 | P10 | Hành vi đặc biệt của đồ | B | ✔ | 4 ngày | ⬜ | |
 | P11 | Mèo AI | B | ✔ | 3 ngày | ⬜ | |
 | P12 | Bản đồ và level loader | C | ✔ | 4 ngày | ⬜ | |
@@ -594,7 +594,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P40 | Kiểm thử trình duyệt | G | | 2 ngày | ⬜ | |
 | P41 | Phát hành | G | | 2 ngày | ⬜ | |
 
-**Tiến độ:** 7/41 phase · Mốc A 🟨 · B 🟨 · C ⬜ · D ⬜ · E ⬜ · F ⬜ · G ⬜
+**Tiến độ:** 8/41 phase · Mốc A 🟨 · B 🟨 · C ⬜ · D ⬜ · E ⬜ · F ⬜ · G ⬜
 
 ---
 
@@ -686,11 +686,12 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 - 📝 *Kiểm tra (Chromium, 2 bàn phím + 2 tay cầm giả lập, chạy 2 lần cùng kết quả): 3 người đẩy 1s → piano đi 0px; người thứ 4 nắm → `lifted`, cùng đẩy phải 1s → đi 91px, không xoay; hai người trên kéo trái, hai người dưới kéo phải → xoay ~50° tại chỗ; kéo co trái/phải → đứng im; P1 buông → `bigLiftFail` + `itemDropped`, piano đóng đinh lại. 10 unit test bộ điều khiển khiêng. Sửa lỗi phát hiện khi test: người đang khiêng vẫn bị tính là chạy nên có thể vấp ngã và tuột tay → giờ đang khiêng thì không chạy/lao/vấp.*
 
 #### P09 · Độ bền và vỡ
-- [ ] Tính lực va chạm; vượt `breakImpulse` thì trừ `durability`
-- [ ] Hiển thị nứt theo nấc độ bền
-- [ ] Vỡ thì để lại mảnh vỡ (vật thể nhỏ hoặc vùng nguy hiểm trên sàn)
-- [ ] Phát sự kiện `itemBroken`, `itemDropped`, `wallHit` lên event bus
+- [x] Tính lực va chạm; vượt `breakImpulse` thì trừ `durability`
+- [x] Hiển thị nứt theo nấc độ bền
+- [x] Vỡ thì để lại mảnh vỡ (vật thể nhỏ hoặc vùng nguy hiểm trên sàn)
+- [x] Phát sự kiện `itemBroken`, `itemDropped`, `wallHit` lên event bus
 - **✅ Xong khi:** ném gương vào tường 3 lần thì vỡ; event bus ghi log đúng sự kiện.
+- 📝 *Kiểm tra (Chromium): ném gương vào tường 3 lần → độ bền 2 → 1 → 0, vỡ; nhật ký debug ghi đúng `itemThrown → wallHit → itemDamaged` ×3 rồi `itemBroken → zoneSpawned glass`. Thêm: ném thùng vào gương → gương mất 1 độ bền (đồ va đồ); kéo lê sofa một mình 6s → mất 2 độ bền; rơi đồ đang khiêng = cú va mạnh theo khối lượng (`4 + kg/100`). Vùng sàn: mảnh kính (đi qua vấp 3/8 lần), nước/đất (trơn: thả phím trượt 22px so với 5px trên sàn khô, đồ vật trượt xa hơn). Người đi bộ va vào đồ không làm vỡ đồ. 6 unit test logic va chạm. Registry hành vi đã có khung + `shatterDebris` (gương, tượng); các hành vi còn lại ở P10.*
 
 #### P10 · Hành vi đặc biệt của đồ
 - [ ] `slippery` (tủ lạnh trượt)

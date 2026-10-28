@@ -8,7 +8,7 @@ import type { Vec } from '../systems/geometry';
 import type { InputManager, PlayerSlot } from '../systems/input/InputManager';
 import { Random } from '../systems/Random';
 import { DebugOverlay } from '../ui/DebugOverlay';
-import { Theme } from '../ui/theme';
+import { GAME_WIDTH, Theme } from '../ui/theme';
 import { RegistryKeys } from './keys';
 
 /**
@@ -24,6 +24,8 @@ export abstract class PlayScene extends Phaser.Scene {
   protected gameData!: GameData;
   protected logicTicks = 0;
   private lastNow = 0;
+  private eventLog!: Phaser.GameObjects.Text;
+  private readonly eventLines: string[] = [];
 
   /** Dựng tường, sàn, đồ vật. */
   protected abstract buildLevel(): void;
@@ -50,10 +52,32 @@ export abstract class PlayScene extends Phaser.Scene {
 
     this.debug = new DebugOverlay(this, this.config.debug);
     this.world.debugDraw = this.config.debug;
+    // Nhật ký sự kiện gần nhất (chỉ hiện khi bật debug).
+    this.eventLines.length = 0;
+    this.eventLog = this.add
+      .text(GAME_WIDTH - 8, 100, '', {
+        fontFamily: 'monospace',
+        fontSize: '12px',
+        color: '#c8f7c5',
+        backgroundColor: '#000000aa',
+        padding: { x: 6, y: 4 },
+        align: 'right',
+      })
+      .setOrigin(1, 0)
+      .setDepth(10_000)
+      .setVisible(this.config.debug);
+    this.world.bus.onAny((e) => {
+      const what = 'itemId' in e ? ` ${e.itemId}` : 'kind' in e ? ` ${e.kind}` : '';
+      const extra = 'durability' in e ? ` ♥${e.durability}` : 'speed' in e ? ` v${e.speed}` : '';
+      this.eventLines.push(`${this.world.bus.tick} ${e.type}${what}${extra}`);
+      if (this.eventLines.length > 10) this.eventLines.shift();
+      this.eventLog.setText(this.eventLines);
+    });
     this.input.keyboard?.on('keydown-F1', (e: KeyboardEvent) => {
       e.preventDefault();
       this.debug.setVisible(!this.debug.visible);
       this.world.debugDraw = this.debug.visible;
+      this.eventLog.setVisible(this.debug.visible);
     });
     // Phím T (chỉ khi bật debug): cho mọi người vấp ngã để thử hoạt ảnh.
     this.input.keyboard?.on('keydown-T', () => {

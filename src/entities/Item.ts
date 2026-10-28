@@ -1,6 +1,8 @@
 import Phaser from 'phaser';
 import type { ItemDef } from '../data/types';
+import type { BehaviorHooks } from '../sim/behaviors';
 import { type CarryState, carryState } from '../systems/carry';
+import { type DamageState, tickCooldown } from '../systems/damage';
 import { rotate, type Vec } from '../systems/geometry';
 import { resolveGrabPoints } from '../systems/grabPoints';
 import { Theme } from '../ui/theme';
@@ -30,16 +32,21 @@ export class Item {
   /** Người đang nắm, theo số thứ tự điểm nắm. Kiểu tổng quát để tránh vòng import với Player. */
   readonly carriers = new Map<number, { slotIndex: number }>();
   carryState: CarryState;
-  durability: number;
-  broken = false;
+  damage: DamageState;
+  /** Hành vi đặc biệt (gắn bởi World khi tạo món đồ). */
+  behaviors: BehaviorHooks[] = [];
   /** Còn bao lâu nữa vật vừa bị ném chạm sàn (ms). */
   private airborneMs = 0;
+  /** Hệ số ma sát sàn do vùng nước/đất (1 = bình thường). */
+  private surfaceFactor = 1;
 
   protected readonly view: Phaser.GameObjects.Container;
   protected readonly image: Phaser.GameObjects.Image;
   private readonly shadow: Phaser.GameObjects.Image;
   private readonly icon: Phaser.GameObjects.Text | null;
   private readonly counter: Phaser.GameObjects.Text;
+  private readonly cracks: Phaser.GameObjects.Graphics;
+  private drawnDurability: number;
   private readonly radius: number;
   private prevPos: Vec;
   private prevAngle: number;
@@ -67,7 +74,8 @@ export class Item {
         : scene.matter.add.rectangle(x, y, w, h, options);
     scene.matter.body.setMass(this.body, def.mass * KG_TO_MASS);
     this.grabPoints = resolveGrabPoints(def);
-    this.durability = def.durability;
+    this.damage = { durability: def.durability, broken: false, cooldownMs: 0 };
+    this.drawnDurability = def.durability;
     this.carryState = carryState(def.liftRule, 0, def.requiredGrabbers);
     // Đồ "strict" không ai khiêng thì nằm im như đóng đinh: đẩy cũng không đi.
     if (this.carryState === 'immovable') scene.matter.body.setStatic(this.body, true);
@@ -82,10 +90,12 @@ export class Item {
     this.icon = def.icon
       ? scene.add.text(0, 0, def.icon, { fontSize: `${iconSize}px` }).setOrigin(0.5)
       : null;
+    this.cracks = scene.add.graphics();
     this.view = scene.add.container(x, y, [
       this.shadow,
       this.image,
       ...(this.icon ? [this.icon] : []),
+      this.cracks,
     ]);
     this.view.setRotation(angle).setDepth(y);
     this.counter = scene.add
@@ -104,6 +114,14 @@ export class Item {
 
   get id(): string {
     return this.def.id;
+  }
+
+  get durability(): number {
+    return this.damage.durability;
+  }
+
+  get broken(): boolean {
+    return this.damage.broken;
   }
 
   get position(): Vec {
@@ -158,7 +176,21 @@ export class Item {
   /** Vật vừa bị ném: bay gần như không ma sát sàn trong `ms`. */
   setAirborne(ms: number): void {
     this.airborneMs = ms;
-    this.body.frictionAir = AIRBORNE_FRICTION;
+    this.updateFriction();
+  }
+
+  /** Đang nằm trên vũng nước/đất: ma sát sàn nhân với `factor`. */
+  setSurfaceFactor(factor: number): void {
+    if (factor === this.surfaceFactor) return;
+    this.surfaceFactor = factor;
+    this.updateFriction();
+  }
+
+  private updateFriction(): void {
+    this.body.frictionAir =
+      this.airborneMs > 0
+        ? AIRBORNE_FRICTION
+        : floorFrictionAir(this.def.friction) * this.surfaceFactor;
   }
 
   get airborne(): boolean {
@@ -171,8 +203,9 @@ export class Item {
     this.prevAngle = this.body.angle;
     if (this.airborneMs > 0) {
       this.airborneMs -= dtMs;
-      if (this.airborneMs <= 0) this.body.frictionAir = floorFrictionAir(this.def.friction);
+      if (this.airborneMs <= 0) this.updateFriction();
     }
+    this.damage = tickCooldown(this.damage, dtMs);
   }
 
   render(alpha: number): void {
@@ -192,6 +225,8 @@ export class Item {
     const down = rotate({ x: 0, y: 3 }, -angle);
     this.shadow.setVisible(this.lifted).setPosition(down.x, down.y);
 
+    if (this.drawnDurability !== this.damage.durability) this.drawDamage();
+
     const n = this.carriers.size;
     const need = this.def.requiredGrabbers;
     if (need > 1 && n > 0) {
@@ -202,6 +237,35 @@ export class Item {
         .setPosition(x, y);
     } else {
       this.counter.setVisible(false);
+    }
+  }
+
+  /** Vết nứt tăng dần theo độ bền đã mất; vỡ thì xám đi. Vết nứt cố định theo uid. */
+  private drawDamage(): void {
+    this.drawnDurability = this.damage.durability;
+    const lost = 1 - this.damage.durability / this.def.durability;
+    const count = this.damage.broken ? 7 : Math.round(lost * 6);
+    const { w, h } = this.def.size;
+    let seed = this.uid * 9301 + 49297;
+    const rnd = () => {
+      seed = (seed * 9301 + 49297) % 233280;
+      return seed / 233280;
+    };
+    this.cracks.clear().lineStyle(2, 0x1d1b26, 0.85);
+    for (let i = 0; i < count; i++) {
+      let px = (rnd() - 0.5) * w * 0.7;
+      let py = (rnd() - 0.5) * h * 0.7;
+      this.cracks.beginPath().moveTo(px, py);
+      for (let k = 0; k < 3; k++) {
+        px = Phaser.Math.Clamp(px + (rnd() - 0.5) * w * 0.4, -w / 2, w / 2);
+        py = Phaser.Math.Clamp(py + (rnd() - 0.5) * h * 0.4, -h / 2, h / 2);
+        this.cracks.lineTo(px, py);
+      }
+      this.cracks.strokePath();
+    }
+    if (this.damage.broken) {
+      this.image.setTint(0x8a8a8a);
+      this.icon?.setAlpha(0.5);
     }
   }
 

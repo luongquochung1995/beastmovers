@@ -3,13 +3,23 @@ import type { GameConfig } from '../data/types';
 import type { GameData } from '../data/validate';
 import { Item } from '../entities/Item';
 import { Player } from '../entities/Player';
+import {
+  applyDamage,
+  applyImpact,
+  breakThreshold,
+  dropImpact,
+  impactSpeed,
+  WALL_HIT_SPEED,
+} from '../systems/damage';
+import { EventBus, type ZoneKind } from '../systems/EventBus';
+import type { Vec } from '../systems/geometry';
 import type { PlayerSlot } from '../systems/input/InputManager';
-import { EventBus } from '../systems/EventBus';
 import { DEFAULT_MOTOR, type MotorParams } from '../systems/PlayerMotor';
 import type { Random } from '../systems/Random';
-import type { Vec } from '../systems/geometry';
 import { Theme } from '../ui/theme';
+import { createBehaviors } from './behaviors';
 import { GrabSystem } from './GrabSystem';
+import { Zone } from './Zone';
 
 export interface Rect {
   x: number;
@@ -18,14 +28,22 @@ export interface Rect {
   h: number;
 }
 
+/** Va vào tường liên tục chỉ tính một lần "đập tường" trong khoảng này. */
+const WALL_HIT_COOLDOWN_MS = 400;
+/** Kéo lê đồ (cào sàn) bao nhiêu lần thì mất 1 độ bền (sự kiện cào sàn: 1 lần/giây). */
+const SCRAPES_PER_DAMAGE = 2;
+/** Người đi chậm hơn mức này (px/bước) thì không vấp trên mảnh kính. */
+const ZONE_TRIP_MIN_SPEED = 1;
+
 /**
- * Toàn bộ mô phỏng của một màn: tường, nhân vật, đồ vật.
+ * Toàn bộ mô phỏng của một màn: tường, nhân vật, đồ vật, vùng nguy hiểm.
  * Màn chơi và sandbox cùng dùng lớp này; scene chỉ lo vẽ HUD và nhận input.
  */
 export class World {
   readonly players: Player[] = [];
   readonly items: Item[] = [];
   readonly walls: MatterJS.BodyType[] = [];
+  readonly zones: Zone[] = [];
   readonly motorParams: MotorParams;
   readonly bus = new EventBus();
   readonly grab: GrabSystem;
@@ -34,6 +52,10 @@ export class World {
   private readonly overlay: Phaser.GameObjects.Graphics;
   private readonly playerByBody = new Map<MatterJS.BodyType, Player>();
   private readonly itemByBody = new Map<MatterJS.BodyType, Item>();
+  private readonly wallSet = new Set<MatterJS.BodyType>();
+  private readonly wallHitAt = new Map<Item, number>();
+  private readonly scrapes = new Map<Item, number>();
+  private timeMs = 0;
 
   constructor(
     readonly scene: Phaser.Scene,
@@ -45,6 +67,7 @@ export class World {
     this.grab = new GrabSystem(this);
     this.overlay = scene.add.graphics().setDepth(9_000);
     scene.matter.world.on('collisionstart', this.onCollisionStart, this);
+    this.bus.on('itemScrape', (e) => this.onScrape(e.item));
   }
 
   // ---------- Dựng màn ----------
@@ -61,6 +84,7 @@ export class World {
     });
     this.scene.add.rectangle(r.x, r.y, r.w, r.h, 0x3a3550).setOrigin(0).setDepth(-500);
     this.walls.push(body);
+    this.wallSet.add(body);
     return body;
   }
 
@@ -93,6 +117,7 @@ export class World {
     const def = this.data.itemById.get(id);
     if (!def) throw new Error(`Unknown item "${id}"`);
     const item = new Item(this.scene, def, x, y, angle);
+    item.behaviors = createBehaviors(this, item);
     this.items.push(item);
     this.itemByBody.set(item.body, item);
     return item;
@@ -111,16 +136,22 @@ export class World {
     for (const item of [...this.items]) this.removeItem(item);
   }
 
+  addZone(kind: ZoneKind, x: number, y: number, radius: number): Zone {
+    const zone = new Zone(this.scene, kind, x, y, radius, () => this.random.next());
+    this.zones.push(zone);
+    this.bus.emit({ type: 'zoneSpawned', kind, x: Math.round(x), y: Math.round(y) });
+    return zone;
+  }
+
+  clearZones(): void {
+    for (const z of this.zones) z.destroy();
+    this.zones.length = 0;
+  }
+
   /** Món đồ có nắm được không (P11: mèo đang trong lồng thì không). */
   isGrabbable(_item: Item): boolean {
     return true;
   }
-
-  /**
-   * Một món đồ đang được khiêng thì bị rơi (có người buông giữa chừng).
-   * P09 thêm sát thương khi rơi; P10 thêm hành vi `dropOnRelease`.
-   */
-  onItemDropped(_item: Item): void {}
 
   playerOf(body: MatterJS.BodyType): Player | undefined {
     return this.playerByBody.get(body);
@@ -140,20 +171,93 @@ export class World {
     return undefined;
   }
 
+  // ---------- Sát thương ----------
+
+  /** Một cú va với tốc độ `speed` (px/bước): vượt ngưỡng thì trừ độ bền. */
+  impact(item: Item, speed: number): void {
+    this.applyResult(item, applyImpact(item.damage, speed, breakThreshold(item.def)), speed);
+    if (speed >= breakThreshold(item.def)) for (const b of item.behaviors) b.onImpact?.(speed);
+  }
+
+  /** Trừ thẳng độ bền (kéo lê, hành vi đặc biệt…). */
+  damage(item: Item, amount: number): void {
+    this.applyResult(item, applyDamage(item.damage, amount), 0);
+  }
+
+  private applyResult(item: Item, r: ReturnType<typeof applyDamage>, speed: number): void {
+    if (!r.damaged) return;
+    item.damage = r.state;
+    const ref = { item: item.uid, itemId: item.id };
+    this.bus.emit({
+      type: 'itemDamaged',
+      ...ref,
+      durability: r.state.durability,
+      speed: Math.round(speed * 10) / 10,
+    });
+    if (r.broke) {
+      this.bus.emit({ type: 'itemBroken', ...ref });
+      for (const b of item.behaviors) b.onBroken?.();
+    }
+  }
+
+  /** Một món đồ đang được khiêng thì bị rơi (có người buông giữa chừng). */
+  onItemDropped(item: Item): void {
+    this.impact(item, dropImpact(item.def.mass));
+    for (const b of item.behaviors) b.onDropped?.();
+  }
+
+  private onScrape(uid: number): void {
+    const item = this.items.find((i) => i.uid === uid);
+    if (!item) return;
+    const n = (this.scrapes.get(item) ?? 0) + 1;
+    this.scrapes.set(item, n % SCRAPES_PER_DAMAGE);
+    if (n >= SCRAPES_PER_DAMAGE) this.damage(item, 1);
+  }
+
   // ---------- Vòng lặp ----------
 
   /** Một bước logic. `slots[i]` là input của người chơi ô i trên máy này. */
   step(dt: number, slots: readonly (PlayerSlot | null)[]): void {
     this.bus.tick++;
-    for (const item of this.items) item.beforeStep(dt);
+    this.timeMs += dt;
+    for (const item of this.items) {
+      item.beforeStep(dt);
+      item.setSurfaceFactor(this.surfaceAt(item.position)?.effect.itemFriction ?? 1);
+      for (const b of item.behaviors) b.onStep?.(dt);
+    }
     for (const p of this.players) {
       const slot = slots[p.slotIndex];
       if (!slot) continue;
       this.grab.handleButtons(p, slot);
-      p.fixedUpdate(slot.prev, slot.cur, dt, this.grab.holds.has(p));
+      p.fixedUpdate(slot.prev, slot.cur, dt, this.grab.holds.has(p), this.paramsFor(p));
+      this.zoneTrip(p, dt);
     }
     this.grab.applyCarry(slots, dt);
     this.scene.matter.world.step(dt);
+  }
+
+  /** Vùng sàn ở vị trí `p` (vùng thêm sau ưu tiên hơn). */
+  private surfaceAt(p: Vec): Zone | undefined {
+    for (let i = this.zones.length - 1; i >= 0; i--) {
+      if (this.zones[i]!.contains(p)) return this.zones[i];
+    }
+    return undefined;
+  }
+
+  private paramsFor(p: Player): MotorParams {
+    const accel = this.surfaceAt(p.position)?.effect.accel;
+    return accel == null ? this.motorParams : { ...this.motorParams, accel };
+  }
+
+  private zoneTrip(p: Player, dt: number): void {
+    const zone = this.surfaceAt(p.position);
+    if (!zone || p.motor.mode !== 'normal') return;
+    const v = p.body.velocity;
+    if (Math.hypot(v.x, v.y) < ZONE_TRIP_MIN_SPEED) return;
+    if (this.random.chance((zone.effect.tripPerSec * dt) / 1000)) {
+      p.knockDown();
+      this.bus.emit({ type: 'playerTripped', slot: p.slotIndex, cause: zone.kind });
+    }
   }
 
   render(alpha: number, frameMs: number): void {
@@ -166,14 +270,42 @@ export class World {
 
   private onCollisionStart(event: Phaser.Physics.Matter.Events.CollisionStartEvent): void {
     for (const pair of event.pairs) {
-      const a = this.playerByBody.get(pair.bodyA);
-      const b = this.playerByBody.get(pair.bodyB);
+      const bodyA = pair.bodyA.parent ?? pair.bodyA;
+      const bodyB = pair.bodyB.parent ?? pair.bodyB;
+      const pa = this.playerByBody.get(bodyA);
+      const pb = this.playerByBody.get(bodyB);
       // Người đang lao đâm vào người khác thì người kia ngã.
-      if (a && b) {
-        if (a.motor.mode === 'dashing' && b.motor.mode !== 'dashing') b.knockDown();
-        else if (b.motor.mode === 'dashing' && a.motor.mode !== 'dashing') a.knockDown();
+      if (pa && pb) {
+        if (pa.motor.mode === 'dashing' && pb.motor.mode !== 'dashing') pb.knockDown();
+        else if (pb.motor.mode === 'dashing' && pa.motor.mode !== 'dashing') pa.knockDown();
+        continue;
+      }
+      const ia = this.itemByBody.get(bodyA);
+      const ib = this.itemByBody.get(bodyB);
+      if (!ia && !ib) continue;
+      // Sự kiện collisionstart chạy trước khi Matter xử lý va chạm nên vận tốc còn là trước va.
+      const speed = impactSpeed(bodyA.velocity, bodyB.velocity, pair.collision.normal);
+      if (ia) this.onItemContact(ia, bodyB, speed);
+      if (ib) this.onItemContact(ib, bodyA, speed);
+    }
+  }
+
+  private onItemContact(item: Item, other: MatterJS.BodyType, speed: number): void {
+    // Người đi bộ va vào đồ không làm vỡ đồ; chỉ đồ bay, đồ va đồ, và đồ va tường.
+    if (this.playerByBody.has(other)) return;
+    if (this.wallSet.has(other) && speed >= WALL_HIT_SPEED) {
+      const last = this.wallHitAt.get(item) ?? -Infinity;
+      if (this.timeMs - last >= WALL_HIT_COOLDOWN_MS) {
+        this.wallHitAt.set(item, this.timeMs);
+        this.bus.emit({
+          type: 'wallHit',
+          item: item.uid,
+          itemId: item.id,
+          speed: Math.round(speed * 10) / 10,
+        });
       }
     }
+    this.impact(item, speed);
   }
 
   destroy(): void {
@@ -204,6 +336,7 @@ export class World {
         carriers: i.carriers.size,
         pinned: i.pinned,
       })),
+      zones: this.zones.map((z) => ({ kind: z.kind, x: Math.round(z.x), y: Math.round(z.y) })),
       events: this.bus.history.map((l) => l.event.type),
     };
   }
