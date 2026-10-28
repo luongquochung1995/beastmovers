@@ -240,5 +240,7 @@
   "pause.finish": "🚚  End level now",
   "pause.restart": "↺  Restart",
   "pause.levels": "◀  Main menu",
-  "pause.leave": "🚪  Leave room"
+  "pause.leave": "🚪  Leave room",
+  "result.newBest": "🏆 New record!",
+  "result.best": "Record: {score}"
 }

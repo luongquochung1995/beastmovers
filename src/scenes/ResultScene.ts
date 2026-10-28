@@ -5,6 +5,7 @@ import { PLAYER_STYLES, playerTextureKey } from '../entities/playerStyles';
 import type { NetContext } from '../net/netContext';
 import type { LevelResult } from '../sim/LevelRuntime';
 import { moodFace } from '../systems/dialogue';
+import { loadSave, recordLevelResult } from '../data/settings';
 import { MenuInput } from '../ui/menuInput';
 import { GAME_HEIGHT, GAME_WIDTH, Theme } from '../ui/theme';
 import { RegistryKeys, SceneKeys } from './keys';
@@ -68,6 +69,27 @@ export class ResultScene extends Phaser.Scene {
           duration: 260,
           ease: 'Back.Out',
         });
+    }
+
+    // Lưu tiến trình (online: mỗi máy tự lưu theo kết quả host gửi về). Chỉ tính khi qua màn.
+    const prev = loadSave().levels[r.levelId];
+    if (r.passed) {
+      recordLevelResult(r.levelId, {
+        stars: r.score.stars,
+        score: r.score.total,
+        players: r.players.length,
+      });
+    }
+    const record = r.passed && (!prev || r.score.total > prev.bestScore);
+    if (record || prev) {
+      text(
+        cx + 120,
+        222,
+        record
+          ? t('result.newBest')
+          : t('result.best', { score: prev!.bestScore.toLocaleString(getLocale()) }),
+        { fontSize: '18px', fontStyle: 'bold', color: record ? STAR_ON : Theme.muted },
+      ).setOrigin(0, 0.5);
     }
 
     // Bảng điểm.

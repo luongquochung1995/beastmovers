@@ -580,7 +580,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P26 | Test 8 người online | D | ✔ | 3 ngày | 🟨 | |
 | P27 | Menu chính, cài đặt, hướng dẫn | E | ✔ | 3 ngày | ✅ | 2026-10-28 |
 | P28 | Màn chọn màn (khóa theo người và sao) | E | ✔ | 3 ngày | ⬜ | |
-| P29 | Lưu tiến trình | E | ✔ | 2 ngày | ⬜ | |
+| P29 | Lưu tiến trình | E | ✔ | 2 ngày | ✅ | 2026-10-28 |
 | P30 | Ping nhanh và chỉ dẫn | E | ✔ | 3 ngày | ⬜ | |
 | P31 | 5 màn MVP (1 màn mỗi cấp) và 3 chủ nhà | F | ✔ | 5 ngày | ⬜ | |
 | P32 | Màn Solo và Đôi còn lại | F | | 5 ngày | ⬜ | |
@@ -594,7 +594,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P40 | Kiểm thử trình duyệt | G | | 2 ngày | ⬜ | |
 | P41 | Phát hành | G | | 2 ngày | ⬜ | |
 
-**Tiến độ:** 24/41 phase · Mốc A 🟨 · B ✅ · C ✅ · D 🟨 · E 🟨 · F ⬜ · G ⬜
+**Tiến độ:** 25/41 phase · Mốc A 🟨 · B ✅ · C ✅ · D 🟨 · E 🟨 · F ⬜ · G ⬜
 
 ---
 
@@ -897,11 +897,12 @@ Chưa làm: playtest người thật; 2 máy ở 2 mạng khác nhau qua relay c
 - **✅ Xong khi:** phòng 4 người thấy màn 🟠🔴 bị khóa đúng lý do; đủ 8 người thì mở ra.
 
 #### P29 · Lưu tiến trình
-- [ ] Lưu và đọc `localStorage` theo schema `beast-movers-save-v1`
-- [ ] Bọc `try/catch`; trình duyệt chặn lưu trữ thì game vẫn chạy
-- [ ] Có số phiên bản để nâng cấp dữ liệu lưu cũ (migration)
-- [ ] Nút xóa tiến trình trong cài đặt
+- [x] Lưu và đọc `localStorage` theo schema `beast-movers-save-v1`
+- [x] Bọc `try/catch`; trình duyệt chặn lưu trữ thì game vẫn chạy
+- [x] Có số phiên bản để nâng cấp dữ liệu lưu cũ (migration)
+- [x] Nút xóa tiến trình trong cài đặt
 - **✅ Xong khi:** tải lại trang vẫn giữ sao, cài đặt, tên và màu.
+- 📝 *Kiểm tra (Chromium): qua màn → lưu `lv01_studio` 2 sao, 1000 điểm, 1 người, màn kết quả hiện "🏆 Kỷ lục mới!" (lần sau hiện "Kỷ lục: …"); trong lobby bấm C/H đổi màu, mũ → lưu vào hồ sơ; tải lại trang, tạo phòng mới → ô của mình đúng tên "Tèo", đúng màu, sao vẫn còn; cài đặt (rung màn hình, âm lượng, phím) giữ sau khi tải lại. Một khóa `beast-movers-save-v1` chứa `version`, `profile` (tên, màu, mũ), `levels` (sao, điểm cao nhất, số người lúc đạt), `settings` (ngôn ngữ, âm lượng, rung, phím). Bản 2: dữ liệu bản 1 (tên nằm trong `settings.playerName`) tự chuyển sang `profile.name`; giá trị sai kiểu bị bỏ, dữ liệu của bản game mới hơn thì dùng mặc định. Chỉ lưu khi qua màn, giữ số sao và điểm cao nhất. Online: mỗi máy tự lưu theo kết quả host gửi. "Xóa tiến trình" (bấm 2 lần để xác nhận) xóa sao và hồ sơ, giữ cài đặt. 6 unit test (nâng cấp, dữ liệu hỏng, giữ kỷ lục, xóa, trình duyệt chặn lưu trữ).*
 
 #### P30 · Ping nhanh và chỉ dẫn
 - [ ] Vòng ping: "Lại đây khiêng!", "Nâng lên!", "Buông ra!", "Bắt mèo!", "Mở cửa!"

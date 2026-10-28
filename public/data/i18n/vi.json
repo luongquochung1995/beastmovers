@@ -240,5 +240,7 @@
   "pause.finish": "🚚  Kết thúc màn",
   "pause.restart": "↺  Chơi lại",
   "pause.levels": "◀  Về menu chính",
-  "pause.leave": "🚪  Rời phòng"
+  "pause.leave": "🚪  Rời phòng",
+  "result.newBest": "🏆 Kỷ lục mới!",
+  "result.best": "Kỷ lục: {score}"
 }
