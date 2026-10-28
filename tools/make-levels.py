@@ -285,6 +285,33 @@ LEVELS = [
 ]
 
 
+# Đồ thưởng thêm cho mỗi người vượt số người đề xuất, theo cấp màn.
+EXTRA_PER_PLAYER = {
+    "solo": [("box", 2), ("plant", 1)],
+    "duo": [("box", 2), ("plant", 1)],
+    "team": [("box", 2), ("mirror", 1)],
+    "squad": [("box", 2), ("mirror", 1)],
+}
+
+
+def round10(v):
+    return int(round(v / 10.0) * 10)
+
+
+def auto_scaling(level):
+    """Co giãn mặc định (P35) cho màn cho phép đông hơn số người tối thiểu."""
+    extra = EXTRA_PER_PLAYER[level["tier"]]
+    per = sum(ITEMS[i]["value"] * n for i, n in extra)
+    return {
+        "basePlayers": level["recommendedPlayers"],
+        "extraSpawnsPerPlayer": [{"item": i, "count": n} for i, n in extra],
+        "timeDeltaPerPlayerSec": -10,
+        # Mốc sao tăng ít hơn giá trị đồ thêm: đông người thì đủ sức chở thêm nhưng vẫn phải cố.
+        "starsPerExtraPlayer": [round10(per * 0.4), round10(per * 0.7), round10(per * 0.9)],
+        "truckSlotsPerPlayer": sum(ITEMS[i]["truckSlots"] * n for i, n in extra) + 1,
+    }
+
+
 def check(level):
     """Đồ vật không đè tường và nằm trên sàn."""
     m = json.loads((DATA / level["map"]).read_text(encoding="utf-8"))
@@ -319,6 +346,8 @@ def main():
     for lv in LEVELS:
         lv = dict(lv)
         lv["stars"] = stars(lv)
+        if lv["maxPlayers"] > lv["recommendedPlayers"]:
+            lv["scaling"] = auto_scaling(lv)
         # Giữ đúng thứ tự trường như các màn có sẵn.
         order = ["id", "name", "tier", "minPlayers", "maxPlayers", "recommendedPlayers",
                  "unlockStars", "timeLimitSec", "map", "landlord", "truck", "spawns",
@@ -330,7 +359,10 @@ def main():
         else:
             levels.append(lv)
         print(lv["id"], "stars", lv["stars"])
-    errors += check(levels[0])
+    # Màn 1 (không sinh từ script này) cũng dùng co giãn mặc định.
+    studio = next(l for l in levels if l["id"] == "lv01_studio")
+    studio["scaling"] = auto_scaling(studio)
+    errors += check(studio)
     # Thứ tự trong file = số thứ tự màn (lv01, lv02, …).
     levels.sort(key=lambda l: l["id"])
     path.write_text(json.dumps(levels, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

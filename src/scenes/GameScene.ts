@@ -11,6 +11,7 @@ import { SLOW_PING_MS } from '../net/OnlineGame';
 import { type PingHold, stepPing, WHEEL_HOLD_MS } from '../systems/ping';
 import { GameHud, HUD_TOP } from '../ui/GameHud';
 import { PingWheelView } from '../ui/PingWheelView';
+import { scaleLevel } from '../systems/scaling';
 import { RainView } from '../ui/RainView';
 import { GAME_HEIGHT, GAME_WIDTH, Theme } from '../ui/theme';
 import type { HudScene } from './HudScene';
@@ -47,15 +48,34 @@ export class GameScene extends PlayScene {
     super(SceneKeys.Game);
   }
 
-  /** Màn đang chơi: `levelId` trong registry, mặc định màn đầu tiên. */
-  protected get levelDef(): LevelDef {
+  /** Màn đã co giãn theo số người lúc vào màn (null trước khi dựng màn). */
+  private scaled: LevelDef | null = null;
+
+  /** Màn đang chơi (đã co giãn theo số người). */
+  get levelDef(): LevelDef {
+    return this.scaled ?? this.baseLevel;
+  }
+
+  /** Màn gốc trong data: `levelId` trong registry, mặc định màn đầu tiên. */
+  private get baseLevel(): LevelDef {
     const id = this.registry.get(RegistryKeys.LevelId) as string | undefined;
     return this.gameData.levels.find((l) => l.id === id) ?? this.gameData.levels[0]!;
   }
 
+  /**
+   * Số người lúc vào màn: online theo danh sách phòng (mọi máy giống nhau), chơi chung máy
+   * theo người đã tham gia (người vào giữa chừng không làm màn đổi nữa).
+   */
+  private playerCount(): number {
+    if (this.online) return this.online.allSlots().length;
+    return Math.max(1, this.inputs.slots.filter((s) => s !== null).length);
+  }
+
   protected buildLevel(): void {
-    const level = this.levelDef;
-    const map = this.gameData.maps[level.map]!;
+    const base = this.baseLevel;
+    const map = this.gameData.maps[base.map]!;
+    this.scaled = scaleLevel(base, map, this.playerCount(), this.gameData.itemById);
+    const level = this.scaled;
     const client = !!this.online && !this.online.isHost;
     this.built = buildLevel(this.world, level, map, !client);
     this.runtime = new LevelRuntime(this.world, this.built, this.gameData, client);

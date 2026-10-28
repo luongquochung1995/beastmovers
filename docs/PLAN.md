@@ -586,7 +586,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P32 | Màn Solo và Đôi còn lại | F | | 5 ngày | 🟨 | |
 | P33 | Màn Đội còn lại | F | | 5 ngày | 🟨 | |
 | P34 | Màn Đại đội và Full nhà còn lại | F | | 5 ngày | 🟨 | |
-| P35 | Co giãn theo số người (scaling) | F | | 3 ngày | ⬜ | |
+| P35 | Co giãn theo số người (scaling) | F | | 3 ngày | 🟨 | |
 | P36 | Thêm 2 chủ nhà và bộ thoại | F | | 3 ngày | ⬜ | |
 | P37 | Âm thanh và hiệu ứng | G | | 4 ngày | ⬜ | |
 | P38 | Tối ưu hiệu năng và mạng | G | | 4 ngày | ⬜ | |
@@ -962,11 +962,12 @@ Chưa làm: playtest người thật; 2 máy ở 2 mạng khác nhau qua relay c
 - 📝 *Kiểm tra (Chromium, bot 6–8 tay cầm giả lập như P31): **màn 11** — 6 người khiêng giàn tạ qua lối 280 px ra xe 13 giây; **màn 13** — 6 người khiêng bể cá khổng lồ đi thẳng ra xe 17 giây, không nghiêng nên không tràn nước, không vỡ (nghiêng/xoay nhanh thì tràn nước — hành vi có từ P10); **màn 14** — không gian mở gần như trống + chủ nhà đổi ý giữa chừng, 6 người khiêng bàn bi-a ra xe 16 giây; **màn 15** — 8 người khiêng tượng đá từ phòng trưng bày, vòng qua bệ trưng bày ra xe 20 giây. **Paparazzi** (màn 16): món đồ mới `paparazzi` (`grabbable: false` — không ai nắm được, không tính là hàng trên xe) với hành vi `paparazziAI`: chạy ra chắn giữa món đồ đang khiêng và xe tải, chụp ảnh ("📸 ✨" + rung nhẹ) mỗi ~3,5 giây khi ở gần, bị lao trúng thì choáng 2,5 giây; không bước vào thùng xe (đứng chắn ở cửa thùng); món đồ đang khiêng tới gần 200 px thì né sang bên. Modifier `paparazzi` tự thả 3 người ở góc sân ngoài trời. Lỗi tìm thấy khi thử: (1) đồ `strict` bị "đóng đinh" khi không ai khiêng nên paparazzi đứng im → dùng `free`; (2) paparazzi đi vào thùng xe chiếm chỗ (xe 12/40 thay vì 10/40) → loại khỏi việc tính hàng, cấm vào thùng; (3) đứng chắn ở cửa thùng thì bị cả đội 8 người ủi vào thùng rồi kẹt sau grand piano → né sang bên khi đồ to tới gần. Mỗi màn chỉ một món khổng lồ (giới hạn thùng xe, xem P31). Sao mở khóa: 11 / 12 / 13 / 15 / 18 / 20 (màn 11–16). Chủ nhà tạm: màn 13, 14 dùng Diva Lan Na, màn 11, 15 dùng Chú Bảy (P36 thêm anh startup cho màn 14). ⚠️ Chưa đạt "Xong khi": cần nhóm 6 và 8 người thật; paparazzi chưa làm chậm bot rõ rệt (bot đi thẳng), cần chỉnh độ khó ở P39.*
 
 #### P35 · Co giãn theo số người (scaling)
-- [ ] Thêm đồ theo `extraSpawnsPerPlayer`
-- [ ] Đổi thời gian theo `timeDeltaPerPlayerSec`
-- [ ] Đổi mốc sao theo `starsPerExtraPlayer`
-- [ ] Thêm chỗ trong xe theo `truckSlotsPerPlayer`
+- [x] Thêm đồ theo `extraSpawnsPerPlayer`
+- [x] Đổi thời gian theo `timeDeltaPerPlayerSec`
+- [x] Đổi mốc sao theo `starsPerExtraPlayer`
+- [x] Thêm chỗ trong xe theo `truckSlotsPerPlayer`
 - **✅ Xong khi:** màn 1 chơi với 1 người và với 8 người đều thấy vừa sức, không quá dễ.
+- 📝 *Kiểm tra (Chromium): màn 1 với 1 người → 13 món, 300 giây, xe 20 chỗ, sao 500/900/1300; với 8 người → 31 món, 240 giây, xe 44 chỗ, sao 680/1260/1720; đồ thêm nằm trong nhà, không đè tường; màn kết quả hiện đúng mốc sao đã co giãn. Cách làm: `scaleLevel(màn, bản đồ, số người)` là hàm thuần — mỗi người vượt `basePlayers` thêm đồ thưởng (không bắt buộc) đặt ngẫu nhiên trên sàn trong nhà (sàn không có `outdoor`), cách tường/cửa/đồ khác ≥ 16 px, vị trí sinh từ id màn + số người nên host và máy khách online ra y hệt (không cần gửi qua mạng); thời gian không dưới 90 giây. Số người tính lúc vào màn: online theo danh sách phòng, chơi chung máy theo người đã tham gia (người vào giữa chừng không làm màn đổi). Kết quả màn mang theo mốc sao đã co giãn (`starGoals`). Data: mọi màn có `maxPlayers` > `recommendedPlayers` (14/16 màn; màn 15, 16 luôn đủ 8) dùng co giãn mặc định sinh bởi `tools/make-levels.py`: `basePlayers` = số người đề xuất, mỗi người thêm 2 thùng + 1 chậu cây (Solo/Đôi) hoặc 2 thùng + 1 gương (Đội/Đại đội), −10 giây, xe +4 chỗ, mốc sao tăng 40/70/90% giá trị đồ thêm (đông người chở được thêm nhưng vẫn phải cố). Lỗi tìm thấy: mốc sao cũ của màn 1 (+150/250/350 mỗi người) làm 3★ với 8 người (3750) cao hơn cả điểm tối đa có thể (~2300) → dùng công thức theo giá trị đồ thêm. Sân studio được đánh dấu `outdoor` để đồ thêm không rơi ra sân. 4 unit test. ⚠️ Chưa đạt "Xong khi": "vừa sức" cần người thật chơi với 1 và 8 người (P39).*
 
 #### P36 · Thêm 2 chủ nhà và bộ thoại
 - [ ] Anh startup cuồng minimalism

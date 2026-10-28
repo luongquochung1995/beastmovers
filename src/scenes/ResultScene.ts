@@ -123,16 +123,13 @@ export class ResultScene extends Phaser.Scene {
       fontStyle: 'bold',
       color: Theme.accent,
     }).setOrigin(1, 0);
-    if (level) {
-      text(
-        right,
-        y + 40,
-        t('result.starGoals', { a: level.stars[0]!, b: level.stars[1]!, c: level.stars[2]! }),
-        {
-          fontSize: '13px',
-          color: Theme.muted,
-        },
-      ).setOrigin(1, 0);
+    // Mốc sao của lần chơi này (đông người thì cao hơn); kết quả cũ không có thì lấy từ data.
+    const goals = r.starGoals ?? level?.stars;
+    if (goals) {
+      text(right, y + 40, t('result.starGoals', { a: goals[0]!, b: goals[1]!, c: goals[2]! }), {
+        fontSize: '13px',
+        color: Theme.muted,
+      }).setOrigin(1, 0);
     }
 
     // Danh hiệu từng người.

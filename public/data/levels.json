@@ -136,7 +136,7 @@
       }
     ],
     "scaling": {
-      "basePlayers": 1,
+      "basePlayers": 2,
       "extraSpawnsPerPlayer": [
         {
           "item": "box",
@@ -148,8 +148,8 @@
         }
       ],
       "timeDeltaPerPlayerSec": -10,
-      "starsPerExtraPlayer": [150, 250, 350],
-      "truckSlotsPerPlayer": 3
+      "starsPerExtraPlayer": [30, 60, 70],
+      "truckSlotsPerPlayer": 4
     }
   },
   {
@@ -266,7 +266,22 @@
     "modifiers": [],
     "stars": [650, 850, 1050],
     "satisfactionMultiplier": 5,
-    "scaling": null
+    "scaling": {
+      "basePlayers": 2,
+      "extraSpawnsPerPlayer": [
+        {
+          "item": "box",
+          "count": 2
+        },
+        {
+          "item": "plant",
+          "count": 1
+        }
+      ],
+      "timeDeltaPerPlayerSec": -10,
+      "starsPerExtraPlayer": [30, 60, 70],
+      "truckSlotsPerPlayer": 4
+    }
   },
   {
     "id": "lv03_cat_house",
@@ -376,7 +391,22 @@
     "modifiers": [],
     "stars": [450, 650, 850],
     "satisfactionMultiplier": 5,
-    "scaling": null
+    "scaling": {
+      "basePlayers": 2,
+      "extraSpawnsPerPlayer": [
+        {
+          "item": "box",
+          "count": 2
+        },
+        {
+          "item": "plant",
+          "count": 1
+        }
+      ],
+      "timeDeltaPerPlayerSec": -10,
+      "starsPerExtraPlayer": [30, 60, 70],
+      "truckSlotsPerPlayer": 4
+    }
   },
   {
     "id": "lv04_townhouse",
@@ -498,7 +528,22 @@
     "modifiers": [],
     "stars": [1050, 1250, 1500],
     "satisfactionMultiplier": 6,
-    "scaling": null
+    "scaling": {
+      "basePlayers": 2,
+      "extraSpawnsPerPlayer": [
+        {
+          "item": "box",
+          "count": 2
+        },
+        {
+          "item": "plant",
+          "count": 1
+        }
+      ],
+      "timeDeltaPerPlayerSec": -10,
+      "starsPerExtraPlayer": [30, 60, 70],
+      "truckSlotsPerPlayer": 4
+    }
   },
   {
     "id": "lv05_rainy_day",
@@ -602,7 +647,22 @@
     "modifiers": ["rain"],
     "stars": [1050, 1250, 1450],
     "satisfactionMultiplier": 6,
-    "scaling": null
+    "scaling": {
+      "basePlayers": 2,
+      "extraSpawnsPerPlayer": [
+        {
+          "item": "box",
+          "count": 2
+        },
+        {
+          "item": "plant",
+          "count": 1
+        }
+      ],
+      "timeDeltaPerPlayerSec": -10,
+      "starsPerExtraPlayer": [30, 60, 70],
+      "truckSlotsPerPlayer": 4
+    }
   },
   {
     "id": "lv06_tube_house",
@@ -724,7 +784,22 @@
     "modifiers": [],
     "stars": [1250, 1600, 1900],
     "satisfactionMultiplier": 6,
-    "scaling": null
+    "scaling": {
+      "basePlayers": 3,
+      "extraSpawnsPerPlayer": [
+        {
+          "item": "box",
+          "count": 2
+        },
+        {
+          "item": "plant",
+          "count": 1
+        }
+      ],
+      "timeDeltaPerPlayerSec": -10,
+      "starsPerExtraPlayer": [30, 60, 70],
+      "truckSlotsPerPlayer": 4
+    }
   },
   {
     "id": "lv07_antique_shop",
@@ -834,7 +909,22 @@
     "modifiers": [],
     "stars": [1900, 2450, 3000],
     "satisfactionMultiplier": 8,
-    "scaling": null
+    "scaling": {
+      "basePlayers": 4,
+      "extraSpawnsPerPlayer": [
+        {
+          "item": "box",
+          "count": 2
+        },
+        {
+          "item": "mirror",
+          "count": 1
+        }
+      ],
+      "timeDeltaPerPlayerSec": -10,
+      "starsPerExtraPlayer": [100, 170, 220],
+      "truckSlotsPerPlayer": 4
+    }
   },
   {
     "id": "lv08_six_cats",
@@ -974,7 +1064,22 @@
     "modifiers": [],
     "stars": [1300, 1500, 1750],
     "satisfactionMultiplier": 8,
-    "scaling": null
+    "scaling": {
+      "basePlayers": 4,
+      "extraSpawnsPerPlayer": [
+        {
+          "item": "box",
+          "count": 2
+        },
+        {
+          "item": "mirror",
+          "count": 1
+        }
+      ],
+      "timeDeltaPerPlayerSec": -10,
+      "starsPerExtraPlayer": [100, 170, 220],
+      "truckSlotsPerPlayer": 4
+    }
   },
   {
     "id": "lv09_slope_house",
@@ -1072,7 +1177,22 @@
     "modifiers": ["slope"],
     "stars": [1750, 2000, 2250],
     "satisfactionMultiplier": 8,
-    "scaling": null
+    "scaling": {
+      "basePlayers": 4,
+      "extraSpawnsPerPlayer": [
+        {
+          "item": "box",
+          "count": 2
+        },
+        {
+          "item": "mirror",
+          "count": 1
+        }
+      ],
+      "timeDeltaPerPlayerSec": -10,
+      "starsPerExtraPlayer": [100, 170, 220],
+      "truckSlotsPerPlayer": 4
+    }
   },
   {
     "id": "lv10_walkup",
@@ -1170,7 +1290,22 @@
     "modifiers": ["stairs"],
     "stars": [1550, 1800, 2000],
     "satisfactionMultiplier": 8,
-    "scaling": null
+    "scaling": {
+      "basePlayers": 4,
+      "extraSpawnsPerPlayer": [
+        {
+          "item": "box",
+          "count": 2
+        },
+        {
+          "item": "mirror",
+          "count": 1
+        }
+      ],
+      "timeDeltaPerPlayerSec": -10,
+      "starsPerExtraPlayer": [100, 170, 220],
+      "truckSlotsPerPlayer": 4
+    }
   },
   {
     "id": "lv11_gym",
@@ -1286,7 +1421,22 @@
     "modifiers": [],
     "stars": [1450, 1850, 2250],
     "satisfactionMultiplier": 10,
-    "scaling": null
+    "scaling": {
+      "basePlayers": 6,
+      "extraSpawnsPerPlayer": [
+        {
+          "item": "box",
+          "count": 2
+        },
+        {
+          "item": "mirror",
+          "count": 1
+        }
+      ],
+      "timeDeltaPerPlayerSec": -10,
+      "starsPerExtraPlayer": [100, 170, 220],
+      "truckSlotsPerPlayer": 4
+    }
   },
   {
     "id": "lv12_billiard_hall",
@@ -1390,7 +1540,22 @@
     "modifiers": [],
     "stars": [2150, 2500, 2850],
     "satisfactionMultiplier": 10,
-    "scaling": null
+    "scaling": {
+      "basePlayers": 6,
+      "extraSpawnsPerPlayer": [
+        {
+          "item": "box",
+          "count": 2
+        },
+        {
+          "item": "mirror",
+          "count": 1
+        }
+      ],
+      "timeDeltaPerPlayerSec": -10,
+      "starsPerExtraPlayer": [100, 170, 220],
+      "truckSlotsPerPlayer": 4
+    }
   },
   {
     "id": "lv13_home_aquarium",
@@ -1494,7 +1659,22 @@
     "modifiers": [],
     "stars": [2750, 3150, 3550],
     "satisfactionMultiplier": 10,
-    "scaling": null
+    "scaling": {
+      "basePlayers": 6,
+      "extraSpawnsPerPlayer": [
+        {
+          "item": "box",
+          "count": 2
+        },
+        {
+          "item": "mirror",
+          "count": 1
+        }
+      ],
+      "timeDeltaPerPlayerSec": -10,
+      "starsPerExtraPlayer": [100, 170, 220],
+      "truckSlotsPerPlayer": 4
+    }
   },
   {
     "id": "lv14_minimalist",
@@ -1592,7 +1772,22 @@
     "modifiers": ["landlordChangesMind"],
     "stars": [2350, 2600, 2900],
     "satisfactionMultiplier": 10,
-    "scaling": null
+    "scaling": {
+      "basePlayers": 6,
+      "extraSpawnsPerPlayer": [
+        {
+          "item": "box",
+          "count": 2
+        },
+        {
+          "item": "mirror",
+          "count": 1
+        }
+      ],
+      "timeDeltaPerPlayerSec": -10,
+      "starsPerExtraPlayer": [100, 170, 220],
+      "truckSlotsPerPlayer": 4
+    }
   },
   {
     "id": "lv15_museum",
