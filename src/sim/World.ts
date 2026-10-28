@@ -4,10 +4,12 @@ import type { GameData } from '../data/validate';
 import { Item } from '../entities/Item';
 import { Player } from '../entities/Player';
 import type { PlayerSlot } from '../systems/input/InputManager';
+import { EventBus } from '../systems/EventBus';
 import { DEFAULT_MOTOR, type MotorParams } from '../systems/PlayerMotor';
 import type { Random } from '../systems/Random';
 import type { Vec } from '../systems/geometry';
 import { Theme } from '../ui/theme';
+import { GrabSystem } from './GrabSystem';
 
 export interface Rect {
   x: number;
@@ -25,6 +27,11 @@ export class World {
   readonly items: Item[] = [];
   readonly walls: MatterJS.BodyType[] = [];
   readonly motorParams: MotorParams;
+  readonly bus = new EventBus();
+  readonly grab: GrabSystem;
+  /** Bật thì vẽ thêm điểm nắm của mọi món đồ. */
+  debugDraw = false;
+  private readonly overlay: Phaser.GameObjects.Graphics;
   private readonly playerByBody = new Map<MatterJS.BodyType, Player>();
   private readonly itemByBody = new Map<MatterJS.BodyType, Item>();
 
@@ -35,6 +42,8 @@ export class World {
     readonly random: Random,
   ) {
     this.motorParams = { ...DEFAULT_MOTOR, tripChancePerSec: config.runTripChance };
+    this.grab = new GrabSystem(this);
+    this.overlay = scene.add.graphics().setDepth(9_000);
     scene.matter.world.on('collisionstart', this.onCollisionStart, this);
   }
 
@@ -92,6 +101,7 @@ export class World {
   removeItem(item: Item): void {
     const i = this.items.indexOf(item);
     if (i < 0) return;
+    this.grab.releaseItem(item);
     this.items.splice(i, 1);
     this.itemByBody.delete(item.body);
     item.destroy();
@@ -100,6 +110,17 @@ export class World {
   clearItems(): void {
     for (const item of [...this.items]) this.removeItem(item);
   }
+
+  /** Món đồ có nắm được không (P11: mèo đang trong lồng thì không). */
+  isGrabbable(_item: Item): boolean {
+    return true;
+  }
+
+  /**
+   * Một món đồ đang được khiêng thì bị rơi (có người buông giữa chừng).
+   * P09 thêm sát thương khi rơi; P10 thêm hành vi `dropOnRelease`.
+   */
+  onItemDropped(_item: Item): void {}
 
   playerOf(body: MatterJS.BodyType): Player | undefined {
     return this.playerByBody.get(body);
@@ -123,17 +144,22 @@ export class World {
 
   /** Một bước logic. `slots[i]` là input của người chơi ô i trên máy này. */
   step(dt: number, slots: readonly (PlayerSlot | null)[]): void {
-    for (const item of this.items) item.beforeStep();
+    this.bus.tick++;
+    for (const item of this.items) item.beforeStep(dt);
     for (const p of this.players) {
       const slot = slots[p.slotIndex];
-      if (slot) p.fixedUpdate(slot.prev, slot.cur, dt);
+      if (!slot) continue;
+      this.grab.handleButtons(p, slot);
+      p.fixedUpdate(slot.prev, slot.cur, dt, this.grab.holds.has(p));
     }
+    this.grab.applyCarry(slots, dt);
     this.scene.matter.world.step(dt);
   }
 
   render(alpha: number, frameMs: number): void {
     for (const item of this.items) item.render(alpha);
     for (const p of this.players) p.render(alpha, frameMs);
+    this.grab.render(this.overlay, this.debugDraw);
   }
 
   // ---------- Va chạm ----------
@@ -164,6 +190,7 @@ export class World {
         y: Math.round(p.position.y),
         mode: p.motor.mode,
         running: p.motor.running,
+        holding: this.grab.holding(p)?.uid ?? null,
       })),
       items: this.items.map((i) => ({
         uid: i.uid,
@@ -173,7 +200,11 @@ export class World {
         angle: Math.round((i.angle * 180) / Math.PI),
         durability: i.durability,
         broken: i.broken,
+        state: i.carryState,
+        carriers: i.carriers.size,
+        pinned: i.pinned,
       })),
+      events: this.bus.history.map((l) => l.event.type),
     };
   }
 }

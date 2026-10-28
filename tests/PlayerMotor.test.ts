@@ -131,4 +131,20 @@ describe('PlayerMotor', () => {
     const { vel } = simulate(10, right, { state: down });
     expect(vel.x).toBe(0);
   });
+
+  it('đang khiêng đồ thì không chạy, không lao, không vấp', () => {
+    const carry: MotorInput = { move: { x: 1, y: 0 }, dashPressed: false, carrying: true };
+    const { state, events } = simulate(300, carry, {}, always);
+    expect(state.running).toBe(false);
+    expect(events).not.toContain('tripped');
+    const dash = stepMotor(
+      state,
+      { ...carry, dashPressed: true },
+      { x: 0, y: 0 },
+      DT,
+      DEFAULT_MOTOR,
+      never,
+    );
+    expect(dash.events).not.toContain('dashed');
+  });
 });

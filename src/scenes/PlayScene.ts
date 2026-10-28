@@ -49,9 +49,11 @@ export abstract class PlayScene extends Phaser.Scene {
     for (const slot of this.inputs.slots) if (slot) this.spawnPlayer(slot);
 
     this.debug = new DebugOverlay(this, this.config.debug);
+    this.world.debugDraw = this.config.debug;
     this.input.keyboard?.on('keydown-F1', (e: KeyboardEvent) => {
       e.preventDefault();
       this.debug.setVisible(!this.debug.visible);
+      this.world.debugDraw = this.debug.visible;
     });
     // Phím T (chỉ khi bật debug): cho mọi người vấp ngã để thử hoạt ảnh.
     this.input.keyboard?.on('keydown-T', () => {
@@ -93,6 +95,18 @@ export abstract class PlayScene extends Phaser.Scene {
       teleport: (slot: number, x: number, y: number) => {
         const p = world.players.find((pl) => pl.slotIndex === slot);
         if (p) this.matter.body.setPosition(p.body, { x, y }, false);
+      },
+      /** Đưa người chơi tới sát điểm nắm thứ `point` của món đồ `uid`, quay mặt vào đó. */
+      moveToGrabPoint: (slot: number, uid: number, point: number) => {
+        const p = world.players.find((pl) => pl.slotIndex === slot);
+        const item = world.items.find((i) => i.uid === uid);
+        if (!p || !item) return;
+        const gp = item.grabWorld(point);
+        const c = item.position;
+        const len = Math.hypot(gp.x - c.x, gp.y - c.y) || 1;
+        const out = { x: (gp.x - c.x) / len, y: (gp.y - c.y) / len };
+        this.matter.body.setPosition(p.body, { x: gp.x + out.x * 22, y: gp.y + out.y * 22 }, false);
+        this.matter.body.setVelocity(p.body, { x: 0, y: 0 });
       },
     };
   }

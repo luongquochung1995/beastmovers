@@ -55,6 +55,8 @@ export interface MotorInput {
   move: Vec;
   /** Nút Lao vừa được nhấn ở bước này. */
   dashPressed: boolean;
+  /** Đang khiêng đồ: không chạy, không lao, không vấp (tốc độ do bộ điều khiển khiêng quyết định). */
+  carrying?: boolean;
 }
 
 export type MotorEvent = 'dashed' | 'tripped' | 'gotUp';
@@ -135,9 +137,9 @@ export function stepMotor(
   } else {
     s.holdMs = 0;
   }
-  s.running = moving && mag > 0.9 && s.holdMs >= params.runAfterMs;
+  s.running = !input.carrying && moving && mag > 0.9 && s.holdMs >= params.runAfterMs;
 
-  if (input.dashPressed && s.dashCooldownMs <= 0) {
+  if (input.dashPressed && !input.carrying && s.dashCooldownMs <= 0) {
     s.mode = 'dashing';
     s.modeMs = 0;
     s.dashCooldownMs = params.dashCooldownMs;

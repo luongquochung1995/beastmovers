@@ -67,12 +67,15 @@ export class Player {
     return { x: this.body.position.x, y: this.body.position.y };
   }
 
-  /** Chạy mỗi bước logic, trước `world.step`. */
-  fixedUpdate(prev: InputFrame, cur: InputFrame, dtMs: number): MotorEvent[] {
+  /**
+   * Chạy mỗi bước logic, trước `world.step`. Đang khiêng đồ thì không lao được,
+   * và vận tốc sẽ bị bộ điều khiển khiêng ghi đè sau đó.
+   */
+  fixedUpdate(prev: InputFrame, cur: InputFrame, dtMs: number, carrying = false): MotorEvent[] {
     this.prevPos = this.position;
     const result = stepMotor(
       this.motor,
-      { move: frameAxis(cur), dashPressed: justPressed(prev, cur, Btn.Dash) },
+      { move: frameAxis(cur), dashPressed: justPressed(prev, cur, Btn.Dash), carrying },
       this.body.velocity,
       dtMs,
       this.params,
@@ -82,6 +85,15 @@ export class Player {
     this.scene.matter.body.setVelocity(this.body, result.velocity);
     for (const e of result.events) this.onEvent(e);
     return result.events;
+  }
+
+  /** Vào nhóm va chạm của món đồ đang nắm (để không va vào nó), hoặc 0 để trở lại bình thường. */
+  setCollisionGroup(group: number): void {
+    this.body.collisionFilter.group = group;
+  }
+
+  setVelocity(v: Vec): void {
+    this.scene.matter.body.setVelocity(this.body, v);
   }
 
   knockDown(): void {
@@ -142,7 +154,7 @@ export class Player {
     if (e === 'tripped') this.popText(t('player.trip'));
   }
 
-  private popText(text: string): void {
+  popText(text: string): void {
     const t = this.scene.add
       .text(this.view.x, this.view.y - PLAYER_RADIUS - 30, text, {
         fontFamily: Theme.font,

@@ -558,8 +558,8 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P04 | Nhân vật | A | ✔ | 3–4 ngày | ✅ | 2026-10-28 |
 | P05 | Data loader và validate | B | ✔ | 2–3 ngày | ✅ | 2026-10-28 |
 | P06 | Đồ vật dựng từ data | B | ✔ | 2 ngày | ✅ | 2026-10-28 |
-| P07 | Nắm, thả, ném (1 người) | B | ✔ | 3 ngày | ⬜ | |
-| P08 | Khiêng nhiều người | B | ✔ | 5 ngày | ⬜ | |
+| P07 | Nắm, thả, ném (1 người) | B | ✔ | 3 ngày | ✅ | 2026-10-28 |
+| P08 | Khiêng nhiều người | B | ✔ | 5 ngày | ✅ | 2026-10-28 |
 | P09 | Độ bền và vỡ | B | ✔ | 3 ngày | ⬜ | |
 | P10 | Hành vi đặc biệt của đồ | B | ✔ | 4 ngày | ⬜ | |
 | P11 | Mèo AI | B | ✔ | 3 ngày | ⬜ | |
@@ -594,7 +594,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P40 | Kiểm thử trình duyệt | G | | 2 ngày | ⬜ | |
 | P41 | Phát hành | G | | 2 ngày | ⬜ | |
 
-**Tiến độ:** 5/41 phase · Mốc A 🟨 · B 🟨 · C ⬜ · D ⬜ · E ⬜ · F ⬜ · G ⬜
+**Tiến độ:** 7/41 phase · Mốc A 🟨 · B 🟨 · C ⬜ · D ⬜ · E ⬜ · F ⬜ · G ⬜
 
 ---
 
@@ -664,24 +664,26 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 - 📝 *Kiểm tra: Chromium chèn thêm "Đèn cây" vào items.json qua mạng → có trong bảng chọn và thả được; thả cả 23 món cùng lúc; click đặt, chuột phải xóa; đẩy cùng vận tốc thì tủ lạnh (ma sát 0,01) trượt 252px, sofa (0,35) chỉ 50px. Data có 22 món (16 trong plan + đồ ăn, cá, bi, quả tạ, sách, lồng mèo). Hình tạm: khối màu + emoji. Sandbox mở bằng phím S ở menu.*
 
 #### P07 · Nắm, thả, ném (1 người)
-- [ ] Nắm món đồ gần nhất trong `grabRange`, gắn vào điểm nắm gần nhất
-- [ ] Thả ra, và ném theo hướng đang đi (`throwSpeed`)
-- [ ] Mang đồ nặng thì đi chậm lại theo khối lượng
-- [ ] Viền sáng món đồ có thể nắm
+- [x] Nắm món đồ gần nhất trong `grabRange`, gắn vào điểm nắm gần nhất
+- [x] Thả ra, và ném theo hướng đang đi (`throwSpeed`)
+- [x] Mang đồ nặng thì đi chậm lại theo khối lượng
+- [x] Viền sáng món đồ có thể nắm
 - **✅ Xong khi:** một người nhặt, mang và ném được thùng carton, gương, chậu cây.
+- 📝 *Kiểm tra (Chromium): nắm/thả thùng, mang thùng đi cùng tốc độ người; ném thùng bay 302px, bể cá 25kg bay 188px; mang bể cá chậm hơn mang thùng; một người kéo sofa (cần 2) chỉ lê được 11px/1,5s và phát `itemScrape`; viền sáng + chấm ở điểm sẽ nắm. Chỉ nắm được khi điểm nắm còn trống nằm trong tầm với (đồ dài phải đi tới đúng chỗ). Vật bị ném bay ~0,45s gần như không ma sát; người ném xuyên qua vật vừa ném 0,25s. Đồ > 30kg hoặc cần > 1 người thì không ném được. Phần "trừ độ bền" khi kéo lê làm ở P09 (đã có sự kiện `itemScrape`).*
 
 #### P08 · Khiêng nhiều người
-- [ ] Đọc `grabPoints` từ data; mỗi điểm chỉ một người nắm
-- [ ] Nối người và đồ bằng constraint mềm (stiffness thấp, giới hạn lực)
-- [ ] Gộp hướng: hướng di chuyển là trung bình hướng của những người đang nắm
-- [ ] `liftRule`:
-  - [ ] `free`: một người cũng kéo được, đông thì nhanh hơn
-  - [ ] `drag`: thiếu người thì kéo lê chậm, trừ độ bền
-  - [ ] `strict`: thiếu người thì không nhúc nhích
-- [ ] Đủ người thì món đồ "nhấc lên" (đổi bóng đổ, đổi viền màu)
-- [ ] Một người buông khi đang nhấc đồ `strict` thì món đồ rơi xuống, phát sinh va chạm
-- [ ] Bộ đếm `x/y 👐` trên món đồ
+- [x] Đọc `grabPoints` từ data; mỗi điểm chỉ một người nắm
+- [x] Nối người và đồ bằng constraint mềm (stiffness thấp, giới hạn lực)
+- [x] Gộp hướng: hướng di chuyển là trung bình hướng của những người đang nắm
+- [x] `liftRule`:
+  - [x] `free`: một người cũng kéo được, đông thì nhanh hơn
+  - [x] `drag`: thiếu người thì kéo lê chậm, trừ độ bền
+  - [x] `strict`: thiếu người thì không nhúc nhích
+- [x] Đủ người thì món đồ "nhấc lên" (đổi bóng đổ, đổi viền màu)
+- [x] Một người buông khi đang nhấc đồ `strict` thì món đồ rơi xuống, phát sinh va chạm
+- [x] Bộ đếm `x/y 👐` trên món đồ
 - **✅ Xong khi:** 4 người chung máy khiêng được piano (`strict`, 4 người); 3 người thì piano đứng im; 1 người buông thì piano rơi.
+- 📝 *Kiểm tra (Chromium, 2 bàn phím + 2 tay cầm giả lập, chạy 2 lần cùng kết quả): 3 người đẩy 1s → piano đi 0px; người thứ 4 nắm → `lifted`, cùng đẩy phải 1s → đi 91px, không xoay; hai người trên kéo trái, hai người dưới kéo phải → xoay ~50° tại chỗ; kéo co trái/phải → đứng im; P1 buông → `bigLiftFail` + `itemDropped`, piano đóng đinh lại. 10 unit test bộ điều khiển khiêng. Sửa lỗi phát hiện khi test: người đang khiêng vẫn bị tính là chạy nên có thể vấp ngã và tuột tay → giờ đang khiêng thì không chạy/lao/vấp.*
 
 #### P09 · Độ bền và vỡ
 - [ ] Tính lực va chạm; vượt `breakImpulse` thì trừ `durability`
