@@ -104,6 +104,33 @@ describe('bắt tay vào phòng', () => {
     expect(c.state.kind === 'rejected' && c.state.reason).toBe('full');
   });
 
+  it('máy khách rớt mạng rồi có lại: vào lại phòng; quá thời gian chờ thì báo mất host', () => {
+    const { net, host } = setup();
+    const a = new RoomSession(net.join('a'), 'client', info, 1, scheduler);
+    a.reconnectGraceMs = 10_000;
+    vi.advanceTimersByTime(100);
+    host.lock(['host', 'a']);
+    net.setOffline('a', true);
+    vi.advanceTimersByTime(100);
+    expect(a.state.kind).toBe('reconnecting');
+    expect(host.members.map((m) => m.id)).toEqual(['host']);
+    // Có mạng lại sau 5 giây: chào lại host, được nhận lại.
+    vi.advanceTimersByTime(5000);
+    net.setOffline('a', false);
+    vi.advanceTimersByTime(100);
+    expect(a.state.kind).toBe('joined');
+    expect(a.rejoins).toBe(1);
+    expect(host.members.map((m) => m.id)).toEqual(['host', 'a']);
+    // Máy lạ không được vào giữa lúc đang chơi.
+    const x = new RoomSession(net.join('x'), 'client', info, 1, scheduler);
+    vi.advanceTimersByTime(100);
+    expect(x.state.kind === 'rejected' && x.state.reason).toBe('started');
+    // Mất mạng lâu hơn thời gian chờ.
+    net.setOffline('a', true);
+    vi.advanceTimersByTime(10_100);
+    expect(a.state).toEqual({ kind: 'hostLeft', quit: false });
+  });
+
   it('không có host thì báo không tìm thấy; host rời thì báo cho máy khách', () => {
     const net = new LoopbackNetwork({ latencyMs: 20, scheduler });
     const lone = new RoomSession(net.join('x'), 'client', info, 1, scheduler, 5000);
@@ -115,7 +142,7 @@ describe('bắt tay vào phòng', () => {
     // Host xuất hiện muộn vẫn vào được.
     expect(lone.state.kind).toBe('joined');
     host.close();
-    vi.advanceTimersByTime(100);
-    expect(lone.state.kind).toBe('hostLeft');
+    vi.advanceTimersByTime(300);
+    expect(lone.state).toEqual({ kind: 'hostLeft', quit: true });
   });
 });

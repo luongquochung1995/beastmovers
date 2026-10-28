@@ -33,6 +33,7 @@ export class LoopbackNetwork {
   /** Thời điểm giao gói gần nhất trên từng cặp (để giữ thứ tự). */
   private readonly lastDelivery = new Map<string, number>();
   private readonly queues = new Map<string, Queued[]>();
+  private readonly offline = new Set<PeerId>();
   readonly scheduler: Scheduler;
   private readonly random: Random;
 
@@ -57,11 +58,34 @@ export class LoopbackNetwork {
     for (const other of this.endpoints.values()) other.emitLeave(id);
   }
 
+  /**
+   * Giả lập một máy mất mạng (tắt Wi-Fi): các máy khác thấy nó rời đi, gói tới/đi bị bỏ.
+   * Bật lại thì hai bên thấy nhau vào lại (cùng định danh).
+   */
+  setOffline(id: PeerId, offline: boolean): void {
+    const ep = this.endpoints.get(id);
+    if (!ep || this.offline.has(id) === offline) return;
+    if (offline) this.offline.add(id);
+    else this.offline.delete(id);
+    for (const other of this.endpoints.values()) {
+      if (other === ep || this.offline.has(other.selfId)) continue;
+      if (offline) {
+        other.emitLeave(id);
+        ep.emitLeave(other.selfId);
+      } else {
+        other.emitJoin(id);
+        ep.emitJoin(other.selfId);
+      }
+    }
+  }
+
   peersOf(id: PeerId): PeerId[] {
-    return [...this.endpoints.keys()].filter((p) => p !== id);
+    if (this.offline.has(id)) return [];
+    return [...this.endpoints.keys()].filter((p) => p !== id && !this.offline.has(p));
   }
 
   deliver(from: PeerId, to: PeerId, data: Payload): void {
+    if (this.offline.has(from) || this.offline.has(to)) return;
     const { latencyMs = 0, jitterMs = 0, loss = 0 } = this.options;
     let delay = latencyMs + this.random.next() * jitterMs;
     if (loss > 0 && this.random.chance(loss)) delay += 2 * latencyMs;
@@ -84,7 +108,9 @@ export class LoopbackNetwork {
         const now = this.scheduler.now();
         while (queue[0] && queue[0].at <= now + 1) {
           const m = queue.shift()!;
-          this.endpoints.get(m.to)?.receive(m.data, m.from);
+          if (!this.offline.has(m.to) && !this.offline.has(m.from)) {
+            this.endpoints.get(m.to)?.receive(m.data, m.from);
+          }
         }
         this.schedule(key, queue);
       },

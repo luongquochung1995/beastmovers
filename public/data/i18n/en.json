@@ -172,5 +172,19 @@
   "lobby.helpHost": "C/Throw: color · H/Dash: hat · N: name · [ ]: level · P/Start: start",
   "lobby.nameLabel": "Player name",
   "result.footerOnline": "Enter / Esc: leave the room",
-  "game.hintOnline": "Space / Enter / A: grab  ·  E / Right Shift / B: throw  ·  Q / Right Ctrl / X: dash  ·  F1: debug"
+  "game.hintOnline": "Space / Enter / A: grab  ·  E / Right Shift / B: throw  ·  Q / Right Ctrl / X: dash  ·  F1: debug",
+  "online.rejectStarted": "The game has already started in this room.",
+  "online.reconnecting": "Connection lost — reconnecting…",
+  "online.hostLost": "Lost connection to the host.",
+  "net.hostTag": "host",
+  "net.slow": "slow network",
+  "net.stalled": "Network hiccup…",
+  "net.reconnecting": "Connection lost — reconnecting… ({s}s)",
+  "net.backToMenu": "Enter: back to menu",
+  "net.playerLost": "📵 disconnected",
+  "net.playerBack": "📶 back!",
+  "online.via.peerjs": "WebRTC (PeerJS, fallback)",
+  "online.tips": "• Try another network (mobile hotspot, another Wi-Fi)\n• Turn off VPN / strict ad-blockers\n• Check the room code, ask the host for a new link\n• Or play together on one computer (keyboard + gamepads)",
+  "online.retry": "Try again",
+  "online.playLocal": "Play on this computer"
 }

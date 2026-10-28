@@ -1,3 +1,4 @@
+import Phaser from 'phaser';
 import { t } from '../data/i18n';
 import type { LevelDef } from '../data/types';
 import { type BuiltLevel, buildLevel, playerSpawn } from '../sim/levelSetup';
@@ -6,6 +7,7 @@ import { EMPTY_FRAME } from '../systems/input/InputFrame';
 import type { SimSlot } from '../sim/SimSlot';
 import type { Vec } from '../systems/geometry';
 import { fitCamera } from '../systems/cameraFit';
+import { SLOW_PING_MS } from '../net/OnlineGame';
 import { GameHud, HUD_TOP } from '../ui/GameHud';
 import { GAME_HEIGHT, GAME_WIDTH, Theme } from '../ui/theme';
 import type { HudScene } from './HudScene';
@@ -23,6 +25,9 @@ export class GameScene extends PlayScene {
   runtime!: LevelRuntime;
   private leaving = false;
   private hud: GameHud | null = null;
+  private netPing: Phaser.GameObjects.Text | null = null;
+  private netBanner: Phaser.GameObjects.Text | null = null;
+  private hostGoneHandled = false;
   private lastFrameMs = 0;
   private cameraReady = false;
   /** Kiểm thử: khóa zoom camera (null = tự động). */
@@ -61,6 +66,58 @@ export class GameScene extends PlayScene {
         padding: { x: 8, y: 3 },
       })
       .setOrigin(0.5, 1);
+    if (this.online) {
+      const style = {
+        fontFamily: Theme.font,
+        fontSize: '15px',
+        color: Theme.text,
+        backgroundColor: '#000000aa',
+        padding: { x: 8, y: 4 },
+      };
+      this.netPing = hud.add.text(GAME_WIDTH - 8, HUD_TOP + 8, '', style).setOrigin(1, 0);
+      this.netBanner = hud.add
+        .text(GAME_WIDTH / 2, HUD_TOP + 40, '', { ...style, fontSize: '20px', align: 'center' })
+        .setOrigin(0.5, 0)
+        .setVisible(false);
+    }
+  }
+
+  /** Online: độ trễ, cảnh báo mạng chậm, mất kết nối / host thoát. */
+  private updateNetHud(): void {
+    const online = this.online;
+    if (!online || !this.netPing || !this.netBanner) return;
+    const ping = online.pingMs();
+    const slow = ping !== null && ping > SLOW_PING_MS;
+    const [up, all] = online.peersOnline();
+    const who = online.isHost ? `${t('net.hostTag')} · ${up}/${all}  ` : '';
+    this.netPing
+      .setText(
+        `${who}📶 ${ping === null ? '…' : `${ping} ms`}${slow ? `  ⚠ ${t('net.slow')}` : ''}`,
+      )
+      .setColor(slow ? '#ff7b7b' : Theme.text);
+    const st = online.status();
+    let msg = '';
+    if (st.kind === 'stalled') msg = `⚠ ${t('net.stalled')}`;
+    else if (st.kind === 'reconnecting') msg = `⚠ ${t('net.reconnecting', { s: st.secondsLeft })}`;
+    else if (st.kind === 'hostGone') {
+      msg = `${t(st.quit ? 'online.hostLeft' : 'online.hostLost')}\n${t('net.backToMenu')}`;
+      if (!this.hostGoneHandled) {
+        this.hostGoneHandled = true;
+        this.input.keyboard?.once('keydown-ENTER', () => this.leaveOnline());
+      }
+    }
+    this.netBanner.setText(msg).setVisible(msg !== '');
+  }
+
+  /** Rời phòng online, về menu. */
+  private leaveOnline(): void {
+    const net = this.online?.ctx;
+    net?.session.close();
+    this.registry.set(RegistryKeys.Net, null);
+    const url = new URL(window.location.href);
+    url.searchParams.delete('room');
+    history.replaceState(null, '', url.toString());
+    this.scene.start(SceneKeys.Menu);
   }
 
   protected spawnPointFor(slotIndex: number): Vec {
@@ -73,6 +130,7 @@ export class GameScene extends PlayScene {
 
   override updateHud(): void {
     this.hud?.update(this.lastFrameMs);
+    this.updateNetHud();
   }
 
   protected override afterRender(frameMs: number): void {
@@ -108,9 +166,16 @@ export class GameScene extends PlayScene {
     cam.centerOn(cx, cy);
   }
 
-  /** Esc: kết thúc sớm (xe chạy luôn). Máy khách online không kết thúc màn của cả phòng. */
+  /**
+   * Esc: kết thúc sớm (xe chạy luôn). Máy khách online không kết thúc màn của cả phòng;
+   * nếu host đã thoát thì Esc đưa về menu.
+   */
   protected onExit(): void {
-    if (this.online && !this.online.isHost) return;
+    if (this.online && !this.online.isHost) {
+      if (this.online.status().kind === 'hostGone') this.leaveOnline();
+      else this.input.keyboard?.once('keydown-ESC', () => this.onExit());
+      return;
+    }
     this.runtime.finishNow();
   }
 

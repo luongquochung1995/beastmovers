@@ -576,7 +576,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P22 | Gửi input và snapshot | D | ✔ | 4 ngày | ✅ | 2026-10-28 |
 | P23 | Nội suy và dự đoán | D | ✔ | 4 ngày | ✅ | 2026-10-28 |
 | P24 | Đồng bộ sự kiện | D | ✔ | 2 ngày | ✅ | 2026-10-28 |
-| P25 | Rớt mạng, lỗi kết nối, dự phòng | D | ✔ | 4 ngày | ⬜ | |
+| P25 | Rớt mạng, lỗi kết nối, dự phòng | D | ✔ | 4 ngày | ✅ | 2026-10-28 |
 | P26 | Test 8 người online | D | ✔ | 3 ngày | ⬜ | |
 | P27 | Menu chính, cài đặt, hướng dẫn | E | ✔ | 3 ngày | ⬜ | |
 | P28 | Màn chọn màn (khóa theo người và sao) | E | ✔ | 3 ngày | ⬜ | |
@@ -594,7 +594,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P40 | Kiểm thử trình duyệt | G | | 2 ngày | ⬜ | |
 | P41 | Phát hành | G | | 2 ngày | ⬜ | |
 
-**Tiến độ:** 22/41 phase · Mốc A 🟨 · B ✅ · C ✅ · D 🟨 · E ⬜ · F ⬜ · G ⬜
+**Tiến độ:** 23/41 phase · Mốc A 🟨 · B ✅ · C ✅ · D 🟨 · E ⬜ · F ⬜ · G ⬜
 
 ---
 
@@ -842,12 +842,13 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 - 📝 *Kiểm tra (Chromium, 3 máy: host tiếng Việt, khách tiếng Anh, khách tiếng Việt): đầu màn → cả 3 cùng câu `levelStart#4` ("Đồ nào cũng có kỷ niệm hết đó nghe chưa." / "Every single thing here has a memory, you hear?"); gương vỡ → cùng `itemBroken#4`, cả 3 máy có vùng mảnh kính, gương vỡ; thùng lên xe → cùng `itemLoaded#3`; còn 60 giây → cùng `timeLow#2`; máy khách bấm Ping (F) → cả 3 máy nhận sự kiện ping, hiện "❗" trên đầu; host kết thúc → **bảng kết quả giống hệt nhau trên cả 3 máy**. Cách làm: mô phỏng không vẽ hiệu ứng trực tiếp mà gọi `world.fx` (chữ nổi bằng khóa i18n, rung màn hình, câu thoại = loại + số thứ tự, vùng nước/kính mới sinh, ping); host gửi hiệu ứng + sự kiện game kèm số bước, máy khách phát khi hình vẽ (đang chậm ~100 ms) tới đúng bước đó; máy vào màn muộn nhận bù hiệu ứng 5 giây gần nhất (lỗi tìm thấy: câu chào đầu màn bị mất ở máy khách). Thế giới ở máy khách "thụ động": sự kiện host gửi chỉ để hiển thị, không tự gây sát thương/hành vi. Đọc câu thoại (giọng ú ớ) phát ở mọi máy. ⚠️ Ping hiện mới là "❗" trên đầu; vòng ping đầy đủ ở P30. Chưa có âm thanh khác ngoài giọng chủ nhà.*
 
 #### P25 · Rớt mạng, lỗi kết nối, dự phòng
-- [ ] Client rớt mạng: nhân vật đứng yên, được vào lại đúng chỗ cũ trong `reconnectGraceSec`
-- [ ] Host thoát: kết thúc màn, báo cho mọi người, quay về menu
-- [ ] Dự phòng: chuyển sang PeerJS nếu Trystero không kết nối được
-- [ ] Màn hình lỗi kết nối kèm hướng dẫn (thử mạng khác, dùng chơi chung máy)
-- [ ] Hiện chỉ số mạng; cảnh báo khi ping > 250 ms
+- [x] Client rớt mạng: nhân vật đứng yên, được vào lại đúng chỗ cũ trong `reconnectGraceSec`
+- [x] Host thoát: kết thúc màn, báo cho mọi người, quay về menu
+- [x] Dự phòng: chuyển sang PeerJS nếu Trystero không kết nối được
+- [x] Màn hình lỗi kết nối kèm hướng dẫn (thử mạng khác, dùng chơi chung máy)
+- [x] Hiện chỉ số mạng; cảnh báo khi ping > 250 ms
 - **✅ Xong khi:** tắt Wi-Fi một client 10 giây rồi bật lại thì client vào lại đúng chỗ cũ; tắt host thì mọi client nhận thông báo.
+- 📝 *Kiểm tra (Chromium, 3 máy): máy A "tắt Wi-Fi" 10 giây giữa màn trong lúc vẫn giữ phím đi (giả lập: kênh truyền ngừng gửi/nhận, các máy khác tự phát hiện qua nhịp tim như mất mạng thật) → host thấy A mất kết nối sau ~4 giây, nhân vật A đứng yên trên host (1175 → 1176, chỉ trôi 1 px quán tính), A hiện "Mất kết nối — đang thử vào lại… (29 giây)", máy B thấy chữ "📵 mất kết nối" trên đầu A; bật lại → A tự vào lại (bắt tay lại, xin lại ô, nhận snapshot đầy đủ), **đúng chỗ cũ**, đi tiếp được; B thấy "📶 đã vào lại!". Host đóng tab → cả 2 máy khách hiện ngay "Host đã rời phòng. Enter: về menu" → Enter về menu (host rớt mạng không báo trước thì chờ `reconnectGraceSec` = 30 giây rồi báo "Mất kết nối tới host"). **Dự phòng PeerJS**: relay Trystero hỏng → sau 8 giây máy khách chuyển sang PeerJS (máy chủ PeerJS chạy trên máy vì môi trường dev chặn máy chủ công cộng), vào lobby, chơi được, ping 121 ms; host nghe cùng lúc trên cả hai kênh. Màn hình không tìm thấy phòng có hướng dẫn + nút "Thử lại" / "Chơi chung máy này". Góc phải: 📶 độ trễ (máy khách tới host; host: máy khách chậm nhất, số máy đang kết nối), > 250 ms hiện "⚠ mạng chậm". Unit test: rớt mạng/vào lại/quá giờ chờ, máy lạ bị từ chối khi đang chơi, chuyển kênh dự phòng. Lỗi tìm thấy: (1) lời chào tạm biệt bị mất khi đóng tab vì kênh truyền tự đóng trước → phiên chơi tự lo việc đóng tab; (2) máy khách mất mạng vẫn tự đoán nhân vật chạy tiếp → ngừng đoán khi mất kết nối. ⚠️ Chưa thử tắt Wi-Fi thật với WebRTC (Trystero tự kết nối lại hay không cần thử trên máy thật); tải lại trang thì là máy mới (định danh mới) nên không lấy lại được chỗ cũ; máy chủ PeerJS công cộng chưa thử được.*
 
 #### P26 · Test 8 người online
 - [ ] Test 8 máy thật (hoặc 8 tab trên vài máy)

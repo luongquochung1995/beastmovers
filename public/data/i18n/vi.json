@@ -172,5 +172,19 @@
   "lobby.helpHost": "C/Ném: màu · H/Lao: mũ · N: tên · [ ]: màn · P/Start: bắt đầu",
   "lobby.nameLabel": "Tên người chơi",
   "result.footerOnline": "Enter / Esc: rời phòng",
-  "game.hintOnline": "Space / Enter / nút A: nắm  ·  E / Shift phải / nút B: ném  ·  Q / Ctrl phải / nút X: lao  ·  F1: debug"
+  "game.hintOnline": "Space / Enter / nút A: nắm  ·  E / Shift phải / nút B: ném  ·  Q / Ctrl phải / nút X: lao  ·  F1: debug",
+  "online.rejectStarted": "Phòng này đã bắt đầu chơi rồi.",
+  "online.reconnecting": "Mất kết nối — đang thử vào lại…",
+  "online.hostLost": "Mất kết nối tới host.",
+  "net.hostTag": "host",
+  "net.slow": "mạng chậm",
+  "net.stalled": "Mạng chập chờn…",
+  "net.reconnecting": "Mất kết nối — đang thử vào lại… ({s} giây)",
+  "net.backToMenu": "Enter: về menu",
+  "net.playerLost": "📵 mất kết nối",
+  "net.playerBack": "📶 đã vào lại!",
+  "online.via.peerjs": "WebRTC (PeerJS, dự phòng)",
+  "online.tips": "• Thử mạng khác (phát 4G từ điện thoại, Wi-Fi khác)\n• Tắt VPN / trình chặn quảng cáo quá mạnh\n• Kiểm tra mã phòng, xin host link mới\n• Hoặc chơi chung một máy (bàn phím + tay cầm)",
+  "online.retry": "Thử lại",
+  "online.playLocal": "Chơi chung máy này"
 }

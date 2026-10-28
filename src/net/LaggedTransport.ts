@@ -72,6 +72,8 @@ export class LaggedTransport implements Transport {
 
   close(): void {
     if (this.timer) clearTimeout(this.timer);
+    // Gửi nốt các gói đang chờ (vd. lời chào tạm biệt) rồi mới đóng.
+    for (const m of this.queue.splice(0)) this.inner.send(m.data, m.to);
     this.inner.close();
   }
 }

@@ -232,6 +232,13 @@ export class ClientInputSender {
     });
   }
 
+  /** Vào lại sau khi mất kết nối: xin lại ô cho mọi người chơi trên máy. */
+  rejoin(): void {
+    this.assigned.clear();
+    this.requested.clear();
+    for (const buf of this.pending.values()) buf.frames = [];
+  }
+
   /** Gọi mỗi bước logic. */
   tick(dtMs: number, allowJoin: boolean): void {
     this.inputs.poll(allowJoin);

@@ -24,8 +24,9 @@ export class BroadcastTransport implements Transport {
   private readonly joinCbs: ((peer: PeerId) => void)[] = [];
   private readonly leaveCbs: ((peer: PeerId) => void)[] = [];
   private readonly timer: ReturnType<typeof setInterval>;
-  private readonly onPageHide = () => this.close();
   private closed = false;
+  /** Giả lập mất mạng (kiểm thử): không gửi, không nhận; máy khác tự thấy máy này "rời đi". */
+  private offline = false;
 
   constructor(room: string, selfId: PeerId = crypto.randomUUID().slice(0, 8)) {
     this.selfId = selfId;
@@ -33,7 +34,6 @@ export class BroadcastTransport implements Transport {
     this.channel.onmessage = (e: MessageEvent<Wire>) => this.receive(e.data);
     this.post({ k: 'hello', from: selfId });
     this.timer = setInterval(() => this.heartbeat(), HEARTBEAT_MS);
-    window.addEventListener('pagehide', this.onPageHide);
   }
 
   send(data: Payload, to?: PeerId): void {
@@ -65,21 +65,27 @@ export class BroadcastTransport implements Transport {
     return [...this.lastSeen.keys()];
   }
 
+  /** Giả lập tắt/bật Wi-Fi (kiểm thử rớt mạng). */
+  setOffline(offline: boolean): void {
+    if (this.offline === offline) return;
+    this.offline = offline;
+    if (!offline) this.post({ k: 'hello', from: this.selfId });
+  }
+
   close(): void {
     if (this.closed) return;
     this.post({ k: 'bye', from: this.selfId });
     this.closed = true;
     clearInterval(this.timer);
-    window.removeEventListener('pagehide', this.onPageHide);
     this.channel.close();
   }
 
   private post(w: Wire): void {
-    if (!this.closed) this.channel.postMessage(w);
+    if (!this.closed && !this.offline) this.channel.postMessage(w);
   }
 
   private receive(w: Wire): void {
-    if (this.closed || w.from === this.selfId) return;
+    if (this.closed || this.offline || w.from === this.selfId) return;
     switch (w.k) {
       case 'hello':
         this.post({ k: 'here', from: this.selfId, to: w.from });

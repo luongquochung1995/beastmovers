@@ -99,6 +99,10 @@ export const configSchema = obj({
     ),
     /** Relay nostr để Trystero tìm nhau; bỏ trống thì dùng danh sách mặc định của Trystero. */
     relayUrls: optional(arr(str({ minLen: 1 }))),
+    /** Máy chủ PeerJS (kênh dự phòng); bỏ trống thì dùng máy chủ công cộng của PeerJS. */
+    peerServer: optional(
+      obj({ host: str({ minLen: 1 }), port: int({ min: 1 }), path: str(), secure: bool() }),
+    ),
     inputHz: int({ min: 1 }),
     snapshotHz: int({ min: 1 }),
     interpolationDelayMs: num({ min: 0 }),

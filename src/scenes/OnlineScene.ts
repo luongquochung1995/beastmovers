@@ -30,6 +30,8 @@ export type OnlineSceneData = { mode?: 'create' } | { mode: 'join'; code: string
 const BAD = '#ff7b7b';
 const GOOD = '#7CFC8A';
 const CARD_W = 580;
+/** Máy khách chờ tìm host qua Trystero bao lâu trước khi thử kênh dự phòng PeerJS. */
+const FALLBACK_AFTER_MS = 8000;
 const CARD_H = 74;
 
 /**
@@ -112,8 +114,22 @@ export class OnlineScene extends Phaser.Scene {
 
   private open(code: string, role: 'host' | 'client'): void {
     this.code = code;
-    const { transport, kind } = openTransport(this.config.net, code, window.location.search);
+    const { transport, kind, fallback } = openTransport(
+      this.config.net,
+      code,
+      window.location.search,
+      role,
+    );
     this.kind = kind;
+    // Máy khách: Trystero không tìm được host sau một lúc thì thử PeerJS.
+    if (fallback) {
+      this.time.delayedCall(FALLBACK_AFTER_MS, () => {
+        if (this.session?.state.kind !== 'connecting') return;
+        fallback.useFallback();
+        this.kind = 'peerjs';
+        this.redraw();
+      });
+    }
     this.session = new RoomSession(
       transport,
       role,
@@ -263,7 +279,17 @@ export class OnlineScene extends Phaser.Scene {
   private keepParams(): string {
     const p = new URLSearchParams(window.location.search);
     let extra = '';
-    for (const k of ['transport', 'relay', 'debug', 'lang', 'lag', 'jitter', 'predict']) {
+    for (const k of [
+      'transport',
+      'relay',
+      'debug',
+      'lang',
+      'lag',
+      'jitter',
+      'predict',
+      'peerserver',
+      'fallback',
+    ]) {
       const v = p.get(k);
       if (v !== null) extra += `&${k}${v ? `=${encodeURIComponent(v)}` : ''}`;
     }
@@ -360,7 +386,33 @@ export class OnlineScene extends Phaser.Scene {
     this.text(cx, 190, inviteLink(window.location.href, this.code), 18, Theme.muted);
     const status = this.statusText();
     this.text(cx, 300, status.text, 24, status.color);
+    // Không vào được: hướng dẫn, thử lại, hoặc chơi chung máy.
+    const k = this.session?.state.kind;
+    const failed = this.error !== null || k === 'noHost' || k === 'hostLeft';
+    if (failed) {
+      this.text(cx, 400, t('online.tips'), 18, Theme.muted).setLineSpacing(6);
+      this.button(cx - 150, 520, t('online.retry'), () => this.retry(), 22);
+      this.button(cx + 150, 520, t('online.playLocal'), () => this.playLocal(), 22);
+    }
     this.text(cx, GAME_HEIGHT - 40, this.footer(t('online.leaveHint')), 18, Theme.muted);
+  }
+
+  /** Thử vào lại phòng này từ đầu (kênh truyền mới). */
+  private retry(): void {
+    const code = this.code;
+    this.session?.close();
+    this.session = null;
+    this.lobby = null;
+    this.error = null;
+    this.open(code, 'client');
+  }
+
+  /** Bỏ online, chơi chung một máy. */
+  private playLocal(): void {
+    const url = new URL(window.location.href);
+    url.searchParams.delete('room');
+    history.replaceState(null, '', url.toString());
+    this.scene.start(SceneKeys.Game);
   }
 
   private footer(hint: string): string {
@@ -489,12 +541,15 @@ export class OnlineScene extends Phaser.Scene {
           return { text: t('online.rejectData', { host: st.hostDataHash, you: mine }), color: BAD };
         }
         if (st.reason === 'kicked') return { text: t('online.kicked'), color: BAD };
+        if (st.reason === 'started') return { text: t('online.rejectStarted'), color: BAD };
         return { text: t('online.rejectFull', { max: this.config.maxPlayers }), color: BAD };
       }
       case 'noHost':
         return { text: t('online.noHost'), color: BAD };
+      case 'reconnecting':
+        return { text: t('online.reconnecting'), color: Theme.accent };
       case 'hostLeft':
-        return { text: t('online.hostLeft'), color: BAD };
+        return { text: t(s.state.quit ? 'online.hostLeft' : 'online.hostLost'), color: BAD };
     }
   }
 

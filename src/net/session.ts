@@ -14,7 +14,7 @@ export interface SessionInfo {
   maxPlayers: number;
 }
 
-export type RejectReason = 'version' | 'data' | 'full' | 'kicked';
+export type RejectReason = 'version' | 'data' | 'full' | 'kicked' | 'started';
 
 export interface Member {
   id: PeerId;
@@ -26,7 +26,9 @@ export type SessionMsg =
   | { t: 'hello'; version: string; dataHash: string; seats: number }
   | { t: 'welcome'; members: Member[] }
   | { t: 'roster'; members: Member[] }
-  | { t: 'reject'; reason: RejectReason; version: string; dataHash: string };
+  | { t: 'reject'; reason: RejectReason; version: string; dataHash: string }
+  /** Rời phòng chủ động (khác với rớt mạng). */
+  | { t: 'bye' };
 
 export type SessionState =
   /** Máy khách đang chờ host trả lời. */
@@ -36,10 +38,12 @@ export type SessionState =
   | { kind: 'rejected'; reason: RejectReason; hostVersion: string; hostDataHash: string }
   /** Hết giờ chờ mà không thấy host (mã sai, phòng đã đóng, hoặc không kết nối được). */
   | { kind: 'noHost' }
-  /** Host rời phòng. */
-  | { kind: 'hostLeft' };
+  /** Mất kết nối tới host, đang chờ vào lại (tối đa `reconnectGraceMs`). */
+  | { kind: 'reconnecting' }
+  /** Host rời phòng (thoát hẳn, hoặc mất kết nối quá lâu). */
+  | { kind: 'hostLeft'; quit: boolean };
 
-const SESSION_TYPES = new Set(['hello', 'welcome', 'roster', 'reject']);
+const SESSION_TYPES = new Set(['hello', 'welcome', 'roster', 'reject', 'bye']);
 
 export function isSessionMsg(data: Payload): data is SessionMsg {
   return (
@@ -65,7 +69,13 @@ export class RoomSession {
   private readonly accepted = new Map<PeerId, number>();
   /** Máy đã bị host đuổi: chào lại cũng bị từ chối. */
   private readonly banned = new Set<PeerId>();
+  /** Host: đang chơi thì chỉ nhận lại những máy có trong danh sách lúc bắt đầu. */
+  private lockedTo: Set<PeerId> | null = null;
   private closed = false;
+  /** Số lần đã vào lại sau khi mất kết nối (máy khách). */
+  rejoins = 0;
+  /** Thời gian chờ vào lại sau khi mất kết nối. */
+  reconnectGraceMs = 30_000;
 
   constructor(
     readonly transport: Transport,
@@ -73,7 +83,7 @@ export class RoomSession {
     private readonly info: SessionInfo,
     /** Số người chơi trên máy này. */
     private localSeats: number,
-    scheduler: Scheduler = realScheduler,
+    private readonly scheduler: Scheduler = realScheduler,
     joinTimeoutMs = JOIN_TIMEOUT_MS,
   ) {
     this.hostId = role === 'host' ? transport.selfId : null;
@@ -83,6 +93,8 @@ export class RoomSession {
     });
     transport.onPeerJoin((peer) => this.peerJoined(peer));
     transport.onPeerLeave((peer) => this.peerLeft(peer));
+    // Đóng tab: chào tạm biệt rồi đóng kênh (kênh truyền không tự đóng khi đóng tab).
+    if (typeof window !== 'undefined') window.addEventListener('pagehide', this.onPageHide);
     if (role === 'host') this.rebuildMembers();
     else {
       for (const peer of transport.peers()) this.peerJoined(peer);
@@ -128,6 +140,11 @@ export class RoomSession {
     this.rosterChanged();
   }
 
+  /** Host: bắt đầu chơi; từ giờ chỉ những máy này được vào (lại). */
+  lock(peers: Iterable<PeerId>): void {
+    this.lockedTo = new Set(peers);
+  }
+
   /** Host: đuổi một máy (máy đó được lobby báo; từ giờ host bỏ qua tin của nó). */
   remove(peer: PeerId): void {
     if (!this.isHost) return;
@@ -137,7 +154,10 @@ export class RoomSession {
 
   private peerJoined(peer: PeerId): void {
     if (this.role !== 'client') return;
-    if (this.state.kind !== 'connecting' && this.state.kind !== 'noHost') return;
+    const k = this.state.kind;
+    if (k !== 'connecting' && k !== 'noHost' && k !== 'reconnecting') return;
+    // Đang chờ vào lại: chỉ chào host cũ.
+    if (k === 'reconnecting' && peer !== this.hostId) return;
     // Chưa biết ai là host: chào mọi máy, chỉ host trả lời.
     const hello: SessionMsg = {
       t: 'hello',
@@ -151,8 +171,15 @@ export class RoomSession {
   private peerLeft(peer: PeerId): void {
     if (this.isHost) {
       if (this.accepted.delete(peer)) this.rosterChanged();
-    } else if (peer === this.hostId) {
-      this.setState({ kind: 'hostLeft' });
+    } else if (peer === this.hostId && this.state.kind === 'joined') {
+      // Rớt mạng (không có lời chào tạm biệt): chờ vào lại một lúc.
+      this.setState({ kind: 'reconnecting' });
+      const at = this.rejoins;
+      this.scheduler.setTimeout(() => {
+        if (!this.closed && this.state.kind === 'reconnecting' && this.rejoins === at) {
+          this.setState({ kind: 'hostLeft', quit: false });
+        }
+      }, this.reconnectGraceMs);
     }
   }
 
@@ -160,15 +187,22 @@ export class RoomSession {
     if (this.closed) return;
     if (this.isHost) {
       if (msg.t === 'hello') this.handleHello(msg, from);
+      else if (msg.t === 'bye' && this.accepted.delete(from)) this.rosterChanged();
       return;
     }
     switch (msg.t) {
-      case 'welcome':
+      case 'welcome': {
         // Host trả lời muộn (sau khi đã báo không tìm thấy) vẫn cho vào.
-        if (this.state.kind !== 'connecting' && this.state.kind !== 'noHost') return;
+        const k = this.state.kind;
+        if (k !== 'connecting' && k !== 'noHost' && k !== 'reconnecting') return;
+        if (k === 'reconnecting') this.rejoins++;
         this.hostId = from;
         this.members = msg.members;
         this.setState({ kind: 'joined' });
+        break;
+      }
+      case 'bye':
+        if (from === this.hostId) this.setState({ kind: 'hostLeft', quit: true });
         break;
       case 'roster':
         if (from !== this.hostId) return;
@@ -211,6 +245,7 @@ export class RoomSession {
 
   private checkHello(msg: Extract<SessionMsg, { t: 'hello' }>, from: PeerId): RejectReason | null {
     if (this.banned.has(from)) return 'kicked';
+    if (this.lockedTo && !this.lockedTo.has(from)) return 'started';
     if (msg.version !== this.info.version) return 'version';
     if (msg.dataHash !== this.info.dataHash) return 'data';
     // Còn ít nhất một chỗ thì cho vào; người chơi chung máy thừa ra sẽ không có ô (xem lobby).
@@ -249,8 +284,19 @@ export class RoomSession {
     for (const cb of this.changeCbs) cb();
   }
 
-  close(): void {
+  private readonly onPageHide = () => this.close(true);
+
+  /**
+   * Rời phòng: báo cho các máy khác (để họ biết là thoát chứ không phải rớt mạng).
+   * `now`: đóng kênh ngay (đang đóng tab, hẹn giờ sẽ không chạy nữa).
+   */
+  close(now = false): void {
+    if (this.closed) return;
     this.closed = true;
-    this.transport.close();
+    if (typeof window !== 'undefined') window.removeEventListener('pagehide', this.onPageHide);
+    this.transport.send({ t: 'bye' } satisfies SessionMsg);
+    // Bình thường đợi chút cho gói tạm biệt đi hết rồi mới đóng kênh.
+    if (now) this.transport.close();
+    else this.scheduler.setTimeout(() => this.transport.close(), 200);
   }
 }
