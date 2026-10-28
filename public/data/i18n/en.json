@@ -70,5 +70,12 @@
   "dataError.linesMismatch": "{base} has {baseCount} lines but {locale} has {count}",
   "dataError.i18nMismatch": "Text \"{key}\" is missing in {missingIn}",
   "dataError.i18nParams": "Parameters differ: expected {expected}, got {actual}",
-  "menu.dataVersion": "data {hash}"
+  "menu.dataVersion": "data {hash}",
+  "menu.sandbox": "🧪  Sandbox  (S)",
+  "sandbox.title": "Sandbox",
+  "sandbox.help": "Click: place item  ·  Right-click: remove  ·  Wheel or [ ]: choose item  ·  C: clear  ·  Esc: menu",
+  "sandbox.stats": "{mass} kg · {people} people · {rule} · durability {durability}",
+  "liftRule.free": "anyone can drag",
+  "liftRule.drag": "drags if short-handed",
+  "liftRule.strict": "won't budge if short-handed"
 }

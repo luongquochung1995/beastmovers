@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { t } from '../data/i18n';
-import { Theme } from './theme';
+import { GAME_WIDTH, Theme } from './theme';
 
 export interface DebugStats {
   fps: number;
@@ -15,7 +15,7 @@ declare global {
   }
 }
 
-/** Góc trên trái: FPS vẽ hình, số bước logic mỗi giây, số vật thể. Bật/tắt bằng F1. */
+/** Góc trên phải: FPS vẽ hình, số bước logic mỗi giây, số vật thể. Bật/tắt bằng F1. */
 export class DebugOverlay {
   private readonly text: Phaser.GameObjects.Text;
   private stepsThisWindow = 0;
@@ -27,13 +27,14 @@ export class DebugOverlay {
     visible: boolean,
   ) {
     this.text = scene.add
-      .text(8, 8, '', {
+      .text(GAME_WIDTH - 8, 8, '', {
         fontFamily: 'monospace',
         fontSize: '14px',
         color: Theme.text,
         backgroundColor: '#000000aa',
         padding: { x: 6, y: 4 },
       })
+      .setOrigin(1, 0)
       .setScrollFactor(0)
       .setDepth(10_000);
     this.setVisible(visible);

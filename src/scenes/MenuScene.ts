@@ -30,9 +30,10 @@ export class MenuScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
 
-    this.button(cx, 420, t('menu.start'), '32px', () => this.scene.start(SceneKeys.Game));
-    this.button(cx, 500, t('menu.inputTest'), '24px', () => this.scene.start(SceneKeys.InputTest));
-    this.button(cx, 560, t('menu.language'), '24px', () => this.switchLanguage());
+    this.button(cx, 400, t('menu.start'), '32px', () => this.scene.start(SceneKeys.Game));
+    this.button(cx, 490, t('menu.inputTest'), '24px', () => this.scene.start(SceneKeys.InputTest));
+    this.button(cx, 560, t('menu.sandbox'), '24px', () => this.scene.start(SceneKeys.Sandbox));
+    this.button(cx, 620, t('menu.language'), '24px', () => this.switchLanguage());
 
     this.add
       .text(
@@ -51,6 +52,7 @@ export class MenuScene extends Phaser.Scene {
     this.input.keyboard?.once('keydown-SPACE', () => this.scene.start(SceneKeys.Game));
     this.input.keyboard?.once('keydown-I', () => this.scene.start(SceneKeys.InputTest));
     this.input.keyboard?.once('keydown-L', () => this.switchLanguage());
+    this.input.keyboard?.once('keydown-S', () => this.scene.start(SceneKeys.Sandbox));
   }
 
   private button(x: number, y: number, label: string, fontSize: string, onClick: () => void) {

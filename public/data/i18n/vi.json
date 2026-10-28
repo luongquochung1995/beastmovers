@@ -70,5 +70,12 @@
   "dataError.linesMismatch": "{base} có {baseCount} câu nhưng {locale} có {count} câu",
   "dataError.i18nMismatch": "Thiếu chữ \"{key}\" ở {missingIn}",
   "dataError.i18nParams": "Tham số khác nhau: cần {expected}, đang là {actual}",
-  "menu.dataVersion": "data {hash}"
+  "menu.dataVersion": "data {hash}",
+  "menu.sandbox": "🧪  Sandbox  (S)",
+  "sandbox.title": "Sandbox",
+  "sandbox.help": "Click: đặt đồ  ·  Chuột phải: xóa  ·  Lăn chuột hoặc [ ]: chọn đồ  ·  C: xóa hết  ·  Esc: menu",
+  "sandbox.stats": "{mass} kg · {people} người · {rule} · độ bền {durability}",
+  "liftRule.free": "ai cũng kéo được",
+  "liftRule.drag": "thiếu người thì kéo lê",
+  "liftRule.strict": "thiếu người thì không nhúc nhích"
 }

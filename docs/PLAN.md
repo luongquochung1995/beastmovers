@@ -557,7 +557,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P03 | Input chung máy | A | ✔ | 3 ngày | ✅ | 2026-10-28 |
 | P04 | Nhân vật | A | ✔ | 3–4 ngày | ✅ | 2026-10-28 |
 | P05 | Data loader và validate | B | ✔ | 2–3 ngày | ✅ | 2026-10-28 |
-| P06 | Đồ vật dựng từ data | B | ✔ | 2 ngày | ⬜ | |
+| P06 | Đồ vật dựng từ data | B | ✔ | 2 ngày | ✅ | 2026-10-28 |
 | P07 | Nắm, thả, ném (1 người) | B | ✔ | 3 ngày | ⬜ | |
 | P08 | Khiêng nhiều người | B | ✔ | 5 ngày | ⬜ | |
 | P09 | Độ bền và vỡ | B | ✔ | 3 ngày | ⬜ | |
@@ -594,7 +594,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P40 | Kiểm thử trình duyệt | G | | 2 ngày | ⬜ | |
 | P41 | Phát hành | G | | 2 ngày | ⬜ | |
 
-**Tiến độ:** 4/41 phase · Mốc A 🟨 · B 🟨 · C ⬜ · D ⬜ · E ⬜ · F ⬜ · G ⬜
+**Tiến độ:** 5/41 phase · Mốc A 🟨 · B 🟨 · C ⬜ · D ⬜ · E ⬜ · F ⬜ · G ⬜
 
 ---
 
@@ -657,10 +657,11 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 - 📝 *Kiểm tra: 21 unit test (data thật hợp lệ; mỗi loại lỗi báo đúng file + đường dẫn trường, vd. `items.json › [fridge].size.w`; JSON sai cú pháp báo đúng dòng/cột; thiếu file; không báo lỗi dây chuyền). Trình duyệt: sửa data qua mạng thì màn hình lỗi hiện đúng 3 lỗi bằng tiếng Việt, JSON hỏng hiện dòng 5 cột 23 bằng tiếng Anh. Kèm theo: kiểm tra trường gõ sai tên, hash data hiện ở góc menu. Thay đổi nhỏ: `throwForce` → `throwSpeed`; cooldown thoại chuyển sang `config.json` (không phụ thuộc ngôn ngữ).*
 
 #### P06 · Đồ vật dựng từ data
-- [ ] Sinh đồ vật từ `items.json`: kích thước, khối lượng, ma sát, sprite
-- [ ] Màn "sandbox" để thả thử từng món đồ
-- [ ] Nhập đủ 10 món đồ MVP vào JSON (sprite tạm cũng được)
+- [x] Sinh đồ vật từ `items.json`: kích thước, khối lượng, ma sát, sprite
+- [x] Màn "sandbox" để thả thử từng món đồ
+- [x] Nhập đủ 10 món đồ MVP vào JSON (sprite tạm cũng được)
 - **✅ Xong khi:** thêm một món đồ mới chỉ bằng cách sửa JSON là nó xuất hiện trong sandbox.
+- 📝 *Kiểm tra: Chromium chèn thêm "Đèn cây" vào items.json qua mạng → có trong bảng chọn và thả được; thả cả 23 món cùng lúc; click đặt, chuột phải xóa; đẩy cùng vận tốc thì tủ lạnh (ma sát 0,01) trượt 252px, sofa (0,35) chỉ 50px. Data có 22 món (16 trong plan + đồ ăn, cá, bi, quả tạ, sách, lồng mèo). Hình tạm: khối màu + emoji. Sandbox mở bằng phím S ở menu.*
 
 #### P07 · Nắm, thả, ném (1 người)
 - [ ] Nắm món đồ gần nhất trong `grabRange`, gắn vào điểm nắm gần nhất
