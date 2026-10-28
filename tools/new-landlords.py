@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
-"""Một lần (P31): thêm chủ nhà "ông chú đồ cổ" và "ngôi sao" vào landlords.json + lines.*.json.
+"""Thêm chủ nhà vào landlords.json + lines.*.json: "ông chú đồ cổ", "ngôi sao" (P31),
+"anh startup", "chị chủ 6 con mèo" (P36, trong landlords_p36.py). Chạy lại nhiều lần được.
 
 Câu thứ i của tiếng Anh và tiếng Việt là cùng một câu (online chỉ gửi số thứ tự), nhưng
 mỗi bên viết lại cho hài theo ngôn ngữ của mình chứ không dịch từng chữ.
 """
 import json
 import pathlib
+
+import landlords_p36 as p36
 
 DATA = pathlib.Path(__file__).resolve().parent.parent / "public/data"
 
@@ -204,6 +207,8 @@ LINES = {
 
 
 def main():
+    LANDLORDS.extend(p36.LANDLORDS)
+    LINES.update(p36.LINES)
     lp = DATA / "landlords.json"
     landlords = json.loads(lp.read_text(encoding="utf-8"))
     ids = {l["id"] for l in landlords}

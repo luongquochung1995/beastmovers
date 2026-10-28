@@ -4,7 +4,7 @@
       "Nhẹ tay nhé mấy đứa, đồ của bà quý lắm.",
       "Coi chừng cái tường, bà mới sơn đó.",
       "Bà đứng đây coi, đừng có làm bể gì nha.",
-      "Mười phút thôi đó, lẹ lên!",
+      "Xe không chờ hoài đâu, lẹ lên!",
       "Đồ nào cũng có kỷ niệm hết đó nghe chưa."
     ],
     "itemBroken": [
@@ -234,6 +234,164 @@
       "Không bỏ {item} được, nó có trong MV mới nhất!",
       "Thêm {item} đi cưng. Đừng cãi ngôi sao.",
       "Khoan khoan khoan — cái {item}! Chị cần cái {item}!"
+    ]
+  },
+  "startup": {
+    "levelStart": [
+      "Anh em, đây là đợt chuyển nhà không rác. Ship gọn nhẹ nhé.",
+      "Coi mỗi món đồ như một tính năng. Phần lớn sẽ bị khai tử.",
+      "Anh có đúng một cái của mỗi thứ. Đừng biến nó thành không cái.",
+      "Làm nhanh nhưng KHÔNG làm vỡ gì nhé.",
+      "Họp nhanh: nhấc, khiêng, chất lên xe. Có câu hỏi không? Không? Tốt."
+    ],
+    "itemBroken": [
+      "Cái đó… pivot hơi gắt rồi đấy.",
+      "Ok, giờ mình chính thức chưa có doanh thu.",
+      "Hít thở. Hít thở. Nó chỉ là vật chất thôi mà.",
+      "Coi như đó là một bài học kinh nghiệm.",
+      "Ít đồ đi. Chắc cũng đúng chất thương hiệu."
+    ],
+    "itemDropped": [
+      "Trọng lực không phải chiến lược tăng trưởng!",
+      "Cú rơi đó không có trong lộ trình.",
+      "Nhặt lên. Làm lại vòng mới.",
+      "Báo lỗi: đồ rơi. Mức độ: anh đang khóc.",
+      "Tay là API. Gọi cho đúng cách đi."
+    ],
+    "wallHit": [
+      "Tường đó sơn trắng mờ đấy. TRẮNG. MỜ.",
+      "Nhà tối giản thì vết trầy nào cũng lộ hết!",
+      "Khoảng trống là nghệ thuật. Tôn trọng nó đi.",
+      "Anh thuê cả chuyên gia tư vấn để chọn bức tường đó.",
+      "Đụng tường lần nữa là anh viết báo cáo sự cố đấy."
+    ],
+    "itemLoaded": [
+      "Đã ship.",
+      "Gọn. Hiệu quả. Anh thích.",
+      "Bớt được một thứ. Theo nghĩa đen.",
+      "Thực thi tốt lắm, team.",
+      "Kéo thẻ đó sang cột Xong!"
+    ],
+    "catEscaped": [
+      "Mèo của ai vậy? Anh đâu có nuôi mèo. Hay là có?",
+      "Con mèo không nằm trong bản MVP!",
+      "Nhốt con mèo lại. Nó là phát sinh ngoài phạm vi có râu.",
+      "Nó đang thêm hỗn loạn. Mình đã nói không hỗn loạn.",
+      "Bắt nó trước khi nó phá vỡ cả thị trường."
+    ],
+    "timeLow": [
+      "Còn sáu mươi giây là launch!",
+      "Một phút nữa là ship, xong hay chưa cũng ship.",
+      "Nước rút rồi! Nhưng là nước rút có chánh niệm.",
+      "Sprint cuối cùng, mọi người ơi!",
+      "Hạn chót không phải là lời gợi ý."
+    ],
+    "levelEnd": [
+      "Mình họp rút kinh nghiệm nhanh nhé. À thôi, khỏi.",
+      "Năm sao. Hoặc bốn. Anh sẽ gửi khảo sát.",
+      "Nhà mới của anh còn ít đồ hơn nữa. Nhờ mấy em đấy.",
+      "Sprint tốt. Hẹn gặp quý sau.",
+      "Anh thấy nhẹ người rồi. Cả tâm hồn lẫn ví tiền."
+    ],
+    "bigLiftStart": [
+      "Sáu người, một cái bàn. Đó mới là cộng hưởng.",
+      "Thống nhất tầm nhìn đã. Rồi nhấc.",
+      "Khiêng đồ liên phòng ban! Anh mê.",
+      "Đây là món to duy nhất anh có. Làm ơn.",
+      "Tay vững thì tăng trưởng vững."
+    ],
+    "bigLiftFail": [
+      "Ai làm hỏng việc? Và làm rơi cả cái bàn?",
+      "Đó là một vấn đề chặn. Một vấn đề to và nặng.",
+      "Giao tiếp đi team! Dùng ping đi!",
+      "Mình cần đồng bộ tốt hơn. Về mặt thể chất.",
+      "Quay lại bản cũ! Quay lại!"
+    ],
+    "changeMind": [
+      "Khoan, cái {item} làm anh hạnh phúc. Mang theo.",
+      "Yêu cầu mới: {item} giờ nằm trong phạm vi.",
+      "Anh pivot rồi. {item} đi theo anh.",
+      "Nghĩ lại thì {item} là cốt lõi con người anh.",
+      "Đổi kế hoạch chút: thêm {item}. Xin lỗi. Mà cũng không xin lỗi."
+    ]
+  },
+  "catlady": {
+    "levelStart": [
+      "Coi chừng mấy bé nha! Cả sáu đứa đó!",
+      "Làm ơn đừng giẫm lên đuôi đứa nào.",
+      "Mèo trước. Rồi tới đồ. Rồi mới tới mấy em.",
+      "Nghe tiếng khè là bình thường. Nghe tiếng khóc là chị đó.",
+      "Bé nào cũng phải vào lồng. Không ngoại lệ. Chúc may mắn."
+    ],
+    "itemBroken": [
+      "Trời ơi! Có trúng bé nào không?!",
+      "Vỡ hả? Thôi được. Miễn mấy bé không sao.",
+      "Bé Mochi sẽ không bao giờ tha thứ cho em.",
+      "Đó là cái gương tụi nhỏ thích cào nhất!",
+      "Mảnh kính đầy sàn! Đứng im hết, giơ chân lên!"
+    ],
+    "itemDropped": [
+      "Tiếng động mạnh làm mấy bé sợ đó!",
+      "Suỵt! Nhẹ thôi! Tai mèo thính lắm!",
+      "Giờ tụi nó chui hết xuống gầm giường rồi. Cảm ơn nha.",
+      "Em làm bé Bánh Bao giật mình rồi.",
+      "Nhặt lên nhẹ nhàng. Như mèo vậy."
+    ],
+    "wallHit": [
+      "Cẩn thận, tường đó có kệ leo của tụi nhỏ!",
+      "Cốp. Y như bé Sushi nhảy hụt.",
+      "Nhẹ với tường thôi, tường chống mèo cào chứ không chống mấy em.",
+      "Mỗi cú va là có một bé thức giấc.",
+      "Coi chừng góc tường, có khi có cái đuôi ở đó!"
+    ],
+    "itemLoaded": [
+      "Tốt! Hoàn hảo meo!",
+      "Để đồ mềm gần mấy cái lồng giùm chị nha.",
+      "Được. Tụi mèo duyệt rồi. Chị biết mà.",
+      "Thêm một bước tới nhà mới rồi!",
+      "Cảm ơn em nha."
+    ],
+    "catEscaped": [
+      "MOCHI! Về với mẹ nè!",
+      "Lại nữa! Ai mở cửa vậy?!",
+      "Lắc túi bánh thưởng đi! Lắc lên!",
+      "Bé chạy nhanh lắm nhưng lúc nào cũng chui gầm giường.",
+      "Đừng đuổi! Làm sao cho bé tưởng là bé tự muốn vào!"
+    ],
+    "timeLow": [
+      "Còn một phút! Mấy bé vào lồng hết chưa?!",
+      "Đếm mèo đi! Đếm lại lần nữa!",
+      "Xe không được chạy khi chưa có con chị!",
+      "Nhanh lên, mà đừng làm tụi nó sợ!",
+      "Nhanh nhanh! Mochi còn ở ngoài kia!"
+    ],
+    "levelEnd": [
+      "Cả nhà chào tạm biệt nhà cũ nào!",
+      "Cảm ơn nha! Tụi mèo sẽ chịu đựng mấy em mãi mãi.",
+      "Chị đếm lại lần nữa. Cho chắc.",
+      "Giờ mấy em có mùi mèo rồi. Chào mừng vào gia đình.",
+      "Lần sau nhớ mang bánh thưởng nha."
+    ],
+    "bigLiftStart": [
+      "Cẩn thận, bé Sushi hay ngủ trên đó!",
+      "Kiểm tra có mèo nằm bên dưới không đã!",
+      "Từ từ, từ từ, không có cái đuôi nào bên dưới chứ?",
+      "Cùng nhấc, nhẹ thôi, như bế một bé mèo đang ngủ.",
+      "Nhấc nào! Nhẹ nhàng!"
+    ],
+    "bigLiftFail": [
+      "Cú rầm đó làm ba bé leo tót lên rèm rồi.",
+      "Ai buông tay?! Mấy bé hoảng hết rồi!",
+      "Đến mèo còn phối hợp giỏi hơn.",
+      "Làm lại đi, lần này đếm 'một, hai, meo'.",
+      "Chị nghe rung tới tận râu."
+    ],
+    "changeMind": [
+      "À, cái {item}! Tụi nhỏ thích ngủ trên {item} lắm!",
+      "Mang cả {item} nữa, nó có mùi nhà với tụi nhỏ.",
+      "Mochi vừa ngồi lên {item}. Vậy là phải mang theo.",
+      "Không bỏ {item} được, tụi mèo sẽ nổi loạn.",
+      "Thêm {item} giùm chị. Lệnh của mèo."
     ]
   }
 }

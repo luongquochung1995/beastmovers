@@ -64,5 +64,50 @@
     },
     "favoriteItems": ["grand_piano", "statue", "teddy"],
     "linesKey": "celebrity"
+  },
+  {
+    "id": "startup",
+    "name": {
+      "en": "Kevin the Founder",
+      "vi": "Anh Khoa Startup"
+    },
+    "icon": "🧘",
+    "color": "#80cbc4",
+    "voicePitch": 1.1,
+    "startSatisfaction": 50,
+    "sensitivity": {
+      "itemBroken": -10,
+      "itemDropped": -4,
+      "wallHit": -6,
+      "itemLoaded": 3,
+      "bigLiftFail": -8,
+      "catEscaped": -2,
+      "bigLiftStart": 2,
+      "timeLow": -3
+    },
+    "favoriteItems": ["plant"],
+    "linesKey": "startup"
+  },
+  {
+    "id": "catlady",
+    "name": {
+      "en": "Auntie Whiskers",
+      "vi": "Chị Hạnh Mèo"
+    },
+    "icon": "🐱",
+    "color": "#ffcc80",
+    "voicePitch": 1.4,
+    "startSatisfaction": 50,
+    "sensitivity": {
+      "itemBroken": -8,
+      "itemDropped": -4,
+      "wallHit": -2,
+      "itemLoaded": 2,
+      "bigLiftFail": -6,
+      "catEscaped": -10,
+      "bigLiftStart": 1
+    },
+    "favoriteItems": ["cat", "cat_carrier", "teddy"],
+    "linesKey": "catlady"
   }
 ]

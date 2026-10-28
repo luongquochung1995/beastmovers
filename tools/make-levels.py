@@ -48,7 +48,7 @@ LEVELS = [
         "name": {"en": "The Gym", "vi": "Phòng gym"},
         "tier": "squad", "minPlayers": 6, "maxPlayers": 8, "recommendedPlayers": 6,
         "unlockStars": 11, "timeLimitSec": 420, "map": "maps/gym.json",
-        "landlord": "collector",
+        "landlord": "startup",
         "truck": {"x": 1500, "y": 390, "slots": 32, "hasHandbrake": False, "facing": "left"},
         "spawns": spawns(
             [("weight_rack", 500, 400), ("mirror", 600, 50), ("box", 100, 800), ("box", 160, 800)],
@@ -80,7 +80,7 @@ LEVELS = [
         "name": {"en": "Minimalist Apartment", "vi": "Căn hộ minimalist"},
         "tier": "squad", "minPlayers": 6, "maxPlayers": 8, "recommendedPlayers": 6,
         "unlockStars": 15, "timeLimitSec": 420, "map": "maps/minimalist.json",
-        "landlord": "celebrity",
+        "landlord": "startup",
         "truck": {"x": 1500, "y": 470, "slots": 32, "hasHandbrake": False, "facing": "left"},
         "spawns": spawns(
             [("pool_table", 400, 400), ("plant", 100, 100), ("mirror", 800, 50)],
@@ -111,7 +111,7 @@ LEVELS = [
         "name": {"en": "House of Six Cats", "vi": "Nhà 6 con mèo"},
         "tier": "team", "minPlayers": 4, "maxPlayers": 8, "recommendedPlayers": 4,
         "unlockStars": 7, "timeLimitSec": 420, "map": "maps/six_cats.json",
-        "landlord": "grandma",
+        "landlord": "catlady",
         "truck": {"x": 1500, "y": 340, "slots": 30, "hasHandbrake": False, "facing": "left"},
         "spawns": spawns(
             [("safe", 600, 300), ("cat", 200, 700), ("cat", 600, 820), ("cat", 1000, 300)],
@@ -175,7 +175,7 @@ LEVELS = [
         "name": {"en": "House with a Cat", "vi": "Nhà có mèo"},
         "tier": "solo", "minPlayers": 1, "maxPlayers": 8, "recommendedPlayers": 2,
         "unlockStars": 2, "timeLimitSec": 300, "map": "maps/cat_house.json",
-        "landlord": "grandma",
+        "landlord": "catlady",
         "truck": {"x": 1330, "y": 640, "slots": 20, "hasHandbrake": False, "facing": "left"},
         "spawns": spawns(
             [("cat", 300, 300), ("teddy", 120, 880), ("box", 850, 100), ("box", 900, 100)],

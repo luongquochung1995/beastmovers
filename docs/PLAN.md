@@ -587,14 +587,14 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P33 | Màn Đội còn lại | F | | 5 ngày | 🟨 | |
 | P34 | Màn Đại đội và Full nhà còn lại | F | | 5 ngày | 🟨 | |
 | P35 | Co giãn theo số người (scaling) | F | | 3 ngày | 🟨 | |
-| P36 | Thêm 2 chủ nhà và bộ thoại | F | | 3 ngày | ⬜ | |
+| P36 | Thêm 2 chủ nhà và bộ thoại | F | | 3 ngày | ✅ | 2026-10-28 |
 | P37 | Âm thanh và hiệu ứng | G | | 4 ngày | ⬜ | |
 | P38 | Tối ưu hiệu năng và mạng | G | | 4 ngày | ⬜ | |
 | P39 | Cân bằng và playtest theo số người | G | | 5 ngày | ⬜ | |
 | P40 | Kiểm thử trình duyệt | G | | 2 ngày | ⬜ | |
 | P41 | Phát hành | G | | 2 ngày | ⬜ | |
 
-**Tiến độ:** 27/41 phase · Mốc A 🟨 · B ✅ · C ✅ · D 🟨 · E ✅ · F 🟨 · G ⬜
+**Tiến độ:** 28/41 phase · Mốc A 🟨 · B ✅ · C ✅ · D 🟨 · E ✅ · F 🟨 · G ⬜
 
 ---
 
@@ -970,10 +970,11 @@ Chưa làm: playtest người thật; 2 máy ở 2 mạng khác nhau qua relay c
 - 📝 *Kiểm tra (Chromium): màn 1 với 1 người → 13 món, 300 giây, xe 20 chỗ, sao 500/900/1300; với 8 người → 31 món, 240 giây, xe 44 chỗ, sao 680/1260/1720; đồ thêm nằm trong nhà, không đè tường; màn kết quả hiện đúng mốc sao đã co giãn. Cách làm: `scaleLevel(màn, bản đồ, số người)` là hàm thuần — mỗi người vượt `basePlayers` thêm đồ thưởng (không bắt buộc) đặt ngẫu nhiên trên sàn trong nhà (sàn không có `outdoor`), cách tường/cửa/đồ khác ≥ 16 px, vị trí sinh từ id màn + số người nên host và máy khách online ra y hệt (không cần gửi qua mạng); thời gian không dưới 90 giây. Số người tính lúc vào màn: online theo danh sách phòng, chơi chung máy theo người đã tham gia (người vào giữa chừng không làm màn đổi). Kết quả màn mang theo mốc sao đã co giãn (`starGoals`). Data: mọi màn có `maxPlayers` > `recommendedPlayers` (14/16 màn; màn 15, 16 luôn đủ 8) dùng co giãn mặc định sinh bởi `tools/make-levels.py`: `basePlayers` = số người đề xuất, mỗi người thêm 2 thùng + 1 chậu cây (Solo/Đôi) hoặc 2 thùng + 1 gương (Đội/Đại đội), −10 giây, xe +4 chỗ, mốc sao tăng 40/70/90% giá trị đồ thêm (đông người chở được thêm nhưng vẫn phải cố). Lỗi tìm thấy: mốc sao cũ của màn 1 (+150/250/350 mỗi người) làm 3★ với 8 người (3750) cao hơn cả điểm tối đa có thể (~2300) → dùng công thức theo giá trị đồ thêm. Sân studio được đánh dấu `outdoor` để đồ thêm không rơi ra sân. 4 unit test. ⚠️ Chưa đạt "Xong khi": "vừa sức" cần người thật chơi với 1 và 8 người (P39).*
 
 #### P36 · Thêm 2 chủ nhà và bộ thoại
-- [ ] Anh startup cuồng minimalism
-- [ ] Chị chủ 6 con mèo
-- [ ] Rà soát toàn bộ câu thoại cả hai ngôn ngữ (chính tả, độ hài, không lặp)
+- [x] Anh startup cuồng minimalism
+- [x] Chị chủ 6 con mèo
+- [x] Rà soát toàn bộ câu thoại cả hai ngôn ngữ (chính tả, độ hài, không lặp)
 - **✅ Xong khi:** mỗi màn trong 16 màn có chủ nhà phù hợp.
+- 📝 *Kiểm tra: 2 chủ nhà mới — **Anh Khoa Startup** (`startup`, "Kevin the Founder"; nói kiểu họp sprint, pivot, ship; ghét vết trầy trên tường trắng; thích chậu cây) và **Chị Hạnh Mèo** (`catlady`, "Auntie Whiskers"; lo cho 6 bé mèo Mochi, Sushi, Bánh Bao…; mèo xổng thì tụt hài lòng mạnh) — mỗi người 11 sự kiện × 5 câu × 2 ngôn ngữ (`tools/landlords_p36.py`). Chủ nhà theo màn: Bà Tư (1, 2, 4, 5, 10), Chị Hạnh Mèo (3, 8), Chú Bảy (6, 7, 9, 12, 15), Anh Khoa (11 phòng gym, 14 căn hộ minimalist), Diva Lan Na (13, 16). Rà soát tự động toàn bộ 550 câu × 2 ngôn ngữ của 5 chủ nhà: không câu nào trùng (trong cùng ngôn ngữ), không thừa khoảng trắng, câu nào cũng có dấu kết thúc, bản tiếng Anh không lẫn chữ có dấu, bản tiếng Việt đều có dấu; validate (P05) kiểm tra cùng số câu, cùng tham số `{item}`. Đọc lại thoại Bà Tư: sửa câu "Mười phút thôi đó" (giờ các màn dài 4–8 phút) thành "Xe không chờ hoài đâu, lẹ lên!". Trong game (Chromium): màn 8 Chị Hạnh Mèo nói câu mở đầu đúng ngôn ngữ; màn 14 Anh Khoa đổi ý → thêm 1 món bắt buộc kèm câu `changeMind`.*
 
 **Ghi chú playtest mốc F:**
 _(ghi ở đây)_

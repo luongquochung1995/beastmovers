@@ -4,7 +4,7 @@
       "Gently now, kids. Everything here is precious.",
       "Mind the walls. I just painted them.",
       "I'll be watching. Don't break anything.",
-      "Ten minutes, that's all you get. Hurry!",
+      "The truck won't wait forever. Hurry!",
       "Every single thing here has a memory, you hear?"
     ],
     "itemBroken": [
@@ -234,6 +234,164 @@
       "Can't leave the {item}, it was in my last music video!",
       "Add the {item}, darling. Don't argue with a star.",
       "Wait wait wait — the {item}! I need the {item}!"
+    ]
+  },
+  "startup": {
+    "levelStart": [
+      "Guys, this is a zero-clutter move. Ship it lean.",
+      "Think of each item as a feature. Most of them we'll deprecate.",
+      "I own exactly one of everything. Please don't make it zero.",
+      "Let's move fast and NOT break things.",
+      "Quick stand-up: lift, carry, load. Questions? No? Great."
+    ],
+    "itemBroken": [
+      "That's... a hard pivot.",
+      "Okay, we're officially pre-revenue now.",
+      "Breathe. Breathe. It was just matter.",
+      "Let's call that a learning.",
+      "Fewer things. I guess that's on brand."
+    ],
+    "itemDropped": [
+      "Gravity is not a growth strategy!",
+      "That drop was not in the roadmap.",
+      "Pick it up. Iterate.",
+      "Bug report: item fell. Severity: me, crying.",
+      "Hands are an API. Use them properly."
+    ],
+    "wallHit": [
+      "Those walls are matte white. MATTE. WHITE.",
+      "Every scuff is visible in a minimalist home!",
+      "Negative space, people. Respect it.",
+      "I paid a consultant to choose that wall.",
+      "Bump the wall again and I'm writing a postmortem."
+    ],
+    "itemLoaded": [
+      "Shipped.",
+      "Clean. Efficient. I love it.",
+      "That's one less thing. Literally.",
+      "Great execution, team.",
+      "Mark it done on the board!"
+    ],
+    "catEscaped": [
+      "Whose cat is that? I don't own a cat. Do I own a cat?",
+      "The cat is not part of the MVP!",
+      "Contain the cat. It's a scope creep with whiskers.",
+      "It's adding chaos. We said no chaos.",
+      "Catch it before it disrupts the industry."
+    ],
+    "timeLow": [
+      "Sixty seconds to launch!",
+      "We're shipping in a minute, ready or not.",
+      "Crunch time! But, like, mindful crunch.",
+      "Final sprint, everybody!",
+      "The deadline is not a suggestion."
+    ],
+    "levelEnd": [
+      "Let's do a quick retro. Actually, let's not.",
+      "Five stars. Maybe four. I'll send a survey.",
+      "My new place has even less stuff. Thanks to you.",
+      "Good sprint. See you next quarter.",
+      "I feel lighter already. Spiritually and financially."
+    ],
+    "bigLiftStart": [
+      "Six people, one table. That's real synergy.",
+      "Align on the vision. Then lift.",
+      "Cross-functional lifting! I love it.",
+      "This is the only big thing I own. Please.",
+      "Steady hands, steady growth."
+    ],
+    "bigLiftFail": [
+      "Who dropped the ball? And the table?",
+      "That's a blocker. A big, heavy blocker.",
+      "Communication, team! Use the pings!",
+      "We need better alignment. Physically.",
+      "Rollback! Rollback!"
+    ],
+    "changeMind": [
+      "Wait, the {item} sparks joy. It comes with us.",
+      "New requirement: the {item} is in scope now.",
+      "I pivoted. The {item} stays with me.",
+      "On second thought, the {item} is core to my identity.",
+      "Quick change of plan: add the {item}. Sorry. Not sorry."
+    ]
+  },
+  "catlady": {
+    "levelStart": [
+      "Mind the babies! All six of them!",
+      "Please don't step on anyone's tail.",
+      "The cats come first. Then the furniture. Then you.",
+      "If you hear hissing, that's normal. If you hear crying, that's me.",
+      "Every cat goes in a carrier. No exceptions. Good luck."
+    ],
+    "itemBroken": [
+      "Oh no! Did it hit a kitty?!",
+      "Broken? Fine. As long as the cats are okay.",
+      "Mochi will never forgive you.",
+      "That was their favourite scratching mirror!",
+      "Glass on the floor! Everybody freeze, paws up!"
+    ],
+    "itemDropped": [
+      "Loud noises scare the babies!",
+      "Shh! Gently! Cat ears are very sensitive!",
+      "Now they're all under the bed. Thanks.",
+      "You startled Bánh Bao.",
+      "Pick it up quietly. Like a cat would."
+    ],
+    "wallHit": [
+      "Careful, that wall has their climbing shelves!",
+      "Bonk. Like Sushi when she misjudges a jump.",
+      "Gentle with the walls, they're scratch-proof, not you-proof.",
+      "Every bump wakes somebody up.",
+      "Watch the corners, there might be a tail there!"
+    ],
+    "itemLoaded": [
+      "Good! Purr-fect!",
+      "Put the soft things near the carriers, please.",
+      "Nice. The cats approve. I can tell.",
+      "One step closer to our new home!",
+      "Thank you, sweetie."
+    ],
+    "catEscaped": [
+      "MOCHI! Come back to mommy!",
+      "Not again! Who opened the door?!",
+      "Shake the treat bag! Shake it!",
+      "She's fast but she always goes under the bed.",
+      "Don't chase her! Make her think it's her idea!"
+    ],
+    "timeLow": [
+      "One minute! Are all the babies in?!",
+      "Count the cats! Count them again!",
+      "The truck won't leave without my kids!",
+      "Hurry, but don't scare them!",
+      "Quick, quick! Mochi's still out there!"
+    ],
+    "levelEnd": [
+      "Everyone say bye to the old house!",
+      "Thank you! The cats will tolerate you forever.",
+      "I'm counting them one more time. Just in case.",
+      "You smell like cat now. Welcome to the family.",
+      "Next time bring treats."
+    ],
+    "bigLiftStart": [
+      "Careful, Sushi likes to sleep on top of that!",
+      "Check for cats underneath first!",
+      "Slowly, slowly, nobody's tail under there?",
+      "All together, gently, like carrying a sleeping kitten.",
+      "Heave! Softly!"
+    ],
+    "bigLiftFail": [
+      "That thud just sent three cats up the curtains.",
+      "Who let go?! The babies are traumatised!",
+      "Even the cats work better as a team.",
+      "Try again, and this time, say 'one, two, meow'.",
+      "I felt that in my whiskers."
+    ],
+    "changeMind": [
+      "Oh, the {item}! The kids love sleeping on the {item}!",
+      "Bring the {item} too, it smells like home to them.",
+      "Mochi just sat on the {item}. That means it's coming.",
+      "I can't leave the {item}, the cats would riot.",
+      "Add the {item}, please. Cat's orders."
     ]
   }
 }

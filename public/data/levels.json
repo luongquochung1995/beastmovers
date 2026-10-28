@@ -296,7 +296,7 @@
     "unlockStars": 2,
     "timeLimitSec": 300,
     "map": "maps/cat_house.json",
-    "landlord": "grandma",
+    "landlord": "catlady",
     "truck": {
       "x": 1330,
       "y": 640,
@@ -939,7 +939,7 @@
     "unlockStars": 7,
     "timeLimitSec": 420,
     "map": "maps/six_cats.json",
-    "landlord": "grandma",
+    "landlord": "catlady",
     "truck": {
       "x": 1500,
       "y": 340,
@@ -1320,7 +1320,7 @@
     "unlockStars": 11,
     "timeLimitSec": 420,
     "map": "maps/gym.json",
-    "landlord": "collector",
+    "landlord": "startup",
     "truck": {
       "x": 1500,
       "y": 390,
@@ -1689,7 +1689,7 @@
     "unlockStars": 15,
     "timeLimitSec": 420,
     "map": "maps/minimalist.json",
-    "landlord": "celebrity",
+    "landlord": "startup",
     "truck": {
       "x": 1500,
       "y": 470,
