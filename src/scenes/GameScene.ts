@@ -39,7 +39,7 @@ export class GameScene extends PlayScene {
     const level = this.levelDef;
     const map = this.gameData.maps[level.map]!;
     this.built = buildLevel(this.world, level, map);
-    this.runtime = new LevelRuntime(this.world, this.built);
+    this.runtime = new LevelRuntime(this.world, this.built, this.gameData);
     this.leaving = false;
     const cam = this.cameras.main;
     cam.setBounds(0, 0, map.width, map.height);
@@ -61,6 +61,10 @@ export class GameScene extends PlayScene {
 
   protected spawnPointFor(slotIndex: number): Vec {
     return playerSpawn(this.levelDef, slotIndex);
+  }
+
+  protected override afterRender(): void {
+    this.runtime.render(this.loop.alpha);
   }
 
   /** Esc: kết thúc sớm (xe chạy luôn). */

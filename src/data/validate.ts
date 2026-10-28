@@ -319,6 +319,20 @@ function checkLinesParity(lines: Partial<Record<Locale, LinesFile>>, issues: Iss
             params: { base: base!, baseCount: a, locale, count: b },
           });
         }
+        // Câu thứ i ở hai ngôn ngữ phải có cùng tham số ({item}…).
+        const la = ref[key]?.[ev] ?? [];
+        const lb = other[key]?.[ev] ?? [];
+        la.forEach((line, i) => {
+          const other = lb[i];
+          if (other !== undefined && paramsOf(line) !== paramsOf(other)) {
+            issues.push({
+              file,
+              path: `${key}.${ev}[${i}]`,
+              code: 'i18nParams',
+              params: { expected: paramsOf(line) || '-', actual: paramsOf(other) || '-' },
+            });
+          }
+        });
       }
     }
   }

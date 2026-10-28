@@ -203,6 +203,9 @@ export const landlordSchema = obj({
   id: ID,
   name: localized(),
   sprite: optional(str({ minLen: 1 })),
+  /** Emoji vẽ trên hình tạm khi chưa có sprite. */
+  icon: optional(str({ minLen: 1 })),
+  color: optional(COLOR),
   voicePitch: num({ min: 0.1, max: 4 }),
   startSatisfaction: num({ min: 0, max: 100 }),
   sensitivity: record(num(), oneOf(DIALOGUE_EVENTS)),

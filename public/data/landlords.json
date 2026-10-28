@@ -1,7 +1,12 @@
 [
   {
     "id": "grandma",
-    "name": { "en": "Grandma Tu", "vi": "Bà Tư" },
+    "name": {
+      "en": "Grandma Tu",
+      "vi": "Bà Tư"
+    },
+    "icon": "👵",
+    "color": "#b39ddb",
     "voicePitch": 1.3,
     "startSatisfaction": 50,
     "sensitivity": {
@@ -9,7 +14,8 @@
       "itemDropped": -5,
       "wallHit": -3,
       "itemLoaded": 2,
-      "bigLiftFail": -8
+      "bigLiftFail": -8,
+      "catEscaped": -2
     },
     "favoriteItems": ["teddy"],
     "linesKey": "grandma"

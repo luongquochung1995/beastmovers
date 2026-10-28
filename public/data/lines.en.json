@@ -2,16 +2,80 @@
   "grandma": {
     "levelStart": [
       "Gently now, kids. Everything here is precious.",
-      "Mind the walls. I just painted them."
+      "Mind the walls. I just painted them.",
+      "I'll be watching. Don't break anything.",
+      "Ten minutes, that's all you get. Hurry!",
+      "Every single thing here has a memory, you hear?"
     ],
-    "itemBroken": ["Good heavens!", "Oh… great. Just great."],
-    "itemDropped": ["Butterfingers!", "Did your hands fall asleep?"],
-    "wallHit": ["That wall was freshly painted!", "The wall did nothing to you!"],
-    "itemLoaded": ["Fine.", "That'll do."],
-    "catEscaped": ["Mittens! Come back to Grandma!"],
-    "timeLow": ["Hurry up, the truck is leaving!"],
-    "levelEnd": ["Well. Next time I'm calling someone else."],
-    "bigLiftStart": ["Careful! CAREFUL!"],
-    "bigLiftFail": ["All of you and you can't lift one thing?"]
+    "itemBroken": [
+      "Good heavens!",
+      "Oh… great. Just great.",
+      "I've had that since I was a girl!",
+      "Well, that's broken for good.",
+      "That's coming out of your pay!"
+    ],
+    "itemDropped": [
+      "Butterfingers!",
+      "Did your hands fall asleep?",
+      "It's on the floor! It's on the floor!",
+      "I saw that, you know.",
+      "Hold on to it properly!"
+    ],
+    "wallHit": [
+      "That wall was freshly painted!",
+      "The wall did nothing to you!",
+      "Hey, hey, you're scratching my walls!",
+      "Slow down, this is a home, not a football pitch!",
+      "Another mark on the wall…"
+    ],
+    "itemLoaded": [
+      "Fine.",
+      "That'll do.",
+      "Stack it neatly.",
+      "Good, keep going.",
+      "Well, that's better."
+    ],
+    "catEscaped": [
+      "Mittens! Come back to Grandma!",
+      "The cat is scared of you lot!",
+      "Gently, she scratches!",
+      "Mittens, sweetie, come out!",
+      "If my cat runs off I'll cry, I swear!"
+    ],
+    "timeLow": [
+      "Hurry up, the truck is leaving!",
+      "One minute left!",
+      "Faster, kids, faster!",
+      "The driver is honking already!",
+      "Time's almost up, don't just stand there!"
+    ],
+    "levelEnd": [
+      "Well. Next time I'm calling someone else.",
+      "Fine, five stars… I suppose.",
+      "Oh, is that it then?",
+      "Be gentler next time, alright?",
+      "Thank you, kids… I think."
+    ],
+    "bigLiftStart": [
+      "Careful! CAREFUL!",
+      "Slowly, don't you drop it!",
+      "One, two, three… lift!",
+      "Watch that corner!",
+      "I can't even look…"
+    ],
+    "bigLiftFail": [
+      "All of you and you can't lift one thing?",
+      "Who let go?!",
+      "Oh my floor, my poor floor!",
+      "Did you lot have breakfast?",
+      "I could carry that better myself!"
+    ],
+    "changeMind": [
+      "Oh, and take the {item} too!",
+      "I changed my mind, take the {item} as well.",
+      "Wait, the {item} has to come too!",
+      "Silly me, the {item} too, dear.",
+      "Just bring the {item} along for me."
+    ]
   }
 }

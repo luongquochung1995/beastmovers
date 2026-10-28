@@ -2,16 +2,80 @@
   "grandma": {
     "levelStart": [
       "Nhẹ tay nhé mấy đứa, đồ của bà quý lắm.",
-      "Coi chừng cái tường, bà mới sơn đó."
+      "Coi chừng cái tường, bà mới sơn đó.",
+      "Bà đứng đây coi, đừng có làm bể gì nha.",
+      "Mười phút thôi đó, lẹ lên!",
+      "Đồ nào cũng có kỷ niệm hết đó nghe chưa."
     ],
-    "itemBroken": ["Trời đất ơi!", "Ờ… giỏi. Giỏi lắm."],
-    "itemDropped": ["Tay chân để đâu vậy con?", "Tay ngủ gật hả?"],
-    "wallHit": ["Tường mới sơn đó!", "Cái tường nó làm gì con đâu!"],
-    "itemLoaded": ["Ừ, được.", "Cũng tạm."],
-    "catEscaped": ["Mimi! Về với bà nè!"],
-    "timeLow": ["Nhanh lên, xe sắp chạy rồi!"],
-    "levelEnd": ["Thôi được, lần sau bà gọi người khác."],
-    "bigLiftStart": ["Cẩn thận! CẨN THẬN!"],
-    "bigLiftFail": ["Đông người vậy mà không nhấc nổi à?"]
+    "itemBroken": [
+      "Trời đất ơi!",
+      "Ờ… giỏi. Giỏi lắm.",
+      "Cái đó bà giữ từ hồi còn con gái!",
+      "Thôi xong, bể thật rồi.",
+      "Bà trừ lương nghe chưa!"
+    ],
+    "itemDropped": [
+      "Tay chân để đâu vậy con?",
+      "Tay ngủ gật hả?",
+      "Rớt rồi kìa, rớt rồi kìa!",
+      "Bà nhìn thấy hết đó nha.",
+      "Cầm cho chắc vào!"
+    ],
+    "wallHit": [
+      "Tường mới sơn đó!",
+      "Cái tường nó làm gì con đâu!",
+      "Ê ê, trầy hết tường bà rồi!",
+      "Từ từ thôi, nhà chứ đâu phải sân banh!",
+      "Lại thêm một vết nữa…"
+    ],
+    "itemLoaded": [
+      "Ừ, được.",
+      "Cũng tạm.",
+      "Xếp cho ngay ngắn vào.",
+      "Được đó, làm tiếp đi.",
+      "Ờ, khá hơn rồi đó."
+    ],
+    "catEscaped": [
+      "Mimi! Về với bà nè!",
+      "Con mèo nó sợ mấy đứa đó!",
+      "Bắt nhẹ thôi, nó cào đó!",
+      "Mimi ơi, ra đây bà thương!",
+      "Mèo của bà mà xổng là bà khóc đó!"
+    ],
+    "timeLow": [
+      "Nhanh lên, xe sắp chạy rồi!",
+      "Còn một phút thôi đó!",
+      "Lẹ lên mấy đứa ơi!",
+      "Tài xế bấm còi rồi kìa!",
+      "Sắp hết giờ rồi, đừng có đứng đó!"
+    ],
+    "levelEnd": [
+      "Thôi được, lần sau bà gọi người khác.",
+      "Cũng được, bà cho năm sao… chắc vậy.",
+      "Ờ, xong rồi đó hả?",
+      "Lần sau nhớ nhẹ tay hơn nha.",
+      "Cảm ơn mấy đứa… bà nghĩ vậy."
+    ],
+    "bigLiftStart": [
+      "Cẩn thận! CẨN THẬN!",
+      "Từ từ, đừng có làm rớt!",
+      "Một, hai, ba… nhấc!",
+      "Coi chừng góc tường đó!",
+      "Bà không dám nhìn luôn…"
+    ],
+    "bigLiftFail": [
+      "Đông người vậy mà không nhấc nổi à?",
+      "Ai buông tay đó?!",
+      "Trời ơi, cái sàn nhà của bà!",
+      "Mấy đứa có ăn sáng chưa vậy?",
+      "Bà khiêng còn khỏe hơn!"
+    ],
+    "changeMind": [
+      "À mà mang luôn cái {item} nhé!",
+      "Bà đổi ý rồi, lấy cả {item} đi.",
+      "Khoan, {item} cũng phải mang theo!",
+      "Ủa quên, {item} nữa con ơi.",
+      "Thôi mang {item} luôn cho bà."
+    ]
   }
 }

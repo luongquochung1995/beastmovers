@@ -566,7 +566,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P12 | Bản đồ và level loader | C | ✔ | 4 ngày | ✅ | 2026-10-28 |
 | P13 | Xe tải | C | ✔ | 3 ngày | ✅ | 2026-10-28 |
 | P14 | Đồng hồ và điều kiện qua màn | C | ✔ | 2 ngày | ✅ | 2026-10-28 |
-| P15 | Chủ nhà NPC | C | ✔ | 4 ngày | ⬜ | |
+| P15 | Chủ nhà NPC | C | ✔ | 4 ngày | ✅ | 2026-10-28 |
 | P16 | Tính điểm và màn kết quả | C | ✔ | 3 ngày | ⬜ | |
 | P17 | HUD trong game | C | ✔ | 3 ngày | ⬜ | |
 | P18 | Camera chung máy | C | ✔ | 2 ngày | ⬜ | |
@@ -594,7 +594,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P40 | Kiểm thử trình duyệt | G | | 2 ngày | ⬜ | |
 | P41 | Phát hành | G | | 2 ngày | ⬜ | |
 
-**Tiến độ:** 13/41 phase · Mốc A 🟨 · B ✅ · C 🟨 · D ⬜ · E ⬜ · F ⬜ · G ⬜
+**Tiến độ:** 14/41 phase · Mốc A 🟨 · B ✅ · C 🟨 · D ⬜ · E ⬜ · F ⬜ · G ⬜
 
 ---
 
@@ -748,12 +748,13 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 - 📝 *Kiểm tra (Chromium, màn rút còn 6 giây): không chất đồ → hết giờ, bấm phím nhân vật không nhúc nhích, 3s sau sang Kết quả "Chưa đủ đồ bắt buộc 0/3"; đưa 3 món bắt buộc lên xe → "Qua màn! 3/3"; Esc → kết thúc sớm. Mèo nằm trong lồng đã lên xe cũng tính là đã lên xe. Sự kiện `levelStart`, `timeLow`, `levelEnd`. 4 unit test đồng hồ. Cảnh xe chạy đi (3 giây cuối) vẽ ở P16; đồng hồ hiện trên HUD ở P17.*
 
 #### P15 · Chủ nhà NPC
-- [ ] Đi lại theo điểm định sẵn, thỉnh thoảng đứng chắn đường
-- [ ] Thanh hài lòng thay đổi theo `sensitivity` khi nhận sự kiện
-- [ ] Hệ thống thoại: chọn câu theo sự kiện, cooldown, tránh lặp câu
-- [ ] Bong bóng thoại + âm thanh lẩm bẩm theo `voicePitch`
-- [ ] Modifier `landlordChangesMind`: đổi danh sách đồ giữa chừng
+- [x] Đi lại theo điểm định sẵn, thỉnh thoảng đứng chắn đường
+- [x] Thanh hài lòng thay đổi theo `sensitivity` khi nhận sự kiện
+- [x] Hệ thống thoại: chọn câu theo sự kiện, cooldown, tránh lặp câu
+- [x] Bong bóng thoại + âm thanh lẩm bẩm theo `voicePitch`
+- [x] Modifier `landlordChangesMind`: đổi danh sách đồ giữa chừng
 - **✅ Xong khi:** làm vỡ gương thì chủ nhà nói câu phù hợp, thanh hài lòng tụt; trong 5 phút không nói lặp một câu quá 2 lần.
+- 📝 *Kiểm tra (Chromium): vào màn chủ nhà nói câu mở đầu và đi tuần theo đường trong bản đồ (~600px/15s, bị đồ chắn thì đi điểm kế tiếp); ném gương vỡ → hài lòng 50 → 26 (−15 vỡ, −3 × 3 lần đập tường), câu "Thôi xong, bể thật rồi."; đưa thùng lên xe → +2, "Xếp cho ngay ngắn vào."; đổi ý → thêm 1 món bắt buộc, "À mà mang luôn cái Sofa nhé!"; chọn tiếng Anh thì thoại tiếng Anh. Không lặp: unit test mô phỏng 5 phút có sự kiện mỗi 2 giây → không câu nào quá 2 lần, hết câu thì im lặng. Thoại chọn theo số thứ tự (online chỉ cần gửi số), mỗi sự kiện 5 câu × 2 ngôn ngữ. Đồ "yêu thích" tính gấp đôi. Tiếng lẩm bẩm tạo bằng Web Audio (chưa nghe thử bằng tai, trình duyệt kiểm thử không có loa).*
 
 #### P16 · Tính điểm và màn kết quả
 - [ ] Công thức điểm như mục 8

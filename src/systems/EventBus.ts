@@ -30,6 +30,7 @@ export type GameEvent =
   | ({ type: 'truckFull' } & ItemRef)
   | { type: 'handbrake'; on: boolean; slot: number }
   | { type: 'truckRolling' }
+  | ({ type: 'requiredChanged' } & ItemRef)
   | { type: 'levelStart' }
   | { type: 'timeLow' }
   | { type: 'levelEnd'; passed: boolean }
