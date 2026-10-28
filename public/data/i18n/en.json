@@ -33,7 +33,7 @@
   "player.ouch": "Ouch!",
   "player.trip": "Whoa!",
   "result.title": "Results",
-  "result.played": "Played {seconds} s ({ticks} logic steps)",
+  "result.played": "Played {seconds} s",
   "result.back": "Enter: back to menu",
   "debug.fps": "Render FPS",
   "debug.logic": "Logic/sec",
@@ -100,5 +100,8 @@
   "dataError.mapColor": "\"{value}\" is not a color (#rrggbb)",
   "truck.full": "Truck's full!",
   "truck.handbrakeOn": "Handbrake on",
-  "truck.handbrakeOff": "Handbrake off"
+  "truck.handbrakeOff": "Handbrake off",
+  "result.passed": "Level cleared!",
+  "result.failed": "Missing required items",
+  "result.required": "Required items on the truck: {loaded}/{total}"
 }

@@ -15,7 +15,7 @@ export class ResultScene extends Phaser.Scene {
     const cx = GAME_WIDTH / 2;
 
     this.add
-      .text(cx, 220, t('result.title'), {
+      .text(cx, 150, t('result.title'), {
         fontFamily: Theme.font,
         fontSize: '56px',
         fontStyle: 'bold',
@@ -24,13 +24,24 @@ export class ResultScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     this.add
+      .text(cx, 250, t(data.passed ? 'result.passed' : 'result.failed'), {
+        fontFamily: Theme.font,
+        fontSize: '36px',
+        fontStyle: 'bold',
+        color: data.passed ? '#7CFC8A' : '#ff8a80',
+      })
+      .setOrigin(0.5);
+    this.add
       .text(
         cx,
         320,
-        t('result.played', { seconds: data.seconds.toFixed(1), ticks: data.logicTicks }),
-        { fontFamily: Theme.font, fontSize: '24px', color: Theme.text },
+        [
+          t('result.required', { loaded: data.requiredLoaded, total: data.requiredTotal }),
+          t('result.played', { seconds: Math.round(data.seconds) }),
+        ].join('\n'),
+        { fontFamily: Theme.font, fontSize: '24px', color: Theme.text, align: 'center' },
       )
-      .setOrigin(0.5);
+      .setOrigin(0.5, 0);
 
     this.add
       .text(cx, 440, t('result.back'), {

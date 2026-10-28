@@ -33,7 +33,7 @@
   "player.ouch": "Ui da!",
   "player.trip": "Ối!",
   "result.title": "Kết quả",
-  "result.played": "Đã chơi {seconds} giây ({ticks} bước logic)",
+  "result.played": "Đã chơi {seconds} giây",
   "result.back": "Enter: về menu",
   "debug.fps": "FPS vẽ hình",
   "debug.logic": "Logic/giây",
@@ -100,5 +100,8 @@
   "dataError.mapColor": "\"{value}\" không phải màu (#rrggbb)",
   "truck.full": "Xe đầy!",
   "truck.handbrakeOn": "Đã kéo phanh tay",
-  "truck.handbrakeOff": "Đã nhả phanh tay"
+  "truck.handbrakeOff": "Đã nhả phanh tay",
+  "result.passed": "Qua màn!",
+  "result.failed": "Chưa đủ đồ bắt buộc",
+  "result.required": "Đồ bắt buộc đã lên xe: {loaded}/{total}"
 }

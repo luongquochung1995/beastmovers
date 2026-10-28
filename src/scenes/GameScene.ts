@@ -1,6 +1,9 @@
 import { t } from '../data/i18n';
 import type { LevelDef } from '../data/types';
 import { type BuiltLevel, buildLevel, playerSpawn } from '../sim/levelSetup';
+import { LevelRuntime } from '../sim/LevelRuntime';
+import { EMPTY_FRAME } from '../systems/input/InputFrame';
+import type { PlayerSlot } from '../systems/input/InputManager';
 import type { Vec } from '../systems/geometry';
 import { GAME_HEIGHT, GAME_WIDTH, Theme } from '../ui/theme';
 import type { HudScene } from './HudScene';
@@ -8,13 +11,19 @@ import { RegistryKeys, SceneKeys } from './keys';
 import { PlayScene } from './PlayScene';
 
 export interface ResultData {
-  logicTicks: number;
+  levelId: string;
+  passed: boolean;
+  requiredLoaded: number;
+  requiredTotal: number;
+  /** Thời gian đã chơi (giây). */
   seconds: number;
 }
 
 /** Màn chơi: dựng hoàn toàn từ `levels.json` + bản đồ Tiled. */
 export class GameScene extends PlayScene {
   protected built!: BuiltLevel;
+  runtime!: LevelRuntime;
+  private leaving = false;
 
   constructor() {
     super(SceneKeys.Game);
@@ -30,6 +39,8 @@ export class GameScene extends PlayScene {
     const level = this.levelDef;
     const map = this.gameData.maps[level.map]!;
     this.built = buildLevel(this.world, level, map);
+    this.runtime = new LevelRuntime(this.world, this.built);
+    this.leaving = false;
     const cam = this.cameras.main;
     cam.setBounds(0, 0, map.width, map.height);
     cam.setZoom(Math.min(GAME_WIDTH / map.width, GAME_HEIGHT / map.height));
@@ -52,9 +63,38 @@ export class GameScene extends PlayScene {
     return playerSpawn(this.levelDef, slotIndex);
   }
 
+  /** Esc: kết thúc sớm (xe chạy luôn). */
   protected onExit(): void {
+    this.runtime.finishNow();
+  }
+
+  protected override fixedUpdate(dt: number): void {
+    super.fixedUpdate(dt);
+    this.runtime.step(dt);
+    if (this.runtime.done && !this.leaving) {
+      this.leaving = true;
+      // Chuyển scene sau khung hình này (không đổi scene giữa vòng lặp logic).
+      this.time.delayedCall(0, () => this.showResult());
+    }
+  }
+
+  protected override allowJoin(): boolean {
+    return !this.runtime.locked;
+  }
+
+  /** Hết giờ: mọi người buông tay điều khiển (input rỗng). */
+  protected override controlSlots(): readonly (PlayerSlot | null)[] {
+    if (!this.runtime.locked) return super.controlSlots();
+    return super.controlSlots().map((s) => s && { ...s, prev: EMPTY_FRAME, cur: EMPTY_FRAME });
+  }
+
+  private showResult(): void {
+    const status = this.runtime.requiredStatus();
     const data: ResultData = {
-      logicTicks: this.logicTicks,
+      levelId: this.built.level.id,
+      passed: this.runtime.passed,
+      requiredLoaded: status.filter((s) => s.loaded).length,
+      requiredTotal: this.built.required.size,
       seconds: this.logicTicks / this.config.logicHz,
     };
     this.scene.start(SceneKeys.Result, data);

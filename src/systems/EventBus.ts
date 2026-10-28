@@ -30,6 +30,9 @@ export type GameEvent =
   | ({ type: 'truckFull' } & ItemRef)
   | { type: 'handbrake'; on: boolean; slot: number }
   | { type: 'truckRolling' }
+  | { type: 'levelStart' }
+  | { type: 'timeLow' }
+  | { type: 'levelEnd'; passed: boolean }
   | { type: 'zoneSpawned'; kind: ZoneKind; x: number; y: number }
   | { type: 'playerTripped'; slot: number; cause: string };
 

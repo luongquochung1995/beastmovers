@@ -565,7 +565,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P11 | Mèo AI | B | ✔ | 3 ngày | ✅ | 2026-10-28 |
 | P12 | Bản đồ và level loader | C | ✔ | 4 ngày | ✅ | 2026-10-28 |
 | P13 | Xe tải | C | ✔ | 3 ngày | ✅ | 2026-10-28 |
-| P14 | Đồng hồ và điều kiện qua màn | C | ✔ | 2 ngày | ⬜ | |
+| P14 | Đồng hồ và điều kiện qua màn | C | ✔ | 2 ngày | ✅ | 2026-10-28 |
 | P15 | Chủ nhà NPC | C | ✔ | 4 ngày | ⬜ | |
 | P16 | Tính điểm và màn kết quả | C | ✔ | 3 ngày | ⬜ | |
 | P17 | HUD trong game | C | ✔ | 3 ngày | ⬜ | |
@@ -594,7 +594,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P40 | Kiểm thử trình duyệt | G | | 2 ngày | ⬜ | |
 | P41 | Phát hành | G | | 2 ngày | ⬜ | |
 
-**Tiến độ:** 12/41 phase · Mốc A 🟨 · B ✅ · C 🟨 · D ⬜ · E ⬜ · F ⬜ · G ⬜
+**Tiến độ:** 13/41 phase · Mốc A 🟨 · B ✅ · C 🟨 · D ⬜ · E ⬜ · F ⬜ · G ⬜
 
 ---
 
@@ -740,11 +740,12 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 - 📝 *Kiểm tra (Chromium): mang thùng vào xe → `itemLoaded`, cabin hiện 1/20; ném thùng vào xe → lên xe; kéo thùng ra → `itemUnloaded`, trả chỗ; xe 3 chỗ chất 4 thùng → thùng thứ 4 bị `truckFull` và bị đẩy dần ra cửa thùng; modifier `slope`: xe trôi ~55px/1,5s kéo theo đồ trên xe, bấm Nắm ở cần phanh → dừng hẳn. Đồ được tính "lên xe" khi nằm trọn trong thùng (sai số 6px), không ai cầm, không đang bay, gần như đứng yên. Xe quay được 4 hướng (`truck.facing`). 6 unit test sổ hàng.*
 
 #### P14 · Đồng hồ và điều kiện qua màn
-- [ ] Đếm ngược theo `timeLimitSec`; còn 60 giây thì phát `timeLow`
-- [ ] Theo dõi danh sách đồ bắt buộc
-- [ ] Hết giờ thì khóa điều khiển và chuyển sang cảnh kết
-- [ ] Qua màn nếu đủ đồ bắt buộc, ngược lại là thua
+- [x] Đếm ngược theo `timeLimitSec`; còn 60 giây thì phát `timeLow`
+- [x] Theo dõi danh sách đồ bắt buộc
+- [x] Hết giờ thì khóa điều khiển và chuyển sang cảnh kết
+- [x] Qua màn nếu đủ đồ bắt buộc, ngược lại là thua
 - **✅ Xong khi:** thắng và thua đều chuyển đúng sang màn kết quả.
+- 📝 *Kiểm tra (Chromium, màn rút còn 6 giây): không chất đồ → hết giờ, bấm phím nhân vật không nhúc nhích, 3s sau sang Kết quả "Chưa đủ đồ bắt buộc 0/3"; đưa 3 món bắt buộc lên xe → "Qua màn! 3/3"; Esc → kết thúc sớm. Mèo nằm trong lồng đã lên xe cũng tính là đã lên xe. Sự kiện `levelStart`, `timeLow`, `levelEnd`. 4 unit test đồng hồ. Cảnh xe chạy đi (3 giây cuối) vẽ ở P16; đồng hồ hiện trên HUD ở P17.*
 
 #### P15 · Chủ nhà NPC
 - [ ] Đi lại theo điểm định sẵn, thỉnh thoảng đứng chắn đường
