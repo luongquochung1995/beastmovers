@@ -577,7 +577,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P23 | Nội suy và dự đoán | D | ✔ | 4 ngày | ✅ | 2026-10-28 |
 | P24 | Đồng bộ sự kiện | D | ✔ | 2 ngày | ✅ | 2026-10-28 |
 | P25 | Rớt mạng, lỗi kết nối, dự phòng | D | ✔ | 4 ngày | ✅ | 2026-10-28 |
-| P26 | Test 8 người online | D | ✔ | 3 ngày | ⬜ | |
+| P26 | Test 8 người online | D | ✔ | 3 ngày | 🟨 | |
 | P27 | Menu chính, cài đặt, hướng dẫn | E | ✔ | 3 ngày | ⬜ | |
 | P28 | Màn chọn màn (khóa theo người và sao) | E | ✔ | 3 ngày | ⬜ | |
 | P29 | Lưu tiến trình | E | ✔ | 2 ngày | ⬜ | |
@@ -851,14 +851,29 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 - 📝 *Kiểm tra (Chromium, 3 máy): máy A "tắt Wi-Fi" 10 giây giữa màn trong lúc vẫn giữ phím đi (giả lập: kênh truyền ngừng gửi/nhận, các máy khác tự phát hiện qua nhịp tim như mất mạng thật) → host thấy A mất kết nối sau ~4 giây, nhân vật A đứng yên trên host (1175 → 1176, chỉ trôi 1 px quán tính), A hiện "Mất kết nối — đang thử vào lại… (29 giây)", máy B thấy chữ "📵 mất kết nối" trên đầu A; bật lại → A tự vào lại (bắt tay lại, xin lại ô, nhận snapshot đầy đủ), **đúng chỗ cũ**, đi tiếp được; B thấy "📶 đã vào lại!". Host đóng tab → cả 2 máy khách hiện ngay "Host đã rời phòng. Enter: về menu" → Enter về menu (host rớt mạng không báo trước thì chờ `reconnectGraceSec` = 30 giây rồi báo "Mất kết nối tới host"). **Dự phòng PeerJS**: relay Trystero hỏng → sau 8 giây máy khách chuyển sang PeerJS (máy chủ PeerJS chạy trên máy vì môi trường dev chặn máy chủ công cộng), vào lobby, chơi được, ping 121 ms; host nghe cùng lúc trên cả hai kênh. Màn hình không tìm thấy phòng có hướng dẫn + nút "Thử lại" / "Chơi chung máy này". Góc phải: 📶 độ trễ (máy khách tới host; host: máy khách chậm nhất, số máy đang kết nối), > 250 ms hiện "⚠ mạng chậm". Unit test: rớt mạng/vào lại/quá giờ chờ, máy lạ bị từ chối khi đang chơi, chuyển kênh dự phòng. Lỗi tìm thấy: (1) lời chào tạm biệt bị mất khi đóng tab vì kênh truyền tự đóng trước → phiên chơi tự lo việc đóng tab; (2) máy khách mất mạng vẫn tự đoán nhân vật chạy tiếp → ngừng đoán khi mất kết nối. ⚠️ Chưa thử tắt Wi-Fi thật với WebRTC (Trystero tự kết nối lại hay không cần thử trên máy thật); tải lại trang thì là máy mới (định danh mới) nên không lấy lại được chỗ cũ; máy chủ PeerJS công cộng chưa thử được.*
 
 #### P26 · Test 8 người online
-- [ ] Test 8 máy thật (hoặc 8 tab trên vài máy)
-- [ ] Đo FPS của host, băng thông, độ trễ, ghi vào bảng kết quả
-- [ ] Test kết hợp: 2 máy × 2 người chung máy + 4 máy đơn
-- [ ] Khiêng đồ `strict` 8 người qua mạng
+- [x] Test 8 máy thật (hoặc 8 tab trên vài máy) — *mới thử 6 tab (8 người) trên 1 máy; chưa có máy thật*
+- [x] Đo FPS của host, băng thông, độ trễ, ghi vào bảng kết quả
+- [x] Test kết hợp: 2 máy × 2 người chung máy + 4 máy đơn
+- [x] Khiêng đồ `strict` 8 người qua mạng
 - **✅ Xong khi:** 8 người khiêng xong grand piano lên xe; host giữ ≥ 55 FPS; không lỗi đồng bộ trong 10 phút.
+- 📝 *Kiểm tra (Chromium, 6 tab = 6 máy: host 2 người + 4 máy 1 người + 1 máy 2 người = 8 người): **8 người khiêng grand piano (`strict`, cần đủ 8) vào thùng xe trong 7,3 giây**, host và cả 5 máy khách đều thấy đàn đã lên xe. **Chạy thử 7 phút** (dừng theo yêu cầu, chưa đủ 10 phút) với 8 bot bấm phím ngẫu nhiên (2844 thao tác): **0 lần lệch đồng bộ** (mỗi snapshot kèm mã kiểm tra, máy khách so với trạng thái tự dựng), 0 gói bị bỏ. Host mô phỏng 60 bước/giây, mỗi bước 0,2 ms (p99 3,7 ms) — tức mô phỏng chỉ dùng ~1–20% ngân sách 16,7 ms. ⚠️ **Chưa kiểm được "host ≥ 55 FPS"**: container không có GPU, host vẽ bằng phần mềm chỉ 6 FPS khi chạy cùng 5 máy khách (máy khách chạy `?renderer=none`, không vẽ); cần đo trên máy thật. Thêm: mã kiểm tra lệch đồng bộ trong snapshot, chế độ không vẽ `?renderer=none` để thử nhiều máy.*
 
 **Ghi chú playtest mốc D:**
-_(ghi ở đây)_
+
+| Thử nghiệm | Kết quả |
+|---|---|
+| 2 trình duyệt riêng, Trystero/WebRTC thật (relay trên máy) | vào phòng ~3 s, ping ~50 ms |
+| 4 máy, lobby → màn → kết quả | đồng bộ đúng; 2 máy cùng nhấc sofa |
+| Băng thông mỗi máy khách | 1,4–2,3 KB/s (4 người); 3,8 KB/s (8 người, 193 B/gói) |
+| Trễ 150 ms ± 30 (mô phỏng 60 FPS) | nhân vật mình phản hồi ≤ 2 bước, lệch dự đoán 0,17 px, 0 khựng |
+| Rớt mạng 10 s rồi có lại | vào lại đúng chỗ cũ |
+| Host đóng tab | mọi máy khách báo ngay |
+| Trystero hỏng → PeerJS (máy chủ trên máy) | chuyển sau 8 s, chơi được, ping 121 ms |
+| 8 người, 6 máy, grand piano | lên xe trong 7,3 s |
+| 8 người chạy 7 phút | 0 lệch, 0 gói bỏ, host 60 bước/s, 0,2 ms/bước |
+| Host FPS | **chưa đo được** (container vẽ phần mềm 6 FPS) |
+
+Chưa làm: playtest người thật; 2 máy ở 2 mạng khác nhau qua relay công cộng; tắt Wi-Fi thật; máy chủ PeerJS công cộng.
 
 ---
 
