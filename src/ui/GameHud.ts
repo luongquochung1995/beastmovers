@@ -1,6 +1,8 @@
 import Phaser from 'phaser';
 import { getLocale, t } from '../data/i18n';
+import { PLAYER_STYLES } from '../entities/playerStyles';
 import type { LevelRuntime } from '../sim/LevelRuntime';
+import { edgeIndicator } from '../systems/cameraFit';
 import type { World } from '../sim/World';
 import { moodFace } from '../systems/dialogue';
 import { formatClock, TIME_LOW_MS } from '../systems/levelClock';
@@ -12,6 +14,9 @@ const GOOD = '#7CFC8A';
 const BAD = '#ff8a80';
 const BAR_W = 190;
 const OBJECTIVE_MS = 7000;
+/** Chiều cao thanh HUD trên cùng (px màn hình). */
+export const HUD_TOP = 56;
+const ARROW_MARGIN = 28;
 
 /** Màu thanh hài lòng: đỏ → vàng → xanh. */
 function satisfactionColor(v: number): number {
@@ -35,12 +40,15 @@ export class GameHud {
   private readonly reqPanel: Phaser.GameObjects.Rectangle;
   private reqRows: Phaser.GameObjects.Text[] = [];
   private readonly objective: Phaser.GameObjects.Container;
+  private readonly arrows: Phaser.GameObjects.Graphics;
+  private readonly arrowLabels: Phaser.GameObjects.Text[] = [];
   private shownMs = 0;
 
   constructor(
     private readonly scene: Phaser.Scene,
     private readonly runtime: LevelRuntime,
     private readonly world: World,
+    private readonly camera: Phaser.Cameras.Scene2D.Camera,
   ) {
     const text = (
       x: number,
@@ -50,7 +58,8 @@ export class GameHud {
     ) => scene.add.text(x, y, s, { fontFamily: Theme.font, color: Theme.text, ...style });
 
     // Thanh trên cùng
-    scene.add.rectangle(0, 0, GAME_WIDTH, 56, PANEL, PANEL_ALPHA).setOrigin(0);
+    scene.add.rectangle(0, 0, GAME_WIDTH, HUD_TOP, PANEL, PANEL_ALPHA).setOrigin(0);
+    this.arrows = scene.add.graphics().setDepth(100);
 
     // Trái: chủ nhà
     const ll = runtime.landlord;
@@ -89,7 +98,50 @@ export class GameHud {
     const bg = scene.add
       .rectangle(0, 0, msg.width + 40, msg.height + 24, 0x000000, 0.7)
       .setStrokeStyle(2, 0xffb347);
-    this.objective = scene.add.container(GAME_WIDTH / 2, GAME_HEIGHT * 0.32, [bg, msg]);
+    // Đặt gần đáy màn hình để không che người chơi (camera luôn đặt người chơi ở giữa).
+    this.objective = scene.add.container(GAME_WIDTH / 2, GAME_HEIGHT - 90, [bg, msg]);
+  }
+
+  /** Người chơi ở ngoài khung hình: mũi tên màu ở mép màn hình chỉ về phía họ. */
+  private drawOffscreenArrows(): void {
+    const g = this.arrows.clear();
+    const view = this.camera.worldView;
+    const zoom = this.camera.zoom;
+    const area = { x: 0, y: HUD_TOP, w: GAME_WIDTH, h: GAME_HEIGHT - HUD_TOP };
+    let n = 0;
+    for (const p of this.world.players) {
+      const screen = { x: (p.position.x - view.x) * zoom, y: (p.position.y - view.y) * zoom };
+      const ind = edgeIndicator(screen, area, ARROW_MARGIN);
+      if (!ind) continue;
+      const color = PLAYER_STYLES[p.styleIndex]!.color;
+      const { x, y } = ind.pos;
+      const a = ind.angle;
+      const tip = { x: x + Math.cos(a) * 16, y: y + Math.sin(a) * 16 };
+      const l = { x: x + Math.cos(a + 2.4) * 12, y: y + Math.sin(a + 2.4) * 12 };
+      const r = { x: x + Math.cos(a - 2.4) * 12, y: y + Math.sin(a - 2.4) * 12 };
+      g.fillStyle(color, 1).fillTriangle(tip.x, tip.y, l.x, l.y, r.x, r.y);
+      g.lineStyle(2, 0x000000, 0.8).strokeTriangle(tip.x, tip.y, l.x, l.y, r.x, r.y);
+      const label =
+        this.arrowLabels[n] ??
+        this.scene.add
+          .text(0, 0, '', {
+            fontFamily: Theme.font,
+            fontSize: '13px',
+            fontStyle: 'bold',
+            color: '#ffffff',
+            stroke: '#000000',
+            strokeThickness: 3,
+          })
+          .setOrigin(0.5)
+          .setDepth(101);
+      this.arrowLabels[n] = label;
+      label
+        .setText(`P${p.slotIndex + 1}`)
+        .setPosition(x - Math.cos(a) * 14, y - Math.sin(a) * 14)
+        .setVisible(true);
+      n++;
+    }
+    for (let i = n; i < this.arrowLabels.length; i++) this.arrowLabels[i]!.setVisible(false);
   }
 
   update(frameMs: number): void {
@@ -148,6 +200,8 @@ export class GameHud {
     const done = status.filter((s) => s.loaded).length;
     this.reqTitle.setText(`${t('hud.required')}  ${done}/${status.length}`);
     this.reqPanel.setSize(250, 36 + status.length * 22);
+
+    this.drawOffscreenArrows();
 
     // Dòng mục tiêu: hiện vài giây đầu màn rồi mờ dần.
     this.shownMs += frameMs;

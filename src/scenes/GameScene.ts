@@ -5,11 +5,17 @@ import { LevelRuntime } from '../sim/LevelRuntime';
 import { EMPTY_FRAME } from '../systems/input/InputFrame';
 import type { PlayerSlot } from '../systems/input/InputManager';
 import type { Vec } from '../systems/geometry';
-import { GameHud } from '../ui/GameHud';
+import { fitCamera } from '../systems/cameraFit';
+import { GameHud, HUD_TOP } from '../ui/GameHud';
 import { GAME_HEIGHT, GAME_WIDTH, Theme } from '../ui/theme';
 import type { HudScene } from './HudScene';
 import { RegistryKeys, SceneKeys } from './keys';
 import { PlayScene } from './PlayScene';
+
+const CAMERA_PADDING = 220;
+const CAMERA_MAX_ZOOM = 1.2;
+/** Độ "bám" của camera mỗi khung hình 60 FPS. */
+const CAMERA_LERP = 0.08;
 
 /** Màn chơi: dựng hoàn toàn từ `levels.json` + bản đồ Tiled. */
 export class GameScene extends PlayScene {
@@ -18,6 +24,9 @@ export class GameScene extends PlayScene {
   private leaving = false;
   private hud: GameHud | null = null;
   private lastFrameMs = 0;
+  private cameraReady = false;
+  /** Kiểm thử: khóa zoom camera (null = tự động). */
+  cameraZoomOverride: number | null = null;
 
   constructor() {
     super(SceneKeys.Game);
@@ -35,14 +44,12 @@ export class GameScene extends PlayScene {
     this.built = buildLevel(this.world, level, map);
     this.runtime = new LevelRuntime(this.world, this.built, this.gameData);
     this.leaving = false;
-    const cam = this.cameras.main;
-    cam.setBounds(0, 0, map.width, map.height);
-    cam.setZoom(Math.min(GAME_WIDTH / map.width, GAME_HEIGHT / map.height));
-    cam.centerOn(map.width / 2, map.height / 2);
+    this.cameras.main.setBounds(0, 0, map.width, map.height);
+    this.cameraReady = false;
   }
 
   override createHud(hud: HudScene): void {
-    this.hud = new GameHud(hud, this.runtime, this.world);
+    this.hud = new GameHud(hud, this.runtime, this.world, this.cameras.main);
     hud.add
       .text(GAME_WIDTH / 2, GAME_HEIGHT - 14, t('game.hint'), {
         fontFamily: Theme.font,
@@ -65,6 +72,29 @@ export class GameScene extends PlayScene {
   protected override afterRender(frameMs: number): void {
     this.lastFrameMs = frameMs;
     this.runtime.render(this.loop.alpha);
+    this.updateCamera(frameMs);
+  }
+
+  /** Camera chung: ôm mọi người chơi trên máy, trượt mượt tới khung hình mới. */
+  private updateCamera(frameMs: number): void {
+    const cam = this.cameras.main;
+    const map = this.built.map;
+    const fit = fitCamera({
+      points: this.world.players.map((p) => p.position),
+      view: { w: GAME_WIDTH, h: GAME_HEIGHT },
+      map: { w: map.width, h: map.height },
+      padding: CAMERA_PADDING,
+      maxZoom: CAMERA_MAX_ZOOM,
+      hudTop: HUD_TOP,
+    });
+    const zoom = this.cameraZoomOverride ?? fit.zoom;
+    // Lần đầu đặt thẳng, sau đó trượt theo (không phụ thuộc FPS).
+    const k = this.cameraReady ? 1 - Math.pow(1 - CAMERA_LERP, frameMs / 16.67) : 1;
+    this.cameraReady = true;
+    cam.setZoom(cam.zoom + (zoom - cam.zoom) * k);
+    const cx = cam.midPoint.x + (fit.center.x - cam.midPoint.x) * k;
+    const cy = cam.midPoint.y + (fit.center.y - cam.midPoint.y) * k;
+    cam.centerOn(cx, cy);
   }
 
   /** Esc: kết thúc sớm (xe chạy luôn). */

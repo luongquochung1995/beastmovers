@@ -7,6 +7,8 @@ export const SAVE_KEY = 'beast-movers-save-v1';
 
 export interface Settings {
   language?: string;
+  /** Rung màn hình khi đồ rơi mạnh (mặc định bật). */
+  screenShake?: boolean;
 }
 
 interface SaveData {

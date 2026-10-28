@@ -569,7 +569,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P15 | Chủ nhà NPC | C | ✔ | 4 ngày | ✅ | 2026-10-28 |
 | P16 | Tính điểm và màn kết quả | C | ✔ | 3 ngày | ✅ | 2026-10-28 |
 | P17 | HUD trong game | C | ✔ | 3 ngày | ✅ | 2026-10-28 |
-| P18 | Camera chung máy | C | ✔ | 2 ngày | ⬜ | |
+| P18 | Camera chung máy | C | ✔ | 2 ngày | ✅ | 2026-10-28 |
 | P19 | Tách simulation host/client | D | ✔ | 4–5 ngày | ⬜ | |
 | P20 | Transport và phòng chơi | D | ✔ | 4 ngày | ⬜ | |
 | P21 | Lobby online | D | ✔ | 3 ngày | ⬜ | |
@@ -594,7 +594,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P40 | Kiểm thử trình duyệt | G | | 2 ngày | ⬜ | |
 | P41 | Phát hành | G | | 2 ngày | ⬜ | |
 
-**Tiến độ:** 16/41 phase · Mốc A 🟨 · B ✅ · C 🟨 · D ⬜ · E ⬜ · F ⬜ · G ⬜
+**Tiến độ:** 17/41 phase · Mốc A 🟨 · B ✅ · C ✅ · D ⬜ · E ⬜ · F ⬜ · G ⬜
 
 ---
 
@@ -773,15 +773,19 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 - 📝 *Kiểm tra (Chromium): thanh trên cùng có mặt + tên + thanh hài lòng của chủ nhà, đồng hồ m:ss (dưới 1 phút đỏ và đập nhịp; hết giờ hiện "🚚 Xe chạy!"), sức chứa xe "🚚 Xe tải 1/20" + thanh; bảng "Đồ bắt buộc 1/4" có ✓ khi lên xe, 👐n cho đồ cần nhiều người, tự thêm khi chủ nhà đổi ý; dòng mục tiêu 7 giây đầu màn. HUD nằm ở scene riêng nên không bị camera zoom. Bong bóng thoại đặt trên đầu chủ nhà. ⚠️ "Người mới hiểu ngay" cần người thật xem thử; hiện bảng đồ bắt buộc che góc trái trên bản đồ → xử lý ở P18 (camera).*
 
 #### P18 · Camera chung máy
-- [ ] Camera chung, tự zoom và di chuyển để thấy tất cả người chơi trên máy
-- [ ] Giới hạn zoom; người đi quá xa thì hiện mũi tên ở mép màn hình
-- [ ] Rung màn hình khi đồ vỡ (tắt được trong cài đặt)
+- [x] Camera chung, tự zoom và di chuyển để thấy tất cả người chơi trên máy
+- [x] Giới hạn zoom; người đi quá xa thì hiện mũi tên ở mép màn hình
+- [x] Rung màn hình khi đồ vỡ (tắt được trong cài đặt)
 - **✅ Xong khi:** 4 người tản ra hai đầu bản đồ vẫn thấy được nhau.
+- 📝 *Kiểm tra (Chromium): 2 người gần nhau → zoom 1,2; 4 người ở 4 góc bản đồ → zoom 0,69 (vừa thấy cả bản đồ, chừa thanh HUD), cả 4 nằm trong khung; khóa zoom gần → 4 mũi tên màu kèm P1–P4 ở mép màn hình (nằm trên bảng HUD). Rung màn hình khi đồ rơi "RẦM": bật mặc định, tắt bằng `screenShake: false` trong cài đặt (giao diện bật/tắt làm ở P27). Camera trượt mượt, không phụ thuộc FPS. 7 unit test.*
 
 **🎯 Mốc C hoàn thành = vertical slice chơi chung máy.** Playtest với 2–4 người thật.
 
 **Ghi chú playtest mốc C:**
-_(ghi ở đây: có vui không? chỗ nào bực mình?)_
+- Chưa playtest người thật (theo plan cần 2–4 người thật chơi vertical slice). Toàn bộ kiểm tra là tự động.
+- Màn 1 đủ 1 vòng chơi: vào màn → khiêng/ném đồ → xe → chủ nhà chê/khen → hết giờ → xe chạy → điểm, sao, danh hiệu → chơi lại.
+- Mốc sao màn 1 (500/900/1300) chưa cân bằng; bản đồ studio sinh bằng script, chưa vẽ trong Tiled.
+- Chủ nhà nặng có thể đẩy lệch đồ khi đi tuần; đã dời sofa khỏi đường đi, cần xem lại khi thiết kế màn.
 
 ---
 

@@ -282,7 +282,7 @@ const dropOnRelease: BehaviorFactory = ({ world, item, params }) => {
       for (const p of world.players) {
         if (!carriers.has(p as never) && dist(p.position, item.position) <= radius) p.knockDown();
       }
-      world.scene.cameras.main.shake(180, 0.006);
+      world.shake(180, 0.006);
       announce(world, item, 'dropOnRelease', 'behavior.thud');
     },
   };

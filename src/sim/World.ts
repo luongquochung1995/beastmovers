@@ -19,6 +19,7 @@ import type { PlayerSlot } from '../systems/input/InputManager';
 import { DEFAULT_MOTOR, type MotorParams } from '../systems/PlayerMotor';
 import type { Random } from '../systems/Random';
 import { t } from '../data/i18n';
+import { loadSettings } from '../data/settings';
 import { popText } from '../ui/popText';
 import { Theme } from '../ui/theme';
 import { createBehaviors } from './behaviors';
@@ -205,6 +206,13 @@ export class World {
       }
     });
   }
+
+  /** Rung màn hình (tắt được trong cài đặt). */
+  shake(durationMs: number, intensity: number): void {
+    if (this.shakeEnabled) this.scene.cameras.main.shake(durationMs, intensity);
+  }
+
+  private readonly shakeEnabled = loadSettings().screenShake !== false;
 
   /** Chữ nổi ngắn ở vị trí `at`. Nhiều chữ trong cùng một bước thì xếp lệch nhau cho khỏi chồng. */
   pop(at: Vec, text: string, color?: string): void {
