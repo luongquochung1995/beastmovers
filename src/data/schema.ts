@@ -167,8 +167,14 @@ export type ObjectOf<S extends Shape> = Simplify<
   { [K in RequiredKeys<S>]: Infer<S[K]> } & { [K in OptionalKeys<S>]?: Infer<S[K]> }
 >;
 
-/** Object có các trường cố định. Trường lạ bị báo lỗi (thường là gõ sai tên trường). */
-export function obj<S extends Shape>(shape: S): Schema<ObjectOf<S>> {
+/**
+ * Object có các trường cố định. Trường lạ bị báo lỗi (thường là gõ sai tên trường),
+ * trừ khi `allowUnknown` (vd. file của Tiled có nhiều trường phụ không cần dùng).
+ */
+export function obj<S extends Shape>(
+  shape: S,
+  opts: { allowUnknown?: boolean } = {},
+): Schema<ObjectOf<S>> {
   return {
     check(v, path, ctx) {
       if (typeof v !== 'object' || v === null || Array.isArray(v))
@@ -183,8 +189,10 @@ export function obj<S extends Shape>(shape: S): Schema<ObjectOf<S>> {
         }
         if (!schema.check(rec[key], join(path, key), ctx)) ok = false;
       }
-      for (const key of Object.keys(rec)) {
-        if (!(key in shape)) ok = report(ctx, join(path, key), 'unknownField', { field: key });
+      if (!opts.allowUnknown) {
+        for (const key of Object.keys(rec)) {
+          if (!(key in shape)) ok = report(ctx, join(path, key), 'unknownField', { field: key });
+        }
       }
       return ok;
     },

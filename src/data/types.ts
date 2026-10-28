@@ -73,6 +73,8 @@ export const DIALOGUE_EVENTS = [
   'levelEnd',
   'bigLiftStart',
   'bigLiftFail',
+  /** Chủ nhà đổi ý (modifier `landlordChangesMind`). */
+  'changeMind',
 ] as const;
 export type DialogueEvent = (typeof DIALOGUE_EVENTS)[number];
 
@@ -154,6 +156,8 @@ export const TIERS = ['solo', 'duo', 'team', 'squad', 'full'] as const;
 export const MODIFIERS = ['rain', 'slope', 'stairs', 'landlordChangesMind', 'paparazzi'] as const;
 
 const starsSchema = arr(num({ min: 0 }), { min: 3, max: 3 });
+export const TRUCK_FACINGS = ['left', 'right', 'up', 'down'] as const;
+export type TruckFacing = (typeof TRUCK_FACINGS)[number];
 
 export const levelSchema = obj({
   id: ID,
@@ -166,8 +170,17 @@ export const levelSchema = obj({
   timeLimitSec: num({ min: 1 }),
   map: str({ minLen: 1 }),
   landlord: ID,
-  truck: obj({ x: num(), y: num(), slots: int({ min: 1 }), hasHandbrake: bool() }),
-  spawns: arr(obj({ item: ID, x: num(), y: num(), required: bool() }), { min: 1 }),
+  /** `x`, `y` là tâm thùng xe; `facing` là phía cửa thùng (mặc định quay sang trái). */
+  truck: obj({
+    x: num(),
+    y: num(),
+    slots: int({ min: 1 }),
+    hasHandbrake: bool(),
+    facing: optional(oneOf(TRUCK_FACINGS)),
+  }),
+  spawns: arr(obj({ item: ID, x: num(), y: num(), required: bool(), angle: optional(num()) }), {
+    min: 1,
+  }),
   playerSpawns: arr(vec2(), { min: 1 }),
   modifiers: arr(oneOf(MODIFIERS)),
   stars: starsSchema,

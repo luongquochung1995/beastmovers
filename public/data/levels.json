@@ -1,7 +1,10 @@
 [
   {
     "id": "lv01_studio",
-    "name": { "en": "Studio Apartment", "vi": "Căn hộ studio" },
+    "name": {
+      "en": "Studio Apartment",
+      "vi": "Căn hộ studio"
+    },
     "tier": "solo",
     "minPlayers": 1,
     "maxPlayers": 8,
@@ -10,23 +13,102 @@
     "timeLimitSec": 300,
     "map": "maps/studio.json",
     "landlord": "grandma",
-    "truck": { "x": 900, "y": 300, "slots": 20, "hasHandbrake": false },
+    "truck": {
+      "x": 1360,
+      "y": 430,
+      "slots": 20,
+      "hasHandbrake": false,
+      "facing": "left"
+    },
     "spawns": [
-      { "item": "box", "x": 200, "y": 150, "required": true },
-      { "item": "box", "x": 250, "y": 150, "required": true },
-      { "item": "mirror", "x": 320, "y": 90, "required": false },
-      { "item": "plant", "x": 380, "y": 200, "required": false },
-      { "item": "teddy", "x": 150, "y": 300, "required": true }
+      {
+        "item": "box",
+        "x": 150,
+        "y": 150,
+        "required": true
+      },
+      {
+        "item": "box",
+        "x": 200,
+        "y": 150,
+        "required": true
+      },
+      {
+        "item": "box",
+        "x": 150,
+        "y": 200,
+        "required": false
+      },
+      {
+        "item": "box",
+        "x": 200,
+        "y": 200,
+        "required": false
+      },
+      {
+        "item": "teddy",
+        "x": 120,
+        "y": 560,
+        "required": true
+      },
+      {
+        "item": "mirror",
+        "x": 500,
+        "y": 80,
+        "required": false
+      },
+      {
+        "item": "plant",
+        "x": 900,
+        "y": 100,
+        "required": false
+      },
+      {
+        "item": "sofa",
+        "x": 600,
+        "y": 320,
+        "required": false
+      },
+      {
+        "item": "fish_tank",
+        "x": 720,
+        "y": 110,
+        "required": false
+      },
+      {
+        "item": "fridge",
+        "x": 900,
+        "y": 820,
+        "required": false
+      },
+      {
+        "item": "plant",
+        "x": 120,
+        "y": 860,
+        "required": false
+      },
+      {
+        "item": "cat",
+        "x": 320,
+        "y": 420,
+        "required": false
+      },
+      {
+        "item": "cat_carrier",
+        "x": 1120,
+        "y": 760,
+        "required": false
+      }
     ],
     "playerSpawns": [
-      [100, 400],
-      [140, 400],
-      [180, 400],
-      [220, 400],
-      [100, 440],
-      [140, 440],
-      [180, 440],
-      [220, 440]
+      [1090, 250],
+      [1140, 250],
+      [1090, 300],
+      [1140, 300],
+      [1090, 560],
+      [1140, 560],
+      [1090, 610],
+      [1140, 610]
     ],
     "modifiers": [],
     "stars": [500, 900, 1300],
@@ -34,8 +116,14 @@
     "scaling": {
       "basePlayers": 1,
       "extraSpawnsPerPlayer": [
-        { "item": "box", "count": 2 },
-        { "item": "plant", "count": 1 }
+        {
+          "item": "box",
+          "count": 2
+        },
+        {
+          "item": "plant",
+          "count": 1
+        }
       ],
       "timeDeltaPerPlayerSec": -10,
       "starsPerExtraPlayer": [150, 250, 350],

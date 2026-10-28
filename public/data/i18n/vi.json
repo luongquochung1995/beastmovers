@@ -92,5 +92,10 @@
   "sandbox.scenarios": "Thử hành vi: 1 tủ lạnh · 2 chậu cây · 3 bể cá · 4 máy chạy bộ · 5 bàn bi-a · 6 giàn tạ · 7 thùng · 8 piano · 9 gương · 0 bể lớn",
   "cat.meow": "Meo!",
   "cat.caught": "Bắt được rồi!",
-  "cat.escaped": "Mèo xổng!"
+  "cat.escaped": "Mèo xổng!",
+  "dataError.unknownMap": "Không có file bản đồ \"{map}\"",
+  "dataError.outOfMap": "Vị trí ({x}, {y}) nằm ngoài bản đồ ({w}×{h})",
+  "dataError.mapRotation": "Đối tượng {id}: chưa hỗ trợ xoay",
+  "dataError.mapEmptyRect": "Đối tượng {id} không có kích thước",
+  "dataError.mapColor": "\"{value}\" không phải màu (#rrggbb)"
 }

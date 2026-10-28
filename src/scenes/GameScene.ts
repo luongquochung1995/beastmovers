@@ -1,7 +1,10 @@
 import { t } from '../data/i18n';
+import type { LevelDef } from '../data/types';
+import { type BuiltLevel, buildLevel, playerSpawn } from '../sim/levelSetup';
 import type { Vec } from '../systems/geometry';
 import { GAME_HEIGHT, GAME_WIDTH, Theme } from '../ui/theme';
-import { SceneKeys } from './keys';
+import type { HudScene } from './HudScene';
+import { RegistryKeys, SceneKeys } from './keys';
 import { PlayScene } from './PlayScene';
 
 export interface ResultData {
@@ -9,43 +12,44 @@ export interface ResultData {
   seconds: number;
 }
 
-const ROOM = { x: 40, y: 40, w: GAME_WIDTH - 80, h: GAME_HEIGHT - 100 };
-
-/**
- * Màn chơi. Hiện là một căn phòng thử với vài món đồ lấy từ data.
- * Bản đồ thật dựng từ `levels.json` sẽ làm ở P12.
- */
+/** Màn chơi: dựng hoàn toàn từ `levels.json` + bản đồ Tiled. */
 export class GameScene extends PlayScene {
+  protected built!: BuiltLevel;
+
   constructor() {
     super(SceneKeys.Game);
   }
 
-  protected buildLevel(): void {
-    this.world.addRoom(ROOM);
-    const spawns: [string, number, number, number?][] = [
-      ['box', 600, 200],
-      ['box', 650, 200],
-      ['box', 625, 250],
-      ['mirror', 760, 160],
-      ['plant', 820, 420],
-      ['teddy', 560, 420],
-      ['sofa', 950, 200, 0.2],
-      ['fridge', 1000, 480],
-    ];
-    for (const [id, x, y, angle] of spawns) this.world.spawnItem(id, x, y, angle ?? 0);
+  /** Màn đang chơi: `levelId` trong registry, mặc định màn đầu tiên. */
+  protected get levelDef(): LevelDef {
+    const id = this.registry.get(RegistryKeys.LevelId) as string | undefined;
+    return this.gameData.levels.find((l) => l.id === id) ?? this.gameData.levels[0]!;
+  }
 
-    this.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT - 20, t('game.hint'), {
+  protected buildLevel(): void {
+    const level = this.levelDef;
+    const map = this.gameData.maps[level.map]!;
+    this.built = buildLevel(this.world, level, map);
+    const cam = this.cameras.main;
+    cam.setBounds(0, 0, map.width, map.height);
+    cam.setZoom(Math.min(GAME_WIDTH / map.width, GAME_HEIGHT / map.height));
+    cam.centerOn(map.width / 2, map.height / 2);
+  }
+
+  override createHud(hud: HudScene): void {
+    hud.add
+      .text(GAME_WIDTH / 2, GAME_HEIGHT - 14, t('game.hint'), {
         fontFamily: Theme.font,
-        fontSize: '15px',
+        fontSize: '14px',
         color: Theme.muted,
+        backgroundColor: '#00000088',
+        padding: { x: 8, y: 3 },
       })
-      .setOrigin(0.5)
-      .setDepth(9_000);
+      .setOrigin(0.5, 1);
   }
 
   protected spawnPointFor(slotIndex: number): Vec {
-    return { x: 200 + (slotIndex % 2) * 60, y: 300 + Math.floor(slotIndex / 2) * 60 };
+    return playerSpawn(this.levelDef, slotIndex);
   }
 
   protected onExit(): void {

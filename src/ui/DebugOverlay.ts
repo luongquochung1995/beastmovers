@@ -25,6 +25,8 @@ export class DebugOverlay {
   constructor(
     private readonly scene: Phaser.Scene,
     visible: boolean,
+    /** Đếm số vật thể của màn chơi (bảng debug nằm ở scene HUD, khác scene vật lý). */
+    private readonly countBodies: () => number = () => 0,
   ) {
     this.text = scene.add
       .text(GAME_WIDTH - 8, 8, '', {
@@ -47,11 +49,6 @@ export class DebugOverlay {
 
   setVisible(visible: boolean): void {
     this.text.setVisible(visible);
-    const world = this.scene.matter?.world;
-    if (world) {
-      world.drawDebug = visible;
-      world.debugGraphic?.setVisible(visible);
-    }
   }
 
   /** Gọi mỗi khung hình với số bước logic vừa chạy. */
@@ -63,7 +60,7 @@ export class DebugOverlay {
       this.stats = {
         fps: Math.round(this.scene.game.loop.actualFps),
         logicStepsPerSec: Math.round((this.stepsThisWindow * 1000) / elapsed),
-        bodies: this.scene.matter?.world.getAllBodies().length ?? 0,
+        bodies: this.countBodies(),
       };
       this.stepsThisWindow = 0;
       this.windowStart = now;

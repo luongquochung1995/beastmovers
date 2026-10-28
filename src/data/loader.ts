@@ -1,6 +1,13 @@
 import { hashFiles } from './hash';
 import type { Issue } from './schema';
-import { allDataFiles, type GameData, validateGameData, type ValidateOptions } from './validate';
+import {
+  allDataFiles,
+  DATA_FILES,
+  type GameData,
+  mapFilesOf,
+  validateGameData,
+  type ValidateOptions,
+} from './validate';
 
 export type ReadText = (file: string) => Promise<string>;
 
@@ -45,17 +52,22 @@ export async function loadGameData(
   const texts: Record<string, string> = {};
   const raw: Record<string, unknown> = {};
 
-  const results = await Promise.allSettled(files.map((f) => readText(f)));
-  results.forEach((r, i) => {
-    const file = files[i]!;
-    if (r.status === 'rejected') {
-      issues.push({ file, path: '', code: 'fileMissing', params: { reason: String(r.reason) } });
-      return;
-    }
-    texts[file] = r.value;
-    const value = parseJson(file, r.value, issues);
-    if (value !== undefined) raw[file] = value;
-  });
+  const readAll = async (list: string[]) => {
+    const results = await Promise.allSettled(list.map((f) => readText(f)));
+    results.forEach((r, i) => {
+      const file = list[i]!;
+      if (r.status === 'rejected') {
+        issues.push({ file, path: '', code: 'fileMissing', params: { reason: String(r.reason) } });
+        return;
+      }
+      texts[file] = r.value;
+      const value = parseJson(file, r.value, issues);
+      if (value !== undefined) raw[file] = value;
+    });
+  };
+  await readAll(files);
+  // Bản đồ: đọc các file mà levels.json nhắc tới.
+  await readAll(mapFilesOf(raw[DATA_FILES.levels]));
 
   const { data, issues: dataIssues } = validateGameData(raw, opts);
   issues.push(...dataIssues);

@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import type { GameConfig } from '../data/types';
 import type { GameData } from '../data/validate';
+import { Door } from '../entities/Door';
 import { Item } from '../entities/Item';
 import { Player } from '../entities/Player';
 import { PLAYER_RADIUS } from '../entities/playerStyles';
@@ -51,6 +52,7 @@ export class World {
   readonly items: Item[] = [];
   readonly walls: MatterJS.BodyType[] = [];
   readonly zones: Zone[] = [];
+  readonly doors: Door[] = [];
   /** Chỗ nấp của mèo (do màn chơi đặt). */
   hideSpots: Vec[] = [];
   /** Mèo → đồ chứa đang nhốt nó. */
@@ -87,8 +89,14 @@ export class World {
 
   // ---------- Dựng màn ----------
 
-  addFloor(r: Rect): void {
-    this.scene.add.rectangle(r.x, r.y, r.w, r.h, Theme.floor).setOrigin(0).setDepth(-1000);
+  addFloor(r: Rect, color: number = Theme.floor): void {
+    this.scene.add.rectangle(r.x, r.y, r.w, r.h, color).setOrigin(0).setDepth(-1000);
+  }
+
+  addDoor(r: Rect, hinge: 'start' | 'end'): Door {
+    const door = new Door(this.scene, r, hinge);
+    this.doors.push(door);
+    return door;
   }
 
   addWall(r: Rect): MatterJS.BodyType {
@@ -97,7 +105,11 @@ export class World {
       label: 'wall',
       friction: 0.1,
     });
-    this.scene.add.rectangle(r.x, r.y, r.w, r.h, 0x3a3550).setOrigin(0).setDepth(-500);
+    this.scene.add
+      .rectangle(r.x, r.y, r.w, r.h, 0x6a6188)
+      .setOrigin(0)
+      .setStrokeStyle(2, 0x8a80aa)
+      .setDepth(-500);
     this.walls.push(body);
     this.wallSet.add(body);
     return body;
@@ -343,6 +355,7 @@ export class World {
     this.bus.tick++;
     this.timeMs += dt;
     this.updateContainers(dt);
+    for (const d of this.doors) d.step();
     for (const item of this.items) {
       item.beforeStep(dt);
       if (item.hidden) continue;
@@ -386,6 +399,7 @@ export class World {
   }
 
   render(alpha: number, frameMs: number): void {
+    for (const d of this.doors) d.render();
     for (const item of this.items) item.render(alpha);
     for (const p of this.players) p.render(alpha, frameMs);
     this.grab.render(this.overlay, this.debugDraw);

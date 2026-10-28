@@ -563,7 +563,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P09 | Độ bền và vỡ | B | ✔ | 3 ngày | ✅ | 2026-10-28 |
 | P10 | Hành vi đặc biệt của đồ | B | ✔ | 4 ngày | ✅ | 2026-10-28 |
 | P11 | Mèo AI | B | ✔ | 3 ngày | ✅ | 2026-10-28 |
-| P12 | Bản đồ và level loader | C | ✔ | 4 ngày | ⬜ | |
+| P12 | Bản đồ và level loader | C | ✔ | 4 ngày | ✅ | 2026-10-28 |
 | P13 | Xe tải | C | ✔ | 3 ngày | ⬜ | |
 | P14 | Đồng hồ và điều kiện qua màn | C | ✔ | 2 ngày | ⬜ | |
 | P15 | Chủ nhà NPC | C | ✔ | 4 ngày | ⬜ | |
@@ -594,7 +594,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P40 | Kiểm thử trình duyệt | G | | 2 ngày | ⬜ | |
 | P41 | Phát hành | G | | 2 ngày | ⬜ | |
 
-**Tiến độ:** 10/41 phase · Mốc A 🟨 · B ✅ · C ⬜ · D ⬜ · E ⬜ · F ⬜ · G ⬜
+**Tiến độ:** 11/41 phase · Mốc A 🟨 · B ✅ · C 🟨 · D ⬜ · E ⬜ · F ⬜ · G ⬜
 
 ---
 
@@ -725,10 +725,11 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 ### 🅲 Mốc C — Một màn chơi hoàn chỉnh (chơi chung máy)
 
 #### P12 · Bản đồ và level loader
-- [ ] Vẽ bản đồ bằng Tiled, xuất JSON; load tường, cửa, sàn, vùng trơn, chỗ nấp
-- [ ] Đọc `levels.json`: điểm xuất hiện người chơi và đồ vật, chủ nhà, xe tải, `modifiers`
-- [ ] Cửa có bản lề, mở được khi đẩy
+- [x] Vẽ bản đồ bằng Tiled, xuất JSON; load tường, cửa, sàn, vùng trơn, chỗ nấp
+- [x] Đọc `levels.json`: điểm xuất hiện người chơi và đồ vật, chủ nhà, xe tải, `modifiers`
+- [x] Cửa có bản lề, mở được khi đẩy
 - **✅ Xong khi:** màn `lv01_studio` dựng hoàn toàn từ file data.
+- 📝 *Kiểm tra: Chromium dựng `lv01_studio` hoàn toàn từ `levels.json` + `maps/studio.json`: 10 tường, 2 cửa, 13 món đồ (3 bắt buộc), 5 chỗ nấp, người chơi ở đúng điểm xuất hiện. Đi qua cửa chính → cửa xoay 31° rồi tự khép lại. Bản đồ dùng định dạng JSON của Tiled (lớp `floors`, `walls`, `doors`, `markers`, `zones`), mở và sửa được bằng Tiled; bản đầu được sinh bằng `tools/make-studio-map.py` chứ chưa vẽ tay trong Tiled. Validate bản đồ: thiếu file, đường dẫn ngoài `maps/`, vị trí ngoài bản đồ, đối tượng xoay, loại vùng lạ, màu sai (5 unit test). Xe tải, chủ nhà và modifier dựng ở P13/P15. Thêm: HudScene chạy song song để HUD và debug không bị camera zoom.*
 
 #### P13 · Xe tải
 - [ ] Vùng thùng xe; đồ đặt vào thì tính là "đã lên xe" (phát sự kiện `itemLoaded`)

@@ -298,3 +298,75 @@ it('món đồ sai schema không gây lỗi dây chuyền "không có món đồ
   );
   expect(issues.filter((i) => i.file === 'levels.json')).toEqual([]);
 });
+
+describe('Bản đồ Tiled', () => {
+  type TiledLayer = { name: string; objects: Record<string, unknown>[] };
+  type Tiled = { layers: TiledLayer[] };
+  const layerOf = (m: Tiled, name: string) => m.layers.find((l) => l.name === name)!;
+
+  it('màn 1 đọc đúng tường, cửa, chỗ nấp, đường đi chủ nhà', async () => {
+    const res = await load(reader());
+    expect(res.ok).toBe(true);
+    if (!res.ok) return;
+    const map = res.data.maps['maps/studio.json']!;
+    expect(map.width).toBe(1600);
+    expect(map.height).toBe(960);
+    expect(map.walls.length).toBe(10);
+    expect(map.doors.map((d) => d.hinge)).toEqual(['start', 'start']);
+    expect(map.hideSpots.length).toBe(5);
+    expect(map.landlordPath[0]).toEqual({ x: 500, y: 300 });
+    expect(map.floors[0]!.color).toBe(0x3b3346);
+  });
+
+  it('màn trỏ tới bản đồ không có', async () => {
+    const issues = await issuesFor(
+      reader({ 'levels.json': (l: { map: string }[]) => (l[0]!.map = 'maps/nowhere.json') }),
+    );
+    expect(issues).toContainEqual(
+      expect.objectContaining({ file: 'maps/nowhere.json', code: 'fileMissing' }),
+    );
+  });
+
+  it('vị trí nằm ngoài bản đồ', async () => {
+    const issues = await issuesFor(
+      reader({ 'levels.json': (l: { spawns: { x: number }[] }[]) => (l[0]!.spawns[0]!.x = 5000) }),
+    );
+    expect(issues).toContainEqual(
+      expect.objectContaining({
+        file: 'levels.json',
+        path: '[lv01_studio].spawns[0]',
+        code: 'outOfMap',
+      }),
+    );
+  });
+
+  it('đối tượng bị xoay, loại vùng lạ, màu sai', async () => {
+    const issues = await issuesFor(
+      reader({
+        'maps/studio.json': (m: Tiled) => {
+          layerOf(m, 'walls').objects[0]!.rotation = 30;
+          layerOf(m, 'zones').objects.push({
+            id: 999,
+            type: 'lava',
+            x: 100,
+            y: 100,
+            width: 40,
+            height: 40,
+          });
+          (layerOf(m, 'floors').objects[0]!.properties as { value: string }[])[0]!.value = 'purple';
+        },
+      }),
+    );
+    const codes = issues.filter((i) => i.file === 'maps/studio.json').map((i) => i.code);
+    expect(codes).toEqual(expect.arrayContaining(['mapRotation', 'enum', 'mapColor']));
+  });
+
+  it('đường dẫn bản đồ phải nằm trong maps/', async () => {
+    const issues = await issuesFor(
+      reader({ 'levels.json': (l: { map: string }[]) => (l[0]!.map = '../../secret.json') }),
+    );
+    expect(issues).toContainEqual(
+      expect.objectContaining({ path: '[lv01_studio].map', code: 'pattern' }),
+    );
+  });
+});

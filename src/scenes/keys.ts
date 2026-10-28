@@ -6,6 +6,7 @@ export const SceneKeys = {
   Sandbox: 'Sandbox',
   Game: 'Game',
   Result: 'Result',
+  Hud: 'Hud',
 } as const;
 
 /** Khóa trong `scene.registry`. */
@@ -15,4 +16,6 @@ export const RegistryKeys = {
   Data: 'data',
   /** Hash của data (8 ký tự hex). */
   DataHash: 'dataHash',
+  /** id màn đang chọn (levels.json). */
+  LevelId: 'levelId',
 } as const;

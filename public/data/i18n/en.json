@@ -92,5 +92,10 @@
   "sandbox.scenarios": "Behavior tests: 1 fridge · 2 plant · 3 fish tank · 4 treadmill · 5 pool table · 6 weights · 7 box · 8 piano · 9 mirror · 0 aquarium",
   "cat.meow": "Meow!",
   "cat.caught": "Gotcha!",
-  "cat.escaped": "The cat got out!"
+  "cat.escaped": "The cat got out!",
+  "dataError.unknownMap": "Map file \"{map}\" not found",
+  "dataError.outOfMap": "Position ({x}, {y}) is outside the map ({w}×{h})",
+  "dataError.mapRotation": "Object {id}: rotated objects are not supported",
+  "dataError.mapEmptyRect": "Object {id} has no size",
+  "dataError.mapColor": "\"{value}\" is not a color (#rrggbb)"
 }

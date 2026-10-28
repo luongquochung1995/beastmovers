@@ -1,4 +1,5 @@
 import { type Dictionary, LOCALES, type Locale } from './i18n';
+import { insideMap, type MapLayout, mapSchema, parseMap } from './map';
 import { type CheckContext, type Issue, report, type Schema, validateFile } from './schema';
 import {
   configSchema,
@@ -43,6 +44,65 @@ export interface GameData {
   landlords: LandlordDef[];
   lines: Record<Locale, LinesFile>;
   i18n: Record<Locale, Dictionary>;
+  /** Bố cục bản đồ theo đường dẫn file (vd. `maps/studio.json`). */
+  maps: Record<string, MapLayout>;
+}
+
+/** Đường dẫn bản đồ hợp lệ: chỉ cho phép file trong thư mục `maps/`. */
+const MAP_PATH = /^maps\/[\w-]+\.json$/;
+
+/** Danh sách file bản đồ mà `levels.json` (chưa kiểm tra) nhắc tới, để loader đọc thêm. */
+export function mapFilesOf(rawLevels: unknown): string[] {
+  if (!Array.isArray(rawLevels)) return [];
+  const files = rawLevels
+    .map((l) => (l && typeof l === 'object' ? (l as { map?: unknown }).map : undefined))
+    .filter((m): m is string => typeof m === 'string' && MAP_PATH.test(m));
+  return [...new Set(files)];
+}
+
+function checkMaps(
+  levels: LevelDef[],
+  raw: Record<string, unknown>,
+  issues: Issue[],
+): Record<string, MapLayout> {
+  const maps: Record<string, MapLayout> = {};
+  for (const file of new Set(levels.map((l) => l.map))) {
+    if (!MAP_PATH.test(file) || !(file in raw)) continue;
+    const tiled = validateFile(file, raw[file], mapSchema, issues);
+    if (tiled) maps[file] = parseMap(file, tiled, issues);
+  }
+  const file = DATA_FILES.levels;
+  for (const lv of levels) {
+    const at = `[${lv.id}]`;
+    if (!MAP_PATH.test(lv.map)) {
+      issues.push({
+        file,
+        path: `${at}.map`,
+        code: 'pattern',
+        params: { value: lv.map, pattern: 'maps/<tên>.json' },
+      });
+      continue;
+    }
+    const map = maps[lv.map];
+    if (!map) {
+      if (!(lv.map in raw))
+        issues.push({ file, path: `${at}.map`, code: 'unknownMap', params: { map: lv.map } });
+      continue;
+    }
+    const out = (path: string, x: number, y: number) => {
+      if (!insideMap(map, x, y))
+        issues.push({
+          file,
+          path: `${at}.${path}`,
+          code: 'outOfMap',
+          params: { x, y, w: map.width, h: map.height },
+        });
+    };
+    out('truck', lv.truck.x, lv.truck.y);
+    lv.spawns.forEach((s, i) => out(`spawns[${i}]`, s.x, s.y));
+    lv.playerSpawns.forEach(([x, y], i) => out(`playerSpawns[${i}]`, x, y));
+  }
+  return maps;
 }
 
 export interface ValidateOptions {
@@ -328,6 +388,7 @@ export function validateGameData(
   if (landlords && items) checkLandlords(landlords.valid, items.ids, lines, issues);
   checkLinesParity(lines, issues);
   checkI18nParity(i18n, issues);
+  const maps = levels ? checkMaps(levels.valid, raw, issues) : {};
 
   const complete =
     config && items && levels && landlords && LOCALES.every((l) => lines[l] && i18n[l]);
@@ -341,6 +402,7 @@ export function validateGameData(
       landlords: landlords.valid,
       lines: lines as Record<Locale, LinesFile>,
       i18n: i18n as Record<Locale, Dictionary>,
+      maps,
     },
     issues,
   };
