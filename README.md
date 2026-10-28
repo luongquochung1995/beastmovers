@@ -100,5 +100,7 @@ tests/              Unit test
 
 ## Deploy GitHub Pages
 
-Workflow `.github/workflows/deploy.yml` tự build và deploy mỗi khi push lên nhánh `main`.
-Trên GitHub, vào **Settings → Pages → Build and deployment** và chọn **Source: GitHub Actions**.
+Workflow `.github/workflows/deploy.yml` mỗi khi push lên nhánh `main`: lint, test, build rồi đẩy
+thư mục `dist/` lên nhánh `gh-pages`.
+Trên GitHub, vào **Settings → Pages → Build and deployment**, chọn **Source: Deploy from a branch**,
+nhánh **gh-pages**, thư mục **/ (root)**.
