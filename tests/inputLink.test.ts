@@ -95,12 +95,23 @@ describe('Input qua mạng', () => {
     client.send({ t: 'join', local: 0 });
     vi.advanceTimersByTime(0);
     hub.poll(true);
-    client.send({ t: 'in', seq: 0, f: [[0, 0, 0, Btn.Grab]] });
-    client.send({ t: 'in', seq: 1, f: [[0, 0, 0, 0]] });
+    client.send({ t: 'in', seq: 0, f: [[0, 0, 0, Btn.Grab, Btn.Grab]] });
+    client.send({ t: 'in', seq: 1, f: [[0, 0, 0, 0, 0]] });
     vi.advanceTimersByTime(0);
     hub.poll(true);
     expect(hub.slots[0]!.cur.buttons & Btn.Grab).toBeTruthy();
     hub.poll(true);
     expect(hub.slots[0]!.cur.buttons & Btn.Grab).toBeFalsy();
+
+    // Đang giữ; gói "thả" và gói "nhấn lại" tới dồn trong cùng một lần đọc → vẫn là cú bấm mới.
+    client.send({ t: 'in', seq: 2, f: [[0, 0, 0, Btn.Grab, Btn.Grab]] });
+    vi.advanceTimersByTime(0);
+    hub.poll(true);
+    client.send({ t: 'in', seq: 3, f: [[0, 0, 0, 0, 0]] });
+    client.send({ t: 'in', seq: 4, f: [[0, 0, 0, Btn.Grab, Btn.Grab]] });
+    vi.advanceTimersByTime(0);
+    hub.poll(true);
+    const s = hub.slots[0]!;
+    expect(s.cur.buttons & Btn.Grab && !(s.prev.buttons & Btn.Grab)).toBeTruthy();
   });
 });

@@ -152,6 +152,18 @@ export class Landlord {
     this.stuckFrom = this.position;
   }
 
+  /** Máy khách online: vị trí và độ hài lòng theo host. */
+  applyRemote(x: number, y: number, satisfaction: number): void {
+    this.prevPos = this.position;
+    this.scene.matter.body.setPosition(this.body, { x, y }, false);
+    this.satisfaction = satisfaction;
+  }
+
+  /** Máy khách: bong bóng thoại tự tắt theo thời gian (không có `step`). */
+  tickBubble(dt: number): void {
+    if (this.bubbleMs > 0) this.bubbleMs -= dt;
+  }
+
   render(alpha: number): void {
     const p = this.position;
     const x = Phaser.Math.Linear(this.prevPos.x, p.x, alpha);

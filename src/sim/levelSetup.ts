@@ -13,8 +13,16 @@ export interface BuiltLevel {
   items: Item[];
 }
 
-/** Dựng toàn bộ màn từ data: sàn, tường, cửa, vùng nguy hiểm, chỗ nấp, đồ vật. */
-export function buildLevel(world: World, level: LevelDef, map: MapLayout): BuiltLevel {
+/**
+ * Dựng toàn bộ màn từ data: sàn, tường, cửa, vùng nguy hiểm, chỗ nấp, đồ vật.
+ * Máy khách online không tạo đồ (`spawnItems = false`): đồ đến từ snapshot của host.
+ */
+export function buildLevel(
+  world: World,
+  level: LevelDef,
+  map: MapLayout,
+  spawnItems = true,
+): BuiltLevel {
   for (const f of map.floors) world.addFloor(f.rect, f.color);
   for (const w of map.walls) world.addWall(w);
   for (const d of map.doors) world.addDoor(d.rect, d.hinge);
@@ -24,7 +32,7 @@ export function buildLevel(world: World, level: LevelDef, map: MapLayout): Built
   world.truck = new Truck(world, level.truck, map, level.modifiers.includes('slope'));
 
   const required = new Set<number>();
-  const items = level.spawns.map((s) => {
+  const items = (spawnItems ? level.spawns : []).map((s) => {
     const item = world.spawnItem(s.item, s.x, s.y, s.angle ?? 0);
     if (s.required) required.add(item.uid);
     return item;

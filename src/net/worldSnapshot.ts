@@ -12,6 +12,10 @@ export function snapshotWorld(world: World, runtime: LevelRuntime | null): Snaps
       return (p && world.grab.holding(p)?.uid) ?? -1;
     },
     items: world.items,
+    containerOf: (uid) => {
+      for (const [cat, box] of world.containedIn) if (cat.uid === uid) return box.uid;
+      return -1;
+    },
     doorAngles: world.doors.map((d) => d.angle),
     truck: world.truck && {
       offset: world.truck.offsetPos,

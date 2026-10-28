@@ -41,8 +41,10 @@ export class GameScene extends PlayScene {
   protected buildLevel(): void {
     const level = this.levelDef;
     const map = this.gameData.maps[level.map]!;
-    this.built = buildLevel(this.world, level, map);
+    const client = !!this.online && !this.online.isHost;
+    this.built = buildLevel(this.world, level, map, !client);
     this.runtime = new LevelRuntime(this.world, this.built, this.gameData);
+    if (client) this.online!.attachMirror(this.world, this.runtime, (s) => this.spawnPointFor(s));
     this.leaving = false;
     this.cameras.main.setBounds(0, 0, map.width, map.height);
     this.cameraReady = false;
@@ -51,7 +53,7 @@ export class GameScene extends PlayScene {
   override createHud(hud: HudScene): void {
     this.hud = new GameHud(hud, this.runtime, this.world, this.cameras.main);
     hud.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT - 14, t('game.hint'), {
+      .text(GAME_WIDTH / 2, GAME_HEIGHT - 14, t(this.online ? 'game.hintOnline' : 'game.hint'), {
         fontFamily: Theme.font,
         fontSize: '14px',
         color: Theme.muted,
@@ -83,8 +85,13 @@ export class GameScene extends PlayScene {
   private updateCamera(frameMs: number): void {
     const cam = this.cameras.main;
     const map = this.built.map;
+    // Online: camera ôm người chơi trên máy này (mỗi máy một góc nhìn riêng).
+    const own = this.online?.ownSlots();
+    const players = own
+      ? this.world.players.filter((p) => own.includes(p.slotIndex))
+      : this.world.players;
     const fit = fitCamera({
-      points: this.world.players.map((p) => p.position),
+      points: (players.length ? players : this.world.players).map((p) => p.position),
       view: { w: GAME_WIDTH, h: GAME_HEIGHT },
       map: { w: map.width, h: map.height },
       padding: CAMERA_PADDING,
@@ -101,13 +108,23 @@ export class GameScene extends PlayScene {
     cam.centerOn(cx, cy);
   }
 
-  /** Esc: kết thúc sớm (xe chạy luôn). */
+  /** Esc: kết thúc sớm (xe chạy luôn). Máy khách online không kết thúc màn của cả phòng. */
   protected onExit(): void {
+    if (this.online && !this.online.isHost) return;
     this.runtime.finishNow();
   }
 
   protected override fixedUpdate(dt: number): void {
     super.fixedUpdate(dt);
+    if (this.online && !this.online.isHost) {
+      this.runtime.landlord.tickBubble(dt);
+      const result = this.online.result;
+      if (result && !this.leaving) {
+        this.leaving = true;
+        this.time.delayedCall(0, () => this.scene.start(SceneKeys.Result, result));
+      }
+      return;
+    }
     this.runtime.step(dt);
     if (this.runtime.done && !this.leaving) {
       this.leaving = true;
@@ -127,6 +144,8 @@ export class GameScene extends PlayScene {
   }
 
   private showResult(): void {
-    this.scene.start(SceneKeys.Result, this.runtime.result());
+    const result = this.runtime.result();
+    this.online?.sendResult(result);
+    this.scene.start(SceneKeys.Result, result);
   }
 }

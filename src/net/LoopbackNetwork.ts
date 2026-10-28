@@ -32,6 +32,7 @@ export class LoopbackNetwork {
   private readonly endpoints = new Map<PeerId, LoopbackEndpoint>();
   /** Thời điểm giao gói gần nhất trên từng cặp (để giữ thứ tự). */
   private readonly lastDelivery = new Map<string, number>();
+  private readonly queues = new Map<string, Queued[]>();
   readonly scheduler: Scheduler;
   private readonly random: Random;
 
@@ -67,11 +68,36 @@ export class LoopbackNetwork {
     const key = `${from}>${to}`;
     const at = Math.max(this.scheduler.now() + delay, this.lastDelivery.get(key) ?? 0);
     this.lastDelivery.set(key, at);
+    // Hàng đợi riêng từng cặp máy: hẹn giờ của trình duyệt làm tròn ms nên hai gói cùng giờ
+    // giao có thể tới ngược thứ tự nếu hẹn riêng từng gói.
+    let queue = this.queues.get(key);
+    if (!queue) this.queues.set(key, (queue = []));
+    queue.push({ at, from, to, data });
+    if (queue.length === 1) this.schedule(key, queue);
+  }
+
+  private schedule(key: string, queue: Queued[]): void {
+    const head = queue[0];
+    if (!head) return;
     this.scheduler.setTimeout(
-      () => this.endpoints.get(to)?.receive(data, from),
-      at - this.scheduler.now(),
+      () => {
+        const now = this.scheduler.now();
+        while (queue[0] && queue[0].at <= now + 1) {
+          const m = queue.shift()!;
+          this.endpoints.get(m.to)?.receive(m.data, m.from);
+        }
+        this.schedule(key, queue);
+      },
+      Math.max(0, head.at - this.scheduler.now()),
     );
   }
+}
+
+interface Queued {
+  at: number;
+  from: PeerId;
+  to: PeerId;
+  data: Payload;
 }
 
 export class LoopbackEndpoint implements Transport {
@@ -88,7 +114,11 @@ export class LoopbackEndpoint implements Transport {
   send(data: Payload, to?: PeerId): void {
     // Sao chép như gửi qua mạng thật (người nhận không dùng chung object với người gửi).
     const copy =
-      data instanceof Uint8Array ? data.slice() : (JSON.parse(JSON.stringify(data)) as Payload);
+      data instanceof ArrayBuffer
+        ? data.slice(0)
+        : data instanceof Uint8Array
+          ? data.slice()
+          : (JSON.parse(JSON.stringify(data)) as Payload);
     const targets = to ? [to] : this.net.peersOf(this.selfId);
     for (const t of targets) {
       this.stats.sentBytes += payloadSize(copy);

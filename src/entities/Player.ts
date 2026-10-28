@@ -37,6 +37,8 @@ export class Player {
     y: number,
     private readonly params: MotorParams,
     private readonly random: () => number,
+    /** Mũ (emoji) chọn trong lobby online, '' = không đội. */
+    hat = '',
   ) {
     this.body = scene.matter.add.circle(x, y, PLAYER_RADIUS, {
       label: 'player',
@@ -52,7 +54,7 @@ export class Player {
     this.sprite = scene.add.image(0, 0, playerTextureKey(styleIndex));
     this.eyes = scene.add.graphics();
     this.label = scene.add
-      .text(0, -PLAYER_RADIUS - 16, name, {
+      .text(0, -PLAYER_RADIUS - (hat ? 30 : 16), name, {
         fontFamily: Theme.font,
         fontSize: '15px',
         fontStyle: 'bold',
@@ -61,11 +63,22 @@ export class Player {
         padding: { x: 5, y: 1 },
       })
       .setOrigin(0.5);
-    this.view = scene.add.container(x, y, [this.sprite, this.eyes, this.label]).setDepth(y);
+    const parts: Phaser.GameObjects.GameObject[] = [this.sprite, this.eyes, this.label];
+    if (hat) {
+      parts.push(
+        scene.add.text(0, -PLAYER_RADIUS + 1, hat, { fontSize: '20px' }).setOrigin(0.5, 0.8),
+      );
+    }
+    this.view = scene.add.container(x, y, parts).setDepth(y);
   }
 
   get position(): Vec {
     return { x: this.body.position.x, y: this.body.position.y };
+  }
+
+  /** Vị trí đang vẽ (đã nội suy). */
+  get viewPosition(): Vec {
+    return { x: this.view.x, y: this.view.y };
   }
 
   /**
@@ -160,6 +173,28 @@ export class Player {
 
   private onEvent(e: MotorEvent): void {
     if (e === 'tripped') this.popText(t('player.trip'));
+  }
+
+  /**
+   * Máy khách online: đặt vị trí và trạng thái theo snapshot. `stepsSince` là số bước logic
+   * kể từ snapshot trước, để ước lượng vận tốc (dùng cho hoạt ảnh lắc lư).
+   */
+  applyRemote(
+    s: { x: number; y: number; fx: number; fy: number; mode: MotorState['mode']; run: boolean },
+    stepsSince: number,
+  ): void {
+    const p = this.position;
+    this.prevPos = p;
+    const mb = this.scene.matter.body;
+    const k = 1 / Math.max(1, stepsSince);
+    mb.setVelocity(this.body, { x: (s.x - p.x) * k, y: (s.y - p.y) * k });
+    mb.setPosition(this.body, { x: s.x, y: s.y }, false);
+    this.motor = { ...this.motor, mode: s.mode, running: s.run, facing: { x: s.fx, y: s.fy } };
+  }
+
+  /** Máy khách: đứng yên ở vị trí hiện tại (không nội suy tiếp). */
+  settle(): void {
+    this.prevPos = this.position;
   }
 
   popText(text: string): void {

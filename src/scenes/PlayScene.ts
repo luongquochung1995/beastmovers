@@ -7,6 +7,8 @@ import { FixedLoop } from '../systems/FixedLoop';
 import type { Vec } from '../systems/geometry';
 import { ClientInputSender, HostInputHub, LocalSlotSource } from '../net/inputLink';
 import { LoopbackNetwork } from '../net/LoopbackNetwork';
+import type { NetContext } from '../net/netContext';
+import { OnlineGame } from '../net/OnlineGame';
 import { parseNetOptions } from '../net/netOptions';
 import type { Snapshot } from '../net/snapshot';
 import { snapshotWorld } from '../net/worldSnapshot';
@@ -17,6 +19,9 @@ import { Random } from '../systems/Random';
 import { Theme } from '../ui/theme';
 import type { HudScene } from './HudScene';
 import { RegistryKeys, SceneKeys } from './keys';
+
+/** Máy khách online: không có ô nào chạy mô phỏng trên máy này. */
+const EMPTY_SOURCE: SlotSource = { slots: [], poll: () => [], destroy: () => {} };
 
 /**
  * Phần chung của mọi scene có mô phỏng (màn chơi, sandbox): vòng lặp cố định,
@@ -33,6 +38,8 @@ export abstract class PlayScene extends Phaser.Scene {
   /** Nguồn ô người chơi cho mô phỏng (chơi chung máy, hoặc đi qua mạng). */
   protected slotSource!: SlotSource;
   private sender: ClientInputSender | null = null;
+  /** Đang chơi online (null: chơi chung máy). */
+  protected online: OnlineGame | null = null;
   /** Mô tả chế độ mạng cho bảng debug (null = chơi chung máy trực tiếp). */
   netInfo: string | null = null;
   /** Bảng debug đang bật (F1). */
@@ -61,6 +68,17 @@ export abstract class PlayScene extends Phaser.Scene {
     this.logicTicks = 0;
     this.lastNow = performance.now();
     this.cameras.main.setBackgroundColor(Theme.bg);
+
+    // Online: phiên chuyển từ lobby sang qua registry.
+    const net = this.registry.get(RegistryKeys.Net) as NetContext | null | undefined;
+    this.online = net
+      ? new OnlineGame(
+          net,
+          this.config,
+          this.inputs,
+          this.gameData.items.map((i) => i.id),
+        )
+      : null;
 
     this.world = new World(this, this.gameData, this.config, new Random());
     this.buildLevel();
@@ -99,6 +117,18 @@ export abstract class PlayScene extends Phaser.Scene {
     const opts = parseNetOptions(window.location.search);
     this.sender = null;
     this.netInfo = null;
+    const online = this.online;
+    if (online) {
+      this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => online.destroy());
+      if (online.isHost) {
+        this.slotSource = online.slotSource!;
+        // Nhân vật của mọi người có ngay từ đầu (máy khách vào chậm vẫn có chỗ).
+        for (const slot of online.allSlots()) this.spawnPlayer(slot);
+      } else {
+        this.slotSource = EMPTY_SOURCE;
+      }
+      return;
+    }
     if (opts.mode === 'loopback') {
       const net = new LoopbackNetwork({
         latencyMs: opts.lagMs,
@@ -117,7 +147,7 @@ export abstract class PlayScene extends Phaser.Scene {
       return;
     }
     this.slotSource = new LocalSlotSource(this.inputs);
-    for (const slot of this.slotSource.slots) if (slot) this.spawnPlayer(slot);
+    for (const slot of this.slotSource.slots) if (slot) this.spawnPlayer(slot.index);
   }
 
   private setPhysicsDebug(on: boolean): void {
@@ -133,7 +163,10 @@ export abstract class PlayScene extends Phaser.Scene {
     const frameMs = now - this.lastNow;
     this.lastSteps = this.loop.advance(frameMs, (dt) => this.fixedUpdate(dt));
     this.lastNow = now;
-    this.world.render(this.loop.alpha, frameMs);
+    const alpha = this.online && !this.online.isHost ? this.online.renderAlpha() : this.loop.alpha;
+    this.world.render(alpha, frameMs);
+    this.online?.renderExtras();
+    if (this.online) this.netInfo = this.online.info();
     this.afterRender(frameMs);
   }
 
@@ -142,11 +175,18 @@ export abstract class PlayScene extends Phaser.Scene {
 
   /** Mọi logic game chạy ở đây, đúng `logicHz` lần mỗi giây. */
   protected fixedUpdate(dt: number): void {
-    const allowJoin = this.allowJoin();
+    // Máy khách online không chạy mô phỏng: gửi input, áp snapshot của host.
+    if (this.online && !this.online.isHost) {
+      this.online.clientStep(dt);
+      this.logicTicks++;
+      return;
+    }
+    const allowJoin = this.allowJoin() && !this.online;
     this.sender?.tick(dt, allowJoin);
-    for (const slot of this.slotSource.poll(allowJoin)) this.spawnPlayer(slot);
+    for (const slot of this.slotSource.poll(allowJoin)) this.spawnPlayer(slot.index);
     this.world.step(dt, this.controlSlots());
     this.logicTicks++;
+    this.online?.hostStep(dt, () => this.snapshot());
   }
 
   /** Có cho người mới vào giữa chừng không. */
@@ -159,10 +199,10 @@ export abstract class PlayScene extends Phaser.Scene {
     return this.slotSource.slots;
   }
 
-  private spawnPlayer(slot: SimSlot): void {
-    if (this.world.players.some((p) => p.slotIndex === slot.index)) return;
-    const p = this.spawnPointFor(slot.index);
-    this.world.addPlayer(slot.index, p.x, p.y);
+  private spawnPlayer(index: number): void {
+    if (this.world.players.some((p) => p.slotIndex === index)) return;
+    const p = this.spawnPointFor(index);
+    this.world.addPlayer(index, p.x, p.y, this.online?.lookOf(index));
   }
 
   /** Màn chơi đang chạy (null ở sandbox). */

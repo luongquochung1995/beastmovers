@@ -23,7 +23,8 @@ const AIRBORNE_FRICTION = 0.012;
 export class Item {
   private static nextUid = 1;
 
-  readonly uid = Item.nextUid++;
+  /** Số định danh; máy khách online dùng đúng uid của host. */
+  readonly uid: number;
   readonly body: MatterJS.BodyType;
   /** Điểm nắm theo tọa độ của món đồ (chưa xoay). */
   readonly grabPoints: readonly Vec[];
@@ -49,6 +50,8 @@ export class Item {
   hidden = false;
   /** Hành vi đặc biệt (gắn bởi World khi tạo món đồ). */
   behaviors: BehaviorHooks[] = [];
+  /** Máy khách online: số người đang nắm do host báo (thay cho `carriers`). */
+  remoteCarriers: number | null = null;
   /** Còn bao lâu nữa vật vừa bị ném chạm sàn (ms). */
   private airborneMs = 0;
   /** Hệ số ma sát sàn do vùng nước/đất (1 = bình thường). */
@@ -71,7 +74,9 @@ export class Item {
     x: number,
     y: number,
     angle = 0,
+    uid?: number,
   ) {
+    this.uid = uid ?? Item.nextUid++;
     const { w, h } = def.size;
     this.collisionGroup = -1000 - this.uid;
     const options: Phaser.Types.Physics.Matter.MatterBodyConfig = {
@@ -261,7 +266,7 @@ export class Item {
     if (this.drawnDurability !== this.damage.durability) this.drawDamage();
     if (this.hidden) return;
 
-    const n = this.carriers.size;
+    const n = this.remoteCarriers ?? this.carriers.size;
     const need = this.def.requiredGrabbers;
     if (need > 1 && n > 0) {
       this.counter
@@ -301,6 +306,40 @@ export class Item {
       this.image.setTint(0x8a8a8a);
       this.icon?.setAlpha(0.5);
     }
+  }
+
+  /** Máy khách online: đặt trạng thái theo snapshot của host (giữ vị trí cũ để nội suy). */
+  applyRemote(s: {
+    x: number;
+    y: number;
+    a: number;
+    cs: CarryState;
+    carriers: number;
+    dur: number;
+    broken: boolean;
+    hidden: boolean;
+    loaded: boolean;
+    icon: string | null;
+  }): void {
+    this.prevPos = this.position;
+    this.prevAngle = this.body.angle;
+    const mb = this.scene.matter.body;
+    mb.setPosition(this.body, { x: s.x, y: s.y }, false);
+    mb.setAngle(this.body, s.a, false);
+    // Góc nhảy qua ±π thì nội suy theo đường ngắn.
+    if (Math.abs(s.a - this.prevAngle) > Math.PI) this.prevAngle = s.a;
+    this.carryState = s.cs;
+    this.remoteCarriers = s.carriers;
+    this.damage = { ...this.damage, durability: s.dur, broken: s.broken };
+    this.loaded = s.loaded;
+    if (s.hidden !== this.hidden) this.setHidden(s.hidden);
+    if (s.icon !== this.iconOverride) this.setIcon(s.icon);
+  }
+
+  /** Máy khách: đứng yên ở vị trí hiện tại (không nội suy tiếp). */
+  settle(): void {
+    this.prevPos = this.position;
+    this.prevAngle = this.body.angle;
   }
 
   destroy(): void {

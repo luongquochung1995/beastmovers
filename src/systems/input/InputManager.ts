@@ -47,7 +47,7 @@ class KeyboardSource implements InputSource {
   }
 
   read(): InputFrame {
-    return frameFromKeys(this.tracker.keys, KEYBOARD_LAYOUTS[this.layoutIndex]!);
+    return frameFromKeys(this.tracker.active, KEYBOARD_LAYOUTS[this.layoutIndex]!);
   }
 }
 
@@ -168,6 +168,7 @@ export class InputManager {
         }
       }
     }
+    this.tracker?.endPoll();
     return joined;
   }
 

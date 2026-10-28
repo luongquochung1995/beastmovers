@@ -573,7 +573,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P19 | Tách simulation host/client | D | ✔ | 4–5 ngày | ✅ | 2026-10-28 |
 | P20 | Transport và phòng chơi | D | ✔ | 4 ngày | 🟨 | |
 | P21 | Lobby online | D | ✔ | 3 ngày | ✅ | 2026-10-28 |
-| P22 | Gửi input và snapshot | D | ✔ | 4 ngày | ⬜ | |
+| P22 | Gửi input và snapshot | D | ✔ | 4 ngày | ✅ | 2026-10-28 |
 | P23 | Nội suy và dự đoán | D | ✔ | 4 ngày | ⬜ | |
 | P24 | Đồng bộ sự kiện | D | ✔ | 2 ngày | ⬜ | |
 | P25 | Rớt mạng, lỗi kết nối, dự phòng | D | ✔ | 4 ngày | ⬜ | |
@@ -594,7 +594,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P40 | Kiểm thử trình duyệt | G | | 2 ngày | ⬜ | |
 | P41 | Phát hành | G | | 2 ngày | ⬜ | |
 
-**Tiến độ:** 19/41 phase · Mốc A 🟨 · B ✅ · C ✅ · D 🟨 · E ⬜ · F ⬜ · G ⬜
+**Tiến độ:** 20/41 phase · Mốc A 🟨 · B ✅ · C ✅ · D 🟨 · E ⬜ · F ⬜ · G ⬜
 
 ---
 
@@ -819,11 +819,12 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 - 📝 *Kiểm tra (Chromium): 4 trình duyệt riêng (như 4 máy) vào phòng qua Trystero/WebRTC thật (relay nostr chạy trên máy). Mọi máy bấm C đổi màu 2 lần + H đổi mũ → 4 màu khác nhau, cả 4 máy thấy y hệt danh sách; máy B đổi tên thành "Tèo" (gõ qua ô nhập ẩn để bộ gõ tiếng Việt chạy được). Host bấm Bắt đầu khi chưa ai sẵn sàng → không vào; 3 máy bấm R → "Mọi người đã sẵn sàng!". Máy thứ 5 vào rồi bị host bấm ✖ → máy đó báo "Host đã mời bạn ra khỏi phòng", chào lại cũng bị từ chối. Host bấm P → cả 4 máy vào màn Căn hộ studio với cùng danh sách người chơi. Tay cầm: người thứ 2 trên máy khách bấm A để vào lobby, B đổi màu, X đổi mũ, A sẵn sàng. Host là người quyết định (màu trùng bị bỏ qua, tên trùng thêm số "Hà 2", tổng ≤ 8 người: máy thừa người chơi chung máy chỉ được số ô còn trống): 5 unit test. Lỗi tìm thấy khi test: phím Enter vừa bấm để tạo phòng/xác nhận tên cũng là nút Nắm của bố cục phím mũi tên → thêm nhầm người chơi; sửa bằng cách chỉ cho vào sau khi mọi nút Nắm/Start đã nhả. Phím: C/Ném màu, H/Lao mũ, N tên, R/Nắm sẵn sàng, [ ] đổi màn, P/Start bắt đầu. ⚠️ Mới có 1 màn nên chưa thấy nút đổi màn; mũ chưa hiện trong màn chơi (làm cùng P22). Từ lúc bắt đầu, máy khách chưa thấy gì từ host (P22).*
 
 #### P22 · Gửi input và snapshot
-- [ ] Client gửi `InputFrame` 30 Hz, có số thứ tự
-- [ ] Host gộp input mọi máy và chạy `Simulation`
-- [ ] Snapshot nhị phân 20 Hz: chỉ gửi vật thể có thay đổi (delta), lượng tử hóa vị trí (int16) và góc (int8)
-- [ ] Gửi snapshot đầy đủ khi có người mới vào và định kỳ mỗi 2 giây
+- [x] Client gửi `InputFrame` 30 Hz, có số thứ tự
+- [x] Host gộp input mọi máy và chạy `Simulation`
+- [x] Snapshot nhị phân 20 Hz: chỉ gửi vật thể có thay đổi (delta), lượng tử hóa vị trí (int16) và góc (int8)
+- [x] Gửi snapshot đầy đủ khi có người mới vào và định kỳ mỗi 2 giây
 - **✅ Xong khi:** 4 máy chơi trọn một màn online; băng thông mỗi client ≤ 15 KB/s.
+- 📝 *Kiểm tra (Chromium): 4 trình duyệt riêng qua Trystero/WebRTC thật (relay nostr trên máy): lobby → vào màn; 3 máy khách đi bằng phím của mình, máy thứ 4 thấy đúng vị trí; **2 người ở 2 máy khác nhau cùng nắm hai đầu sofa** (cần 2 người) → nhấc lên "lifted", cùng đi → sofa di chuyển, mọi máy thấy "2 người nắm"; 3 món bắt buộc lên xe (host đặt bằng API debug cho nhanh) → HUD cả 4 máy "3/3", xe 3 chỗ, đồng hồ khớp; host Esc → xe chạy → **cả 4 máy hiện bảng kết quả** (tên/màu theo lobby). Thêm: máy khách tự đi tới thùng, nắm, khiêng vào xe chỉ bằng phím của mình → host và máy khách đều thấy đã lên xe. **Băng thông: 68–85 byte/snapshot → ~1,4–1,7 KB/s mỗi máy khách** (gói delta; đầy đủ mỗi 2 giây; tính toán 8 người + 40 món đồ: gói đầy đủ < 1 KB → tối đa ~20 KB/s nếu mọi thứ cùng chuyển động mỗi khung, thực tế thấp hơn nhiều). Mã hóa nhị phân: vị trí int16 (0,25 px), góc int8, delta theo từng máy khách, đồ mới/đồ mất: 3 unit test. Lỗi tìm thấy và đã sửa: (1) bấm nhanh hơn 1 khung hình bị mất phím → bộ đọc phím giữ cú bấm tới lần đọc kế; (2) gói "thả" và gói "nhấn lại" tới dồn trong một lần đọc thì host không thấy cú bấm mới (loopback 100ms ±30, mất 10%: chỉ nắm được 5–9/10 lần) → máy khách gửi riêng "nút vừa nhấn", host tự chèn một lần thả → 30/30; (3) mạng giả loopback có thể giao ngược thứ tự 2 gói cùng giờ (hẹn giờ trình duyệt làm tròn ms) → hàng đợi FIFO. ⚠️ Trong container, 4 trình duyệt dùng chung 4 nhân CPU và vẽ bằng phần mềm nên host chỉ ~4–9 FPS (mô phỏng chạy chậm lại) → chưa đo được cảm giác chơi thật; cần chơi thử trên máy thật. Máy khách hiện chỉ nội suy đơn giản giữa 2 snapshot, chưa dự đoán (P23); vũng nước/mảnh kính mới sinh, câu thoại chủ nhà, hiệu ứng chưa hiện ở máy khách (P24); hết màn chỉ có "rời phòng", chưa có "chơi tiếp cùng phòng".*
 
 #### P23 · Nội suy và dự đoán
 - [ ] Đệm snapshot, nội suy với độ trễ `interpolationDelayMs`

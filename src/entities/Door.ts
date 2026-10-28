@@ -14,6 +14,8 @@ const CLOSE_SPRING = 0.0015;
 export class Door {
   readonly body: MatterJS.BodyType;
   readonly hinge: Vec;
+  /** Tâm cánh cửa lúc đóng. */
+  private readonly restCenter: Vec;
   private readonly view: Phaser.GameObjects.Rectangle;
 
   constructor(
@@ -27,6 +29,7 @@ export class Door {
     this.hinge = vertical
       ? { x: cx, y: hingeAt === 'start' ? rect.y : rect.y + rect.h }
       : { x: hingeAt === 'start' ? rect.x : rect.x + rect.w, y: cy };
+    this.restCenter = { x: cx, y: cy };
     this.body = scene.matter.add.rectangle(cx, cy, rect.w, rect.h, {
       label: 'door',
       frictionAir: 0.08,
@@ -43,6 +46,21 @@ export class Door {
       .setStrokeStyle(2, 0x4e342e)
       .setDepth(-400);
     scene.add.circle(this.hinge.x, this.hinge.y, 4, 0x4e342e).setDepth(-399);
+  }
+
+  /** Máy khách online: xoay cửa quanh bản lề tới góc host báo. */
+  applyRemote(angle: number): void {
+    const mb = this.scene.matter.body;
+    const c = this.restCenter;
+    const off = { x: c.x - this.hinge.x, y: c.y - this.hinge.y };
+    const cos = Math.cos(angle);
+    const sin = Math.sin(angle);
+    mb.setAngle(this.body, angle, false);
+    mb.setPosition(
+      this.body,
+      { x: this.hinge.x + off.x * cos - off.y * sin, y: this.hinge.y + off.x * sin + off.y * cos },
+      false,
+    );
   }
 
   get angle(): number {

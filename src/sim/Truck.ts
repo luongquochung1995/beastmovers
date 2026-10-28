@@ -383,6 +383,20 @@ export class Truck {
     this.translate(d);
   }
 
+  /** Máy khách online: dời xe, phanh, số chỗ đã dùng, đồ đã lên xe theo host. */
+  applyRemote(
+    s: { ox: number; oy: number; used: number; handbrake: boolean },
+    loaded: number[],
+  ): void {
+    const d = { x: s.ox - this.offset.x, y: s.oy - this.offset.y };
+    if (d.x !== 0 || d.y !== 0) this.translate(d);
+    this.handbrakeOn = s.handbrake;
+    if (s.used !== this.cargo.used || loaded.length !== this.cargo.loaded.size) {
+      this.cargo = { ...this.cargo, used: s.used, loaded: new Map(loaded.map((u) => [u, 0])) };
+      this.refreshLabel();
+    }
+  }
+
   private refreshLabel(): void {
     this.label.setText(`🚚\n${this.cargo.used}/${this.capacity}`);
   }

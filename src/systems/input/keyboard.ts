@@ -61,6 +61,11 @@ export function frameFromKeys(keys: ReadonlySet<string>, layout: KeyboardLayout)
 /** Theo dõi các phím đang nhấn trên toàn trang. */
 export class KeyboardTracker {
   readonly keys = new Set<string>();
+  /**
+   * Phím đã nhấn kể từ lần đọc trước. Bấm nhanh (nhấn và thả trong cùng một khung hình,
+   * hay khi máy chậm) vẫn được tính là đang nhấn ở lần đọc kế tiếp.
+   */
+  private readonly tapped = new Set<string>();
   private readonly gameCodes: Set<string>;
 
   constructor(private readonly target: Window = window) {
@@ -88,8 +93,20 @@ export class KeyboardTracker {
     this.keys.clear();
   }
 
+  /** Phím đang nhấn, cộng phím vừa bấm nhanh từ lần đọc trước. */
+  get active(): ReadonlySet<string> {
+    if (this.tapped.size === 0) return this.keys;
+    return new Set([...this.keys, ...this.tapped]);
+  }
+
+  /** Gọi sau mỗi lần đọc input (InputManager.poll). */
+  endPoll(): void {
+    this.tapped.clear();
+  }
+
   private readonly onDown = (e: KeyboardEvent) => {
     this.keys.add(e.code);
+    this.tapped.add(e.code);
     // Chặn cuộn trang bằng phím mũi tên / Space khi đang chơi.
     if (this.gameCodes.has(e.code)) e.preventDefault();
   };
@@ -99,5 +116,8 @@ export class KeyboardTracker {
   };
 
   // Chuyển tab thì trình duyệt không gửi keyup, nên xóa hết để nhân vật không tự chạy.
-  private readonly onBlur = () => this.keys.clear();
+  private readonly onBlur = () => {
+    this.keys.clear();
+    this.tapped.clear();
+  };
 }

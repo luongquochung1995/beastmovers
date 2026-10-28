@@ -34,6 +34,12 @@ export interface Interactable {
   use(p: Player): void;
 }
 
+export interface PlayerLook {
+  style: number;
+  name: string;
+  hat: string;
+}
+
 export interface Rect {
   x: number;
   y: number;
@@ -136,26 +142,29 @@ export class World {
     this.addWall({ x: r.x + r.w, y: r.y, w: t, h: r.h });
   }
 
-  addPlayer(slotIndex: number, x: number, y: number): Player {
+  /** Thêm người chơi ô `slotIndex`; `look` (màu, tên, mũ) chọn trong lobby online. */
+  addPlayer(slotIndex: number, x: number, y: number, look?: PlayerLook): Player {
     const player = new Player(
       this.scene,
       slotIndex,
-      slotIndex,
-      `P${slotIndex + 1}`,
+      look?.style ?? slotIndex,
+      look?.name ?? `P${slotIndex + 1}`,
       x,
       y,
       this.motorParams,
       () => this.random.next(),
+      look?.hat ?? '',
     );
     this.players.push(player);
     this.playerByBody.set(player.body, player);
     return player;
   }
 
-  spawnItem(id: string, x: number, y: number, angle = 0): Item {
+  /** Tạo món đồ; `uid` chỉ dùng ở máy khách online (lấy đúng uid của host). */
+  spawnItem(id: string, x: number, y: number, angle = 0, uid?: number): Item {
     const def = this.data.itemById.get(id);
     if (!def) throw new Error(`Unknown item "${id}"`);
-    const item = new Item(this.scene, def, x, y, angle);
+    const item = new Item(this.scene, def, x, y, angle, uid);
     item.behaviors = createBehaviors(this, item);
     this.items.push(item);
     this.itemByBody.set(item.body, item);
@@ -499,7 +508,7 @@ export class World {
         durability: i.durability,
         broken: i.broken,
         state: i.carryState,
-        carriers: i.carriers.size,
+        carriers: i.remoteCarriers ?? i.carriers.size,
         pinned: i.pinned,
         hidden: i.hidden,
         status: i.status,

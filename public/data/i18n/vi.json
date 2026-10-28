@@ -170,5 +170,7 @@
   "lobby.block.tooMany": "Màn này tối đa {max} người.",
   "lobby.help": "C/Ném: màu · H/Lao: mũ · N: tên · R/Nắm: sẵn sàng",
   "lobby.helpHost": "C/Ném: màu · H/Lao: mũ · N: tên · [ ]: màn · P/Start: bắt đầu",
-  "lobby.nameLabel": "Tên người chơi"
+  "lobby.nameLabel": "Tên người chơi",
+  "result.footerOnline": "Enter / Esc: rời phòng",
+  "game.hintOnline": "Space / Enter / nút A: nắm  ·  E / Shift phải / nút B: ném  ·  Q / Ctrl phải / nút X: lao  ·  F1: debug"
 }

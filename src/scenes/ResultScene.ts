@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { getLocale, t } from '../data/i18n';
 import type { GameData } from '../data/validate';
 import { PLAYER_STYLES, playerTextureKey } from '../entities/playerStyles';
+import type { NetContext } from '../net/netContext';
 import type { LevelResult } from '../sim/LevelRuntime';
 import { moodFace } from '../systems/dialogue';
 import { GAME_HEIGHT, GAME_WIDTH, Theme } from '../ui/theme';
@@ -115,10 +116,15 @@ export class ResultScene extends Phaser.Scene {
     const px = 690;
     let py = 284;
     const gap = Math.min(96, 390 / Math.max(1, r.players.length));
+    // Online: màu và tên theo lobby.
+    const net = this.registry.get(RegistryKeys.Net) as NetContext | null | undefined;
     for (const p of r.players) {
-      const style = PLAYER_STYLES[p.slot]!;
-      this.add.image(px + 24, py + 24, playerTextureKey(p.slot)).setScale(gap < 70 ? 0.8 : 1);
-      text(px + 60, py, `P${p.slot + 1} · ${t(`title.${p.title}`)}`, {
+      const seat = net?.roster.seats[p.slot];
+      const styleIndex = seat?.color ?? p.slot;
+      const style = PLAYER_STYLES[styleIndex]!;
+      const name = seat?.name ?? `P${p.slot + 1}`;
+      this.add.image(px + 24, py + 24, playerTextureKey(styleIndex)).setScale(gap < 70 ? 0.8 : 1);
+      text(px + 60, py, `${name} · ${t(`title.${p.title}`)}`, {
         fontSize: '19px',
         fontStyle: 'bold',
         color: Phaser.Display.Color.IntegerToColor(style.color).lighten(10).rgba,
@@ -140,10 +146,24 @@ export class ResultScene extends Phaser.Scene {
       py += gap;
     }
 
-    text(cx, GAME_HEIGHT - 28, t('result.footer'), {
+    text(cx, GAME_HEIGHT - 28, t(net ? 'result.footerOnline' : 'result.footer'), {
       fontSize: '18px',
       color: Theme.muted,
     }).setOrigin(0.5);
+    if (net) {
+      // Online: rời phòng về menu (chơi tiếp cùng phòng: làm sau).
+      const leave = () => {
+        net.session.close();
+        this.registry.set(RegistryKeys.Net, null);
+        const url = new URL(window.location.href);
+        url.searchParams.delete('room');
+        history.replaceState(null, '', url.toString());
+        this.scene.start(SceneKeys.Menu);
+      };
+      this.input.keyboard?.once('keydown-ENTER', leave);
+      this.input.keyboard?.once('keydown-ESC', leave);
+      return;
+    }
     this.input.keyboard?.once('keydown-ENTER', () => this.scene.start(SceneKeys.Game));
     this.input.keyboard?.once('keydown-ESC', () => this.scene.start(SceneKeys.Menu));
   }

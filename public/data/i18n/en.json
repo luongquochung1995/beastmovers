@@ -170,5 +170,7 @@
   "lobby.block.tooMany": "This level allows at most {max} players.",
   "lobby.help": "C/Throw: color · H/Dash: hat · N: name · R/Grab: ready",
   "lobby.helpHost": "C/Throw: color · H/Dash: hat · N: name · [ ]: level · P/Start: start",
-  "lobby.nameLabel": "Player name"
+  "lobby.nameLabel": "Player name",
+  "result.footerOnline": "Enter / Esc: leave the room",
+  "game.hintOnline": "Space / Enter / A: grab  ·  E / Right Shift / B: throw  ·  Q / Right Ctrl / X: dash  ·  F1: debug"
 }

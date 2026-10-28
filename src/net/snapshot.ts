@@ -4,7 +4,7 @@ import type { MotorMode } from '../systems/PlayerMotor';
 
 /**
  * Ảnh chụp trạng thái màn chơi mà host gửi cho máy khách (đủ để vẽ lại, không có vật lý).
- * Dạng object gọn; P22 mã hóa thành nhị phân và chỉ gửi phần thay đổi.
+ * Gửi qua mạng bằng `snapshotCodec` (nhị phân, chỉ gửi phần thay đổi).
  */
 export interface PlayerSnap {
   /** Ô toàn cục. */
@@ -34,7 +34,8 @@ export interface ItemSnap {
   hidden: boolean;
   loaded: boolean;
   icon: string | null;
-  status: string;
+  /** uid đồ chứa đang nhốt món này (mèo trong lồng), -1 nếu không. */
+  box: number;
 }
 
 export interface Snapshot {
@@ -69,8 +70,9 @@ export interface SnapshotSource {
     hidden: boolean;
     loaded: boolean;
     iconOverride: string | null;
-    status: string;
   }[];
+  /** uid đồ chứa đang nhốt món `uid`, -1 nếu không. */
+  containerOf(uid: number): number;
   doorAngles: readonly number[];
   truck: { offset: { x: number; y: number }; used: number; handbrakeOn: boolean } | null;
   landlord: { position: { x: number; y: number }; satisfaction: number } | null;
@@ -108,7 +110,7 @@ export function captureSnapshot(src: SnapshotSource): Snapshot {
       hidden: i.hidden,
       loaded: i.loaded,
       icon: i.iconOverride,
-      status: i.status,
+      box: src.containerOf(i.uid),
     })),
     doors: src.doorAngles.map(r3),
     truck: src.truck && {

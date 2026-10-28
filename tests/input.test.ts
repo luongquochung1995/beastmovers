@@ -135,6 +135,21 @@ describe('InputManager', () => {
     expect(justPressed(slot!.prev, slot!.cur, Btn.Grab)).toBe(false);
   });
 
+  it('bấm nhanh (nhấn và thả giữa hai lần đọc) vẫn được tính một lần', () => {
+    const target = new EventTarget();
+    const tracker = new KeyboardTracker(target as unknown as Window);
+    const im = new InputManager(1, { tracker, getPads: () => [] });
+    const [slot] = [im.join('kb0')!];
+    const key = (type: string, code: string) =>
+      target.dispatchEvent(Object.assign(new Event(type), { code, preventDefault() {} }));
+    key('keydown', 'Space');
+    key('keyup', 'Space');
+    im.poll();
+    expect(justPressed(slot.prev, slot.cur, Btn.Grab)).toBe(true);
+    im.poll();
+    expect(slot.cur.buttons & Btn.Grab).toBe(0);
+  });
+
   it('rút tay cầm thì ô mất kết nối, cắm lại thì nhận lại', () => {
     const tracker = new KeyboardTracker(new EventTarget() as unknown as Window);
     const pads: (ReturnType<typeof fakePad> | null)[] = [fakePad(0, [1, 0])];
