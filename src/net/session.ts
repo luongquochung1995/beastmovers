@@ -14,7 +14,7 @@ export interface SessionInfo {
   maxPlayers: number;
 }
 
-export type RejectReason = 'version' | 'data' | 'full';
+export type RejectReason = 'version' | 'data' | 'full' | 'kicked';
 
 export interface Member {
   id: PeerId;
@@ -63,6 +63,8 @@ export class RoomSession {
   members: Member[] = [];
   private readonly changeCbs: (() => void)[] = [];
   private readonly accepted = new Map<PeerId, number>();
+  /** Máy đã bị host đuổi: chào lại cũng bị từ chối. */
+  private readonly banned = new Set<PeerId>();
   private closed = false;
 
   constructor(
@@ -103,10 +105,34 @@ export class RoomSession {
     this.changeCbs.push(cb);
   }
 
-  /** Đổi số người chơi trên máy này (host: cập nhật ngay; máy khách: P21 gửi lên host). */
+  /** Đổi số người chơi trên máy này (host cập nhật danh sách ngay; máy khách báo qua lobby). */
   setLocalSeats(n: number): void {
     this.localSeats = n;
     if (this.isHost) this.rosterChanged();
+  }
+
+  /** Host: một máy đã được nhận vào phòng chưa. */
+  isMember(peer: PeerId): boolean {
+    return peer === this.transport.selfId || this.accepted.has(peer);
+  }
+
+  /** Số người chơi trên một máy (0 nếu không ở trong phòng). */
+  seatsOf(peer: PeerId): number {
+    return this.members.find((m) => m.id === peer)?.seats ?? 0;
+  }
+
+  /** Host: cập nhật số người chơi của một máy khách (lobby báo khi có người chơi chung máy vào/ra). */
+  setPeerSeats(peer: PeerId, n: number): void {
+    if (!this.isHost || !this.accepted.has(peer) || this.accepted.get(peer) === n) return;
+    this.accepted.set(peer, n);
+    this.rosterChanged();
+  }
+
+  /** Host: đuổi một máy (máy đó được lobby báo; từ giờ host bỏ qua tin của nó). */
+  remove(peer: PeerId): void {
+    if (!this.isHost) return;
+    this.banned.add(peer);
+    if (this.accepted.delete(peer)) this.rosterChanged();
   }
 
   private peerJoined(peer: PeerId): void {
@@ -176,7 +202,7 @@ export class RoomSession {
       this.transport.send(reject, from);
       return;
     }
-    this.accepted.set(from, Math.max(1, Math.floor(msg.seats)));
+    this.accepted.set(from, Math.min(Math.max(1, Math.floor(msg.seats)), this.freeSeatsFor(from)));
     this.rebuildMembers();
     this.transport.send({ t: 'welcome', members: this.members } satisfies SessionMsg, from);
     this.broadcastRoster(from);
@@ -184,11 +210,16 @@ export class RoomSession {
   }
 
   private checkHello(msg: Extract<SessionMsg, { t: 'hello' }>, from: PeerId): RejectReason | null {
+    if (this.banned.has(from)) return 'kicked';
     if (msg.version !== this.info.version) return 'version';
     if (msg.dataHash !== this.info.dataHash) return 'data';
-    const others = this.totalSeats - (this.accepted.get(from) ?? 0);
-    if (others + Math.max(1, msg.seats) > this.info.maxPlayers) return 'full';
+    // Còn ít nhất một chỗ thì cho vào; người chơi chung máy thừa ra sẽ không có ô (xem lobby).
+    if (this.freeSeatsFor(from) < 1) return 'full';
     return null;
+  }
+
+  private freeSeatsFor(peer: PeerId): number {
+    return this.info.maxPlayers - (this.totalSeats - (this.accepted.get(peer) ?? 0));
   }
 
   private rosterChanged(): void {

@@ -572,7 +572,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P18 | Camera chung máy | C | ✔ | 2 ngày | ✅ | 2026-10-28 |
 | P19 | Tách simulation host/client | D | ✔ | 4–5 ngày | ✅ | 2026-10-28 |
 | P20 | Transport và phòng chơi | D | ✔ | 4 ngày | 🟨 | |
-| P21 | Lobby online | D | ✔ | 3 ngày | ⬜ | |
+| P21 | Lobby online | D | ✔ | 3 ngày | ✅ | 2026-10-28 |
 | P22 | Gửi input và snapshot | D | ✔ | 4 ngày | ⬜ | |
 | P23 | Nội suy và dự đoán | D | ✔ | 4 ngày | ⬜ | |
 | P24 | Đồng bộ sự kiện | D | ✔ | 2 ngày | ⬜ | |
@@ -594,7 +594,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P40 | Kiểm thử trình duyệt | G | | 2 ngày | ⬜ | |
 | P41 | Phát hành | G | | 2 ngày | ⬜ | |
 
-**Tiến độ:** 18/41 phase · Mốc A 🟨 · B ✅ · C ✅ · D 🟨 · E ⬜ · F ⬜ · G ⬜
+**Tiến độ:** 19/41 phase · Mốc A 🟨 · B ✅ · C ✅ · D 🟨 · E ⬜ · F ⬜ · G ⬜
 
 ---
 
@@ -810,12 +810,13 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 - 📝 *Kiểm tra (Chromium): (1) **Trystero thật**: 2 trình duyệt riêng (như 2 máy) vào cùng phòng qua WebRTC, relay nostr chạy trên máy (`?relay=ws://localhost:7777`, vì môi trường dev chặn relay công cộng) → vào phòng sau ~3 giây, ping ~50 ms, máy khách thoát thì host thấy ngay. (2) `?transport=broadcast` (các tab cùng trình duyệt): host tạo phòng, tab A vào bằng link, tab B gõ mã bằng bàn phím, tab C data khác → bị từ chối "Dữ liệu game khác host (7c072818 ≠ ad233c0f)"; đóng tab B → danh sách còn 2; host đóng → A báo "Host đã rời phòng". Sai phiên bản, đủ 8 người (tính cả người chơi chung máy), không tìm thấy host, host vào muộn: 7 unit test. Mã phòng bỏ ký tự dễ nhầm (0, O, 1, I, L) nên mã mẫu `ABC123` thực tế sẽ kiểu `4HHTQA`. ⏳ **Còn thiếu: thử 2 máy ở 2 mạng khác nhau qua relay công cộng** (cần deploy GitHub Pages ở P01). Nếu 2 mạng không nối được (NAT chặt) cần thêm TURN vào `config.json` → `net.iceServers` (có `username`/`credential`).*
 
 #### P21 · Lobby online
-- [ ] 8 ô người chơi: tên, màu, mũ, biểu tượng nguồn input, độ trễ (ms)
-- [ ] Đổi màu không trùng nhau
-- [ ] Nút Sẵn sàng; host bấm Bắt đầu khi mọi người đã sẵn sàng
-- [ ] Host chọn màn, kick người chơi
-- [ ] Nút Copy link mời
+- [x] 8 ô người chơi: tên, màu, mũ, biểu tượng nguồn input, độ trễ (ms)
+- [x] Đổi màu không trùng nhau
+- [x] Nút Sẵn sàng; host bấm Bắt đầu khi mọi người đã sẵn sàng
+- [x] Host chọn màn, kick người chơi
+- [x] Nút Copy link mời
 - **✅ Xong khi:** 4 máy vào lobby, đổi màu, sẵn sàng, host bắt đầu được màn.
+- 📝 *Kiểm tra (Chromium): 4 trình duyệt riêng (như 4 máy) vào phòng qua Trystero/WebRTC thật (relay nostr chạy trên máy). Mọi máy bấm C đổi màu 2 lần + H đổi mũ → 4 màu khác nhau, cả 4 máy thấy y hệt danh sách; máy B đổi tên thành "Tèo" (gõ qua ô nhập ẩn để bộ gõ tiếng Việt chạy được). Host bấm Bắt đầu khi chưa ai sẵn sàng → không vào; 3 máy bấm R → "Mọi người đã sẵn sàng!". Máy thứ 5 vào rồi bị host bấm ✖ → máy đó báo "Host đã mời bạn ra khỏi phòng", chào lại cũng bị từ chối. Host bấm P → cả 4 máy vào màn Căn hộ studio với cùng danh sách người chơi. Tay cầm: người thứ 2 trên máy khách bấm A để vào lobby, B đổi màu, X đổi mũ, A sẵn sàng. Host là người quyết định (màu trùng bị bỏ qua, tên trùng thêm số "Hà 2", tổng ≤ 8 người: máy thừa người chơi chung máy chỉ được số ô còn trống): 5 unit test. Lỗi tìm thấy khi test: phím Enter vừa bấm để tạo phòng/xác nhận tên cũng là nút Nắm của bố cục phím mũi tên → thêm nhầm người chơi; sửa bằng cách chỉ cho vào sau khi mọi nút Nắm/Start đã nhả. Phím: C/Ném màu, H/Lao mũ, N tên, R/Nắm sẵn sàng, [ ] đổi màn, P/Start bắt đầu. ⚠️ Mới có 1 màn nên chưa thấy nút đổi màn; mũ chưa hiện trong màn chơi (làm cùng P22). Từ lúc bắt đầu, máy khách chưa thấy gì từ host (P22).*
 
 #### P22 · Gửi input và snapshot
 - [ ] Client gửi `InputFrame` 30 Hz, có số thứ tự

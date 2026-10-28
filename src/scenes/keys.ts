@@ -19,4 +19,6 @@ export const RegistryKeys = {
   DataHash: 'dataHash',
   /** id màn đang chọn (levels.json). */
   LevelId: 'levelId',
+  /** `NetContext` khi đang chơi online (null khi chơi chung máy). */
+  Net: 'net',
 } as const;

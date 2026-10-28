@@ -93,14 +93,15 @@ describe('bắt tay vào phòng', () => {
     host.setLocalSeats(4);
     const a = new RoomSession(net.join('a'), 'client', info, 3, scheduler);
     vi.advanceTimersByTime(100);
+    // Còn 1 chỗ mà máy B có 2 người: vẫn vào, chỉ được 1 ô.
     const b = new RoomSession(net.join('b'), 'client', info, 2, scheduler);
     vi.advanceTimersByTime(100);
     expect(a.state.kind).toBe('joined');
-    expect(b.state.kind === 'rejected' && b.state.reason).toBe('full');
+    expect(b.state.kind).toBe('joined');
+    expect(host.totalSeats).toBe(8);
     const c = new RoomSession(net.join('c'), 'client', info, 1, scheduler);
     vi.advanceTimersByTime(100);
-    expect(c.state.kind).toBe('joined');
-    expect(host.totalSeats).toBe(8);
+    expect(c.state.kind === 'rejected' && c.state.reason).toBe('full');
   });
 
   it('không có host thì báo không tìm thấy; host rời thì báo cho máy khách', () => {

@@ -9,6 +9,8 @@ export interface Settings {
   language?: string;
   /** Rung màn hình khi đồ rơi mạnh (mặc định bật). */
   screenShake?: boolean;
+  /** Tên hiện trong lobby online. */
+  playerName?: string;
 }
 
 interface SaveData {
