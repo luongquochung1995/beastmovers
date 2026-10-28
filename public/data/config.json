@@ -1,0 +1,19 @@
+{
+  "maxPlayers": 8,
+  "maxLocalPlayers": 4,
+  "logicHz": 60,
+  "runTripChance": 0.03,
+  "throwForce": 0.08,
+  "grabRange": 40,
+  "net": {
+    "transport": "trystero",
+    "fallbackTransport": "peerjs",
+    "appId": "moving-game-v1",
+    "iceServers": [{ "urls": "stun:stun.l.google.com:19302" }],
+    "inputHz": 30,
+    "snapshotHz": 20,
+    "interpolationDelayMs": 100,
+    "reconnectGraceSec": 30
+  },
+  "debug": false
+}
