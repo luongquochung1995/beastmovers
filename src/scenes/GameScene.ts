@@ -10,15 +10,6 @@ import type { HudScene } from './HudScene';
 import { RegistryKeys, SceneKeys } from './keys';
 import { PlayScene } from './PlayScene';
 
-export interface ResultData {
-  levelId: string;
-  passed: boolean;
-  requiredLoaded: number;
-  requiredTotal: number;
-  /** Thời gian đã chơi (giây). */
-  seconds: number;
-}
-
 /** Màn chơi: dựng hoàn toàn từ `levels.json` + bản đồ Tiled. */
 export class GameScene extends PlayScene {
   protected built!: BuiltLevel;
@@ -93,14 +84,6 @@ export class GameScene extends PlayScene {
   }
 
   private showResult(): void {
-    const status = this.runtime.requiredStatus();
-    const data: ResultData = {
-      levelId: this.built.level.id,
-      passed: this.runtime.passed,
-      requiredLoaded: status.filter((s) => s.loaded).length,
-      requiredTotal: this.built.required.size,
-      seconds: this.logicTicks / this.config.logicHz,
-    };
-    this.scene.start(SceneKeys.Result, data);
+    this.scene.start(SceneKeys.Result, this.runtime.result());
   }
 }

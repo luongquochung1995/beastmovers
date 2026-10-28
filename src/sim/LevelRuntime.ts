@@ -5,6 +5,14 @@ import type { GameData } from '../data/validate';
 import type { Item } from '../entities/Item';
 import { Landlord } from '../entities/Landlord';
 import { applySatisfaction, DialogueDirector } from '../systems/dialogue';
+import {
+  assignTitles,
+  computeScore,
+  type PlayerStats,
+  type ScoreBreakdown,
+  type TitleKey,
+} from '../systems/scoring';
+import { StatsTracker } from './StatsTracker';
 import type { GameEvent, GameEventType } from '../systems/EventBus';
 import {
   type ClockState,
@@ -33,6 +41,19 @@ const DIALOGUE_OF: Partial<Record<GameEventType, DialogueEvent>> = {
 /** Chủ nhà đổi ý sau mỗi khoảng ngẫu nhiên trong đoạn này (ms). */
 const CHANGE_MIND_MS: [number, number] = [60_000, 90_000];
 
+/** Kết quả màn gửi sang màn hình Kết quả. */
+export interface LevelResult {
+  levelId: string;
+  passed: boolean;
+  requiredLoaded: number;
+  requiredTotal: number;
+  /** Thời gian đã chơi (giây). */
+  seconds: number;
+  satisfaction: number;
+  score: ScoreBreakdown;
+  players: { slot: number; title: TitleKey; stats: PlayerStats }[];
+}
+
 export interface RequiredStatus {
   item: Item;
   loaded: boolean;
@@ -42,6 +63,7 @@ export interface RequiredStatus {
 export class LevelRuntime {
   clock: ClockState;
   readonly landlord: Landlord;
+  readonly stats: StatsTracker;
   private readonly dialogue: DialogueDirector;
   private started = false;
   private elapsedMs = 0;
@@ -73,6 +95,7 @@ export class LevelRuntime {
     this.nextChangeMindMs = built.level.modifiers.includes('landlordChangesMind')
       ? this.randomChangeMindDelay()
       : null;
+    this.stats = new StatsTracker(world);
     world.bus.onAny((e) => this.onEvent(e));
   }
 
@@ -151,6 +174,8 @@ export class LevelRuntime {
     }
     this.elapsedMs += dt;
     this.landlord.step(dt);
+    if (!this.locked) this.stats.step(dt);
+    else this.world.truck?.departStep();
     if (this.nextChangeMindMs !== null && this.elapsedMs >= this.nextChangeMindMs && !this.locked) {
       this.changeMind();
       this.nextChangeMindMs = this.randomChangeMindDelay();
@@ -159,13 +184,48 @@ export class LevelRuntime {
     const r = tickClock(this.clock, dt);
     this.clock = r.state;
     for (const e of r.events) if (e === 'timeLow') this.world.bus.emit({ type: 'timeLow' });
-    if (!wasLocked && this.locked) this.world.bus.emit({ type: 'levelEnd', passed: this.passed });
+    if (!wasLocked && this.locked) this.onLock();
   }
 
   finishNow(): void {
     const wasLocked = this.locked;
     this.clock = finishNow(this.clock);
-    if (!wasLocked && this.locked) this.world.bus.emit({ type: 'levelEnd', passed: this.passed });
+    if (!wasLocked && this.locked) this.onLock();
+  }
+
+  /** Hết giờ: xe chạy đi (đồ sát cửa thùng có thể rơi), rồi mới chốt qua màn hay không. */
+  private onLock(): void {
+    this.world.truck?.startDeparture();
+    this.world.bus.emit({ type: 'levelEnd', passed: this.passed });
+  }
+
+  result(): LevelResult {
+    const status = this.requiredStatus();
+    const passed = this.passed;
+    const score = computeScore({
+      items: this.world.items.map((i) => ({
+        value: i.def.value,
+        repairCost: i.def.repairCost,
+        broken: i.broken,
+        loaded: this.isLoaded(i),
+      })),
+      satisfaction: this.landlord.satisfaction,
+      satisfactionMultiplier: this.built.level.satisfactionMultiplier,
+      stars: this.built.level.stars,
+      passed,
+    });
+    const stats = this.stats.all();
+    const titles = assignTitles(stats);
+    return {
+      levelId: this.built.level.id,
+      passed,
+      requiredLoaded: status.filter((s) => s.loaded).length,
+      requiredTotal: this.built.required.size,
+      seconds: Math.round(this.elapsedMs / 1000),
+      satisfaction: Math.round(this.landlord.satisfaction),
+      score,
+      players: stats.map((st) => ({ slot: st.slot, title: titles.get(st.slot)!, stats: st })),
+    };
   }
 
   /** Món đồ đã lên xe (tính cả mèo đang nằm trong lồng/thùng đã lên xe). */

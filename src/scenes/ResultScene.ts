@@ -1,56 +1,170 @@
 import Phaser from 'phaser';
-import { t } from '../data/i18n';
-import { GAME_WIDTH, Theme } from '../ui/theme';
-import type { ResultData } from './GameScene';
-import { SceneKeys } from './keys';
+import { getLocale, t } from '../data/i18n';
+import type { GameData } from '../data/validate';
+import { PLAYER_STYLES, playerTextureKey } from '../entities/playerStyles';
+import type { LevelResult } from '../sim/LevelRuntime';
+import { moodFace } from '../systems/dialogue';
+import { GAME_HEIGHT, GAME_WIDTH, Theme } from '../ui/theme';
+import { RegistryKeys, SceneKeys } from './keys';
 
-/** Màn kết quả tạm; bảng điểm thật làm ở P16. */
+const STAR_ON = '#ffd54f';
+const STAR_OFF = '#4a4560';
+const GOOD = '#7CFC8A';
+const BAD = '#ff8a80';
+
+/** Màn kết quả: qua màn/thua, sao, bảng điểm, danh hiệu từng người. */
 export class ResultScene extends Phaser.Scene {
   constructor() {
     super(SceneKeys.Result);
   }
 
-  create(data: ResultData): void {
+  create(r: LevelResult): void {
     this.cameras.main.setBackgroundColor(Theme.bg);
+    const data = this.registry.get(RegistryKeys.Data) as GameData;
+    const level = data.levels.find((l) => l.id === r.levelId);
     const cx = GAME_WIDTH / 2;
+    const text = (
+      x: number,
+      y: number,
+      s: string,
+      style: Phaser.Types.GameObjects.Text.TextStyle,
+    ) => this.add.text(x, y, s, { fontFamily: Theme.font, color: Theme.text, ...style });
 
-    this.add
-      .text(cx, 150, t('result.title'), {
-        fontFamily: Theme.font,
+    text(cx, 36, level?.name[getLocale()] ?? r.levelId, {
+      fontSize: '18px',
+      color: Theme.muted,
+    }).setOrigin(0.5);
+    text(cx, 74, t('result.title'), {
+      fontSize: '44px',
+      fontStyle: 'bold',
+      color: Theme.accent,
+    }).setOrigin(0.5);
+    text(cx, 132, t(r.passed ? 'result.passed' : 'result.failed'), {
+      fontSize: '30px',
+      fontStyle: 'bold',
+      color: r.passed ? GOOD : BAD,
+    }).setOrigin(0.5);
+    text(cx, 168, t('result.required', { loaded: r.requiredLoaded, total: r.requiredTotal }), {
+      fontSize: '16px',
+      color: Theme.muted,
+    }).setOrigin(0.5);
+
+    // Sao hiện lần lượt.
+    for (let i = 0; i < 3; i++) {
+      const on = i < r.score.stars;
+      const star = text(cx + (i - 1) * 64, 222, '★', {
         fontSize: '56px',
-        fontStyle: 'bold',
-        color: Theme.accent,
+        color: on ? STAR_ON : STAR_OFF,
       })
-      .setOrigin(0.5);
+        .setOrigin(0.5)
+        .setScale(on ? 0 : 1);
+      if (on)
+        this.tweens.add({
+          targets: star,
+          scale: 1,
+          delay: 300 + i * 280,
+          duration: 260,
+          ease: 'Back.Out',
+        });
+    }
 
-    this.add
-      .text(cx, 250, t(data.passed ? 'result.passed' : 'result.failed'), {
-        fontFamily: Theme.font,
-        fontSize: '36px',
+    // Bảng điểm.
+    const left = 150;
+    const right = 600;
+    let y = 290;
+    const row = (label: string, value: number, sign: '+' | '−', color: string) => {
+      text(left, y, label, { fontSize: '19px' });
+      text(right, y, `${sign} ${value.toLocaleString(getLocale())}`, {
+        fontSize: '19px',
+        color,
         fontStyle: 'bold',
-        color: data.passed ? '#7CFC8A' : '#ff8a80',
-      })
-      .setOrigin(0.5);
-    this.add
-      .text(
-        cx,
-        320,
-        [
-          t('result.required', { loaded: data.requiredLoaded, total: data.requiredTotal }),
-          t('result.played', { seconds: Math.round(data.seconds) }),
-        ].join('\n'),
-        { fontFamily: Theme.font, fontSize: '24px', color: Theme.text, align: 'center' },
-      )
-      .setOrigin(0.5, 0);
+      }).setOrigin(1, 0);
+      y += 38;
+    };
+    const s = r.score;
+    row(t('result.loadedValue'), s.loadedValue, '+', GOOD);
+    row(t('result.repairCosts'), s.repairCosts, '−', s.repairCosts ? BAD : Theme.muted);
+    row(
+      `${t('result.satisfactionBonus')} ${moodFace(r.satisfaction)} ${r.satisfaction}%`,
+      s.satisfactionBonus,
+      '+',
+      GOOD,
+    );
+    row(t('result.requiredBonus'), s.requiredBonus, '+', s.requiredBonus ? GOOD : Theme.muted);
+    this.add.rectangle(left, y + 4, right - left, 2, 0x4a4560).setOrigin(0);
+    y += 18;
+    text(left, y, t('result.total'), { fontSize: '26px', fontStyle: 'bold' });
+    text(right, y, s.total.toLocaleString(getLocale()), {
+      fontSize: '30px',
+      fontStyle: 'bold',
+      color: Theme.accent,
+    }).setOrigin(1, 0);
+    if (level) {
+      text(
+        right,
+        y + 40,
+        t('result.starGoals', { a: level.stars[0]!, b: level.stars[1]!, c: level.stars[2]! }),
+        {
+          fontSize: '13px',
+          color: Theme.muted,
+        },
+      ).setOrigin(1, 0);
+    }
 
-    this.add
-      .text(cx, 440, t('result.back'), {
-        fontFamily: Theme.font,
-        fontSize: '24px',
+    // Danh hiệu từng người.
+    const px = 690;
+    let py = 284;
+    const gap = Math.min(96, 390 / Math.max(1, r.players.length));
+    for (const p of r.players) {
+      const style = PLAYER_STYLES[p.slot]!;
+      this.add.image(px + 24, py + 24, playerTextureKey(p.slot)).setScale(gap < 70 ? 0.8 : 1);
+      text(px + 60, py, `P${p.slot + 1} · ${t(`title.${p.title}`)}`, {
+        fontSize: '19px',
+        fontStyle: 'bold',
+        color: Phaser.Display.Color.IntegerToColor(style.color).lighten(10).rgba,
+      });
+      text(px + 60, py + 26, t(`titleDesc.${p.title}`, { n: titleCount(p) }), {
+        fontSize: '14px',
         color: Theme.muted,
-      })
-      .setOrigin(0.5);
+      });
+      text(
+        px + 60,
+        py + 46,
+        t('result.stats', {
+          carried: Math.round(p.stats.carriedMs / 1000),
+          throws: p.stats.throws,
+          broken: p.stats.broken,
+        }),
+        { fontSize: '13px', color: Theme.muted },
+      );
+      py += gap;
+    }
 
-    this.input.keyboard?.once('keydown-ENTER', () => this.scene.start(SceneKeys.Menu));
+    text(cx, GAME_HEIGHT - 28, t('result.footer'), {
+      fontSize: '18px',
+      color: Theme.muted,
+    }).setOrigin(0.5);
+    this.input.keyboard?.once('keydown-ENTER', () => this.scene.start(SceneKeys.Game));
+    this.input.keyboard?.once('keydown-ESC', () => this.scene.start(SceneKeys.Menu));
+  }
+}
+
+/** Con số đi kèm mô tả danh hiệu. */
+function titleCount(p: LevelResult['players'][number]): number {
+  const s = p.stats;
+  switch (p.title) {
+    case 'clumsy':
+      return s.broken;
+    case 'catWhisperer':
+      return s.catsCaught;
+    case 'firstToLetGo':
+      return s.letGo;
+    case 'thrower':
+      return s.throws;
+    case 'backbone':
+    case 'spectator':
+      return Math.round(s.carriedMs / 1000);
+    default:
+      return s.loaded;
   }
 }

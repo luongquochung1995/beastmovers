@@ -117,6 +117,8 @@ export class GrabSystem {
       { pointA: { x: 0, y: 0 }, pointB: offset, damping: 0.1, label: 'arm' },
     );
     item.carriers.set(point, p);
+    item.lastHandler = p.slotIndex;
+    item.handlers.add(p.slotIndex);
     this.passThrough.delete(p);
     p.setCollisionGroup(item.collisionGroup);
     this.holds.set(p, { item, point, constraint });
@@ -133,6 +135,7 @@ export class GrabSystem {
     if (!hold) return;
     this.world.scene.matter.world.removeConstraint(hold.constraint);
     hold.item.carriers.delete(hold.point);
+    hold.item.lastReleasedBy = p.slotIndex;
     p.setCollisionGroup(0);
     this.holds.delete(p);
     const ref = { item: hold.item.uid, itemId: hold.item.id };
@@ -184,6 +187,7 @@ export class GrabSystem {
       }
     }
     for (const item of this.world.items) {
+      if (item.frozen) continue;
       const entries = [...item.carriers.entries()] as [number, Player][];
       const before = item.carryState;
       const res = computeCarry({
@@ -243,7 +247,7 @@ export class GrabSystem {
       this.world.bus.emit({ type: 'bigLiftStart', ...ref, carriers });
     } else if (before === 'lifted' && item.carryState !== 'lifted' && carriers > 0) {
       // Có người buông trong khi những người khác vẫn đang khiêng → rơi.
-      this.world.bus.emit({ type: 'bigLiftFail', ...ref });
+      this.world.bus.emit({ type: 'bigLiftFail', ...ref, slot: item.lastReleasedBy });
       if (item.def.liftRule === 'strict') {
         this.world.bus.emit({ type: 'itemDropped', ...ref });
         this.world.onItemDropped(item);

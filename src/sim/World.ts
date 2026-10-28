@@ -253,17 +253,17 @@ export class World {
   onItemReleased(item: Item, by: Player): void {
     if (!item.def.ai) return;
     const box = this.containerNear(item, by);
-    if (box) this.later(() => this.putInside(item, box));
+    if (box) this.later(() => this.putInside(item, box, by.slotIndex));
   }
 
-  putInside(cat: Item, box: Item): void {
+  putInside(cat: Item, box: Item, slot: number | null = null): void {
     if (cat.hidden) return;
     this.grab.releaseItem(cat);
     this.scene.matter.world.remove(cat.body);
     cat.setHidden(true);
     this.containedIn.set(cat, box);
     box.setIcon('😺');
-    this.bus.emit({ type: 'catCaught', item: cat.uid, itemId: cat.id, container: box.uid });
+    this.bus.emit({ type: 'catCaught', item: cat.uid, itemId: cat.id, container: box.uid, slot });
     this.pop(box.position, t('cat.caught'), '#7CFC8A');
   }
 

@@ -35,6 +35,14 @@ export class Item {
   damage: DamageState;
   /** Đã nằm trên xe tải (do Truck cập nhật). */
   loaded = false;
+  /** Đứng im theo xe tải khi xe chạy đi (không ai điều khiển, không vật lý). */
+  frozen = false;
+  /** Người chạm cuối (nắm, ném) — để biết ai làm vỡ. */
+  lastHandler: number | null = null;
+  /** Những người đã từng khiêng món này. */
+  readonly handlers = new Set<number>();
+  /** Người buông tay gần nhất. */
+  lastReleasedBy: number | null = null;
   /** Trạng thái AI hiện tại (mèo), để debug và kiểm thử. */
   status = '';
   /** Đang nằm trong đồ chứa (mèo trong lồng): không vẽ, không có trong thế giới vật lý. */

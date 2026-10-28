@@ -567,7 +567,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P13 | Xe tải | C | ✔ | 3 ngày | ✅ | 2026-10-28 |
 | P14 | Đồng hồ và điều kiện qua màn | C | ✔ | 2 ngày | ✅ | 2026-10-28 |
 | P15 | Chủ nhà NPC | C | ✔ | 4 ngày | ✅ | 2026-10-28 |
-| P16 | Tính điểm và màn kết quả | C | ✔ | 3 ngày | ⬜ | |
+| P16 | Tính điểm và màn kết quả | C | ✔ | 3 ngày | ✅ | 2026-10-28 |
 | P17 | HUD trong game | C | ✔ | 3 ngày | ⬜ | |
 | P18 | Camera chung máy | C | ✔ | 2 ngày | ⬜ | |
 | P19 | Tách simulation host/client | D | ✔ | 4–5 ngày | ⬜ | |
@@ -594,7 +594,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P40 | Kiểm thử trình duyệt | G | | 2 ngày | ⬜ | |
 | P41 | Phát hành | G | | 2 ngày | ⬜ | |
 
-**Tiến độ:** 14/41 phase · Mốc A 🟨 · B ✅ · C 🟨 · D ⬜ · E ⬜ · F ⬜ · G ⬜
+**Tiến độ:** 15/41 phase · Mốc A 🟨 · B ✅ · C 🟨 · D ⬜ · E ⬜ · F ⬜ · G ⬜
 
 ---
 
@@ -757,12 +757,13 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 - 📝 *Kiểm tra (Chromium): vào màn chủ nhà nói câu mở đầu và đi tuần theo đường trong bản đồ (~600px/15s, bị đồ chắn thì đi điểm kế tiếp); ném gương vỡ → hài lòng 50 → 26 (−15 vỡ, −3 × 3 lần đập tường), câu "Thôi xong, bể thật rồi."; đưa thùng lên xe → +2, "Xếp cho ngay ngắn vào."; đổi ý → thêm 1 món bắt buộc, "À mà mang luôn cái Sofa nhé!"; chọn tiếng Anh thì thoại tiếng Anh. Không lặp: unit test mô phỏng 5 phút có sự kiện mỗi 2 giây → không câu nào quá 2 lần, hết câu thì im lặng. Thoại chọn theo số thứ tự (online chỉ cần gửi số), mỗi sự kiện 5 câu × 2 ngôn ngữ. Đồ "yêu thích" tính gấp đôi. Tiếng lẩm bẩm tạo bằng Web Audio (chưa nghe thử bằng tai, trình duyệt kiểm thử không có loa).*
 
 #### P16 · Tính điểm và màn kết quả
-- [ ] Công thức điểm như mục 8
-- [ ] Tính sao theo `stars`
-- [ ] Thống kê từng người: số đồ khiêng, số đồ làm vỡ, số lần ném, số mèo bắt được
-- [ ] Gán danh hiệu dựa trên thống kê
-- [ ] Cảnh xe tải chạy đi, đồ rơi ra đường
+- [x] Công thức điểm như mục 8
+- [x] Tính sao theo `stars`
+- [x] Thống kê từng người: số đồ khiêng, số đồ làm vỡ, số lần ném, số mèo bắt được
+- [x] Gán danh hiệu dựa trên thống kê
+- [x] Cảnh xe tải chạy đi, đồ rơi ra đường
 - **✅ Xong khi:** màn kết quả hiện đúng điểm, sao, danh hiệu sau mỗi lần chơi.
+- 📝 *Kiểm tra (Chromium, 2 người, màn 20s): P1 đưa gấu bông lên xe, ném 2 thùng, bỏ mèo vào lồng; P2 cầm gương rồi gương vỡ; 2 thùng đặt sát cửa thùng. Hết giờ → xe chạy đi 380px, 1/2 thùng sát cửa rơi ra ("Rơi mất!"). Kết quả: qua màn 3/3, đồ lên xe +79, đền −200 (gương), hài lòng 53% +265, thưởng đủ đồ bắt buộc +200, tổng 344, 0 sao (mốc 500/900/1300). Danh hiệu: P1 "Người thì thầm với mèo", P2 "Bàn tay vàng làm vỡ". Enter chơi lại, Esc về menu. 5 unit test điểm/danh hiệu. Thưởng đủ đồ bắt buộc = 200 (hằng số). Đồ vỡ không tính giá trị dù đã lên xe.*
 
 #### P17 · HUD trong game
 - [ ] Đồng hồ, thanh hài lòng có mặt biểu cảm, chỉ số thùng xe đã đầy bao nhiêu

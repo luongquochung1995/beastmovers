@@ -17,6 +17,11 @@ const CAB_LEN = 90;
 const SETTLED_SPEED = 1.2;
 const ROLL_ACCEL = 0.004;
 const ROLL_MAX = 0.6;
+/** Đồ nằm sát cửa thùng trong khoảng này dễ rơi khi xe chạy (xếp ẩu). */
+const FALL_MARGIN = 30;
+const FALL_CHANCE = 0.5;
+const DEPART_ACCEL = 0.12;
+const DEPART_MAX = 7;
 /** Sai số khi xét "nằm trọn trong thùng" (px). */
 const INSIDE_TOLERANCE = 6;
 /** Độ dày tường bao bản đồ. */
@@ -67,6 +72,8 @@ export class Truck {
   private readonly lever: Phaser.GameObjects.Container | null;
   private leverPos: Vec | null;
   private rollSpeed = 0;
+  private departing = false;
+  private departSpeed = 0;
   private offset: Vec = { x: 0, y: 0 };
 
   constructor(
@@ -233,6 +240,7 @@ export class Truck {
 
   /** Mỗi bước logic, sau bước vật lý. */
   step(): void {
+    if (this.departing) return;
     this.roll();
     const res = updateCargo(
       this.cargo,
@@ -283,6 +291,68 @@ export class Truck {
     if (res.loaded.length || res.unloaded.length) this.refreshLabel();
   }
 
+  /**
+   * Hết giờ, xe chạy đi: đồ xếp sát cửa thùng có thể rơi ra (xếp ẩu); đồ còn lại
+   * đứng im theo xe. Trả về những món bị rơi.
+   */
+  startDeparture(): Item[] {
+    if (this.departing) return [];
+    this.departing = true;
+    const fallen: Item[] = [];
+    const loaded = new Map(this.cargo.loaded);
+    let used = this.cargo.used;
+    const n = this.openingNormal;
+    for (const [uid, slots] of this.cargo.loaded) {
+      const item = this.world.items.find((i) => i.uid === uid);
+      if (!item) continue;
+      if (this.distanceToOpening(item) < FALL_MARGIN && this.world.random.chance(FALL_CHANCE)) {
+        loaded.delete(uid);
+        used -= slots;
+        item.loaded = false;
+        fallen.push(item);
+        this.world.scene.matter.body.setVelocity(item.body, { x: n.x * 4, y: n.y * 4 });
+        item.setAirborne(400);
+        this.world.bus.emit({ type: 'itemUnloaded', item: uid, itemId: item.id });
+        this.world.pop(item.position, t('truck.fellOff'), '#ff8a80');
+      } else {
+        item.frozen = true;
+        this.world.grab.releaseItem(item);
+        this.world.scene.matter.body.setStatic(item.body, true);
+      }
+    }
+    this.cargo = { ...this.cargo, loaded, used };
+    this.refreshLabel();
+    return fallen;
+  }
+
+  /** Mỗi bước trong cảnh xe chạy đi. */
+  departStep(): void {
+    if (!this.departing) return;
+    this.departSpeed = Math.min(DEPART_MAX, this.departSpeed + DEPART_ACCEL);
+    this.translate({ x: this.rollDir.x * this.departSpeed, y: this.rollDir.y * this.departSpeed });
+  }
+
+  /** Dời cả xe (vách, cabin, cần phanh) và đồ đã lên xe. */
+  private translate(d: Vec): void {
+    this.extent = { ...this.extent, x: this.extent.x + d.x, y: this.extent.y + d.y };
+    this.bed = { ...this.bed, x: this.bed.x + d.x, y: this.bed.y + d.y };
+    this.offset = { x: this.offset.x + d.x, y: this.offset.y + d.y };
+    const mb = this.world.scene.matter.body;
+    for (const b of this.bodies)
+      mb.setPosition(b, { x: b.position.x + d.x, y: b.position.y + d.y }, false);
+    for (const uid of this.cargo.loaded.keys()) {
+      const item = this.world.items.find((i) => i.uid === uid);
+      if (item && item.carriers.size === 0) {
+        mb.setPosition(
+          item.body,
+          { x: item.body.position.x + d.x, y: item.body.position.y + d.y },
+          false,
+        );
+      }
+    }
+    if (this.leverPos) this.leverPos = { x: this.leverPos.x + d.x, y: this.leverPos.y + d.y };
+  }
+
   /** Có dốc và chưa kéo phanh: xe trôi dần ra xa nhà (kéo theo đồ đã lên xe). */
   private roll(): void {
     if (!this.onSlope) return;
@@ -305,23 +375,7 @@ export class Truck {
       this.rollSpeed = 0;
       return;
     }
-    this.extent = next;
-    this.bed = { ...this.bed, x: this.bed.x + d.x, y: this.bed.y + d.y };
-    this.offset = { x: this.offset.x + d.x, y: this.offset.y + d.y };
-    const mb = this.world.scene.matter.body;
-    for (const b of this.bodies)
-      mb.setPosition(b, { x: b.position.x + d.x, y: b.position.y + d.y }, false);
-    for (const uid of this.cargo.loaded.keys()) {
-      const item = this.world.items.find((i) => i.uid === uid);
-      if (item && item.carriers.size === 0) {
-        mb.setPosition(
-          item.body,
-          { x: item.body.position.x + d.x, y: item.body.position.y + d.y },
-          false,
-        );
-      }
-    }
-    if (this.leverPos) this.leverPos = { x: this.leverPos.x + d.x, y: this.leverPos.y + d.y };
+    this.translate(d);
   }
 
   private refreshLabel(): void {
