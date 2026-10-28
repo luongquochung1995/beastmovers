@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { CONFIG_KEY } from '../data/config';
 import { getLocale, t } from '../data/i18n';
-import { loadProfile, saveProfile } from '../data/settings';
+import { loadProfile, loadSave, saveProfile, totalStars } from '../data/settings';
 import type { GameConfig } from '../data/types';
 import type { GameData } from '../data/validate';
 import { playerTextureKey } from '../entities/playerStyles';
@@ -21,7 +21,9 @@ import { RoomSession } from '../net/session';
 import { TrysteroTransport } from '../net/TrysteroTransport';
 import { Btn, isDown, justPressed } from '../systems/input/InputFrame';
 import type { InputManager } from '../systems/input/InputManager';
+import { isOpen, levelLock, TIER_ICONS } from '../systems/levelLock';
 import { MenuInput } from '../ui/menuInput';
+import { lockText } from './LevelSelectScene';
 import { GAME_HEIGHT, GAME_WIDTH, Theme } from '../ui/theme';
 import { RegistryKeys, SceneKeys } from './keys';
 
@@ -193,7 +195,12 @@ export class OnlineScene extends Phaser.Scene {
 
   private startLobby(): void {
     const session = this.session!;
-    const lobby = new Lobby(session, this.gameData.levels[0]!.id, this.config.maxPlayers);
+    const lobby = new Lobby(
+      session,
+      this.gameData.levels[0]!.id,
+      this.config.maxPlayers,
+      session.isHost ? totalStars(loadSave().levels) : 0,
+    );
     this.lobby = lobby;
     this.joinArmed = false;
     lobby.onChange(() => {
@@ -295,8 +302,18 @@ export class OnlineScene extends Phaser.Scene {
   private tryStart(): void {
     const lobby = this.lobby;
     if (!lobby?.isHost) return;
+    if (this.startBlock() === null) lobby.start();
+  }
+
+  /** Lý do chưa bắt đầu được (thiếu sao của host tính trước), null nếu bắt đầu được. */
+  private startBlock(): string | null {
+    const lobby = this.lobby!;
     const level = this.currentLevel();
-    if (lobby.startBlock(level.minPlayers, level.maxPlayers) === null) lobby.start();
+    const lock = levelLock(level, lobby.state.seats.length, lobby.state.hostStars ?? 0);
+    if (lock.needStars) return t('levels.needStarsHost', { n: lock.needStars });
+    const block = lobby.startBlock(level.minPlayers, level.maxPlayers);
+    if (block === 'tooFew') return lockText(lock);
+    return block && t(`lobby.block.${block}`, { min: level.minPlayers, max: level.maxPlayers });
   }
 
   /** Mọi máy nhận lệnh bắt đầu: chuyển phiên online sang màn chơi. */
@@ -444,7 +461,7 @@ export class OnlineScene extends Phaser.Scene {
     const url = new URL(window.location.href);
     url.searchParams.delete('room');
     history.replaceState(null, '', url.toString());
-    this.scene.start(SceneKeys.Game);
+    this.scene.start(SceneKeys.LevelSelect);
   }
 
   private footer(hint: string): string {
@@ -465,7 +482,7 @@ export class OnlineScene extends Phaser.Scene {
 
     const lx = GAME_WIDTH - 260;
     this.text(lx, 36, t('lobby.level'), 18, Theme.muted);
-    this.text(lx, 70, level.name[getLocale()], 26);
+    this.text(lx, 70, `${TIER_ICONS[level.tier]} ${level.name[getLocale()]}`, 26);
     this.text(
       lx,
       102,
@@ -473,6 +490,8 @@ export class OnlineScene extends Phaser.Scene {
       16,
       Theme.muted,
     );
+    const lock = levelLock(level, lobby.state.seats.length, lobby.state.hostStars ?? 0);
+    if (!isOpen(lock)) this.text(lx, 128, lockText(lock), 16, BAD);
     if (lobby.isHost && this.gameData.levels.length > 1) {
       this.clickable(this.text(lx - 190, 70, '◀', 30, Theme.accent), () => this.cycleLevel(-1));
       this.clickable(this.text(lx + 190, 70, '▶', 30, Theme.accent), () => this.cycleLevel(1));
@@ -489,13 +508,9 @@ export class OnlineScene extends Phaser.Scene {
     const fy = GAME_HEIGHT - 92;
     const cx = GAME_WIDTH / 2;
     if (lobby.isHost) {
-      const block = lobby.startBlock(level.minPlayers, level.maxPlayers);
+      const block = this.startBlock();
       this.button(cx, fy, t('lobby.start'), () => this.tryStart(), 28, block === null);
-      const msg =
-        block === null
-          ? t('lobby.canStart')
-          : t(`lobby.block.${block}`, { min: level.minPlayers, max: level.maxPlayers });
-      this.text(cx, fy + 44, msg, 18, block === null ? GOOD : Theme.muted);
+      this.text(cx, fy + 44, block ?? t('lobby.canStart'), 18, block === null ? GOOD : Theme.muted);
     } else {
       const ready = lobby.isReady(selfId);
       const label = ready ? t('lobby.notReady') : t('lobby.ready');

@@ -9,6 +9,7 @@ import { HelpScene } from './scenes/HelpScene';
 import { HudScene } from './scenes/HudScene';
 import { InputTestScene } from './scenes/InputTestScene';
 import { KeysScene } from './scenes/KeysScene';
+import { LevelSelectScene } from './scenes/LevelSelectScene';
 import { MenuScene } from './scenes/MenuScene';
 import { OnlineScene } from './scenes/OnlineScene';
 import { PauseScene } from './scenes/PauseScene';
@@ -55,6 +56,7 @@ const game = new Phaser.Game({
     KeysScene,
     HelpScene,
     PauseScene,
+    LevelSelectScene,
   ],
 });
 

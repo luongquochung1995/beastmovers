@@ -36,6 +36,8 @@ export interface LobbyState {
   /** Các máy khách đã bấm Sẵn sàng (host luôn sẵn sàng). */
   ready: PeerId[];
   levelId: string;
+  /** Tổng sao của host: màn mở khóa theo tiến trình của máy host. */
+  hostStars?: number;
 }
 
 export interface LookPatch {
@@ -109,9 +111,10 @@ export class Lobby {
     readonly session: RoomSession,
     levelId: string,
     private readonly maxPlayers: number,
+    hostStars = 0,
   ) {
     this.selfId = session.transport.selfId;
-    this.state = { hostId: session.hostId ?? '', seats: [], ready: [], levelId };
+    this.state = { hostId: session.hostId ?? '', seats: [], ready: [], levelId, hostStars };
     session.transport.onMessage((data, from) => {
       if (isLobbyMsg(data)) this.receive(data, from);
     });

@@ -107,4 +107,21 @@ describe('lobby online', () => {
     expect(cleanName('  Một cái tên rất là dài quá  ')).toBe('Một cái tên ');
     expect(cleanName('a\u0000b\nc')).toBe('abc');
   });
+
+  it('sao của host đi kèm trạng thái lobby; màu đã lưu được dùng nếu còn trống', () => {
+    const net = new LoopbackNetwork({ latencyMs: 10, scheduler });
+    const hs = new RoomSession(net.join('host'), 'host', info, 1, scheduler);
+    const host = new Lobby(hs, 'lv01', 8, 17);
+    host.setLocalSeats([{ ...kb('Hà'), color: 5, hat: 2 }]);
+    const s = new RoomSession(net.join('a'), 'client', info, 1, scheduler);
+    vi.advanceTimersByTime(50);
+    const a = new Lobby(s, 'lv01', 8);
+    a.setLocalSeats([{ ...kb('An'), color: 5 }]);
+    vi.advanceTimersByTime(50);
+    expect(a.state.hostStars).toBe(17);
+    expect(host.state.seats.map((x) => [x.name, x.color, x.hat])).toEqual([
+      ['Hà', 5, 2],
+      ['An', 0, 0],
+    ]);
+  });
 });

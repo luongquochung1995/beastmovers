@@ -38,7 +38,7 @@ export class MenuScene extends Phaser.Scene {
     const list = new MenuList(
       this,
       [
-        { label: () => t('menu.local'), onConfirm: go(SceneKeys.Game), fontSize: 30 },
+        { label: () => t('menu.local'), onConfirm: go(SceneKeys.LevelSelect), fontSize: 30 },
         { label: () => t('menu.createRoom'), onConfirm: go(SceneKeys.Online, { mode: 'create' }) },
         { label: () => t('menu.joinRoom'), onConfirm: go(SceneKeys.Online, {}) },
         { label: () => t('menu.settings'), onConfirm: go(SceneKeys.Settings), gapBefore: 6 },

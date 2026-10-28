@@ -579,7 +579,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P25 | Rớt mạng, lỗi kết nối, dự phòng | D | ✔ | 4 ngày | ✅ | 2026-10-28 |
 | P26 | Test 8 người online | D | ✔ | 3 ngày | 🟨 | |
 | P27 | Menu chính, cài đặt, hướng dẫn | E | ✔ | 3 ngày | ✅ | 2026-10-28 |
-| P28 | Màn chọn màn (khóa theo người và sao) | E | ✔ | 3 ngày | ⬜ | |
+| P28 | Màn chọn màn (khóa theo người và sao) | E | ✔ | 3 ngày | ✅ | 2026-10-28 |
 | P29 | Lưu tiến trình | E | ✔ | 2 ngày | ✅ | 2026-10-28 |
 | P30 | Ping nhanh và chỉ dẫn | E | ✔ | 3 ngày | ⬜ | |
 | P31 | 5 màn MVP (1 màn mỗi cấp) và 3 chủ nhà | F | ✔ | 5 ngày | ⬜ | |
@@ -594,7 +594,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P40 | Kiểm thử trình duyệt | G | | 2 ngày | ⬜ | |
 | P41 | Phát hành | G | | 2 ngày | ⬜ | |
 
-**Tiến độ:** 25/41 phase · Mốc A 🟨 · B ✅ · C ✅ · D 🟨 · E 🟨 · F ⬜ · G ⬜
+**Tiến độ:** 26/41 phase · Mốc A 🟨 · B ✅ · C ✅ · D 🟨 · E 🟨 · F ⬜ · G ⬜
 
 ---
 
@@ -889,12 +889,13 @@ Chưa làm: playtest người thật; 2 máy ở 2 mạng khác nhau qua relay c
 - 📝 *Kiểm tra (Chromium, tay cầm giả lập qua `navigator.getGamepads`, không chạm bàn phím/chuột): menu chính → Hướng dẫn → B về → Cài đặt → chỉnh âm lượng 80→90% (◀ ▶), tắt rung màn hình (đã lưu) → Đổi phím → B → B về menu; Chơi chung máy → A tham gia → Start mở menu tạm dừng → "Kết thúc màn" → xe chạy → Kết quả → A chơi lại. Đổi phím: người 1 Lên → I, Phải → E (E đang là Ném nên Ném nhận lại phím D — đổi chỗ, không hành động nào mất phím), trang Hướng dẫn hiện đúng phím mới; Esc/F1/Tab không gán được. Font Nunito (gói `@fontsource/nunito`, đóng gói cùng game, có bộ chữ tiếng Việt) được chờ tải xong ở Boot trước khi vẽ chữ. Thêm: **menu tạm dừng** (Esc / Start; chơi chung máy dừng thật, online chỉ mở menu, host có "Kết thúc màn") thay cho "Esc = kết thúc ngay"; màn kết quả và màn vào phòng online dùng được tay cầm (A/B, nút Back rời lobby). Lỗi tìm thấy: Enter bấm ở menu cũng là nút Nắm của bố cục mũi tên nên người 2 tự vào màn → giờ chỉ cho vào sau khi nút đã nhả. Âm lượng áp cho giọng chủ nhà (Web Audio). Toàn màn hình chỉ bật được bằng phím/chuột (trình duyệt không coi nút tay cầm là thao tác người dùng) → báo rõ. 8 unit test (điều hướng, lặp phím, gộp tay cầm, đổi phím). ⚠️ Chưa thử tay cầm thật.*
 
 #### P28 · Màn chọn màn (khóa theo người và sao)
-- [ ] Danh sách màn lọc theo cấp 🟢🔵🟣🟠🔴
-- [ ] Mỗi màn hiện: số người tối thiểu, số người đề xuất, sao đã đạt
-- [ ] Khóa khi thiếu người: "🔒 Cần thêm N người"
-- [ ] Khóa khi thiếu sao: "🔒 Cần X ⭐"
-- [ ] Online: sao tính theo máy host
+- [x] Danh sách màn lọc theo cấp 🟢🔵🟣🟠🔴
+- [x] Mỗi màn hiện: số người tối thiểu, số người đề xuất, sao đã đạt
+- [x] Khóa khi thiếu người: "🔒 Cần thêm N người"
+- [x] Khóa khi thiếu sao: "🔒 Cần X ⭐"
+- [x] Online: sao tính theo máy host
 - **✅ Xong khi:** phòng 4 người thấy màn 🟠🔴 bị khóa đúng lý do; đủ 8 người thì mở ra.
+- 📝 *Kiểm tra (Chromium; data mới có 1 màn nên chèn tạm 5 màn thử vào bộ nhớ: Đôi 2 người, Đội 4 người + 3 ⭐, Đại đội 6, Full nhà 8, Full nhà 8 + 30 ⭐): chơi chung máy, 1 bàn phím + 3 tay cầm giả lập bấm A để vào ngay ở màn chọn màn → "4 người trên máy này"; màn 6 người "🔒 Cần thêm 2 người", màn 8 người "🔒 Cần thêm 4 người", màn cần 3 ⭐ (đang có 2) "🔒 Cần 3 ⭐", màn vừa thiếu người vừa thiếu sao hiện cả hai; bấm A vào màn khóa → báo lý do, không vào; lên hàng lọc chọn "Đôi" → chỉ còn màn Đôi → A → vào đúng màn với cả 4 người. Online (lobby 4 người): host đổi sang màn 6 người → mọi máy thấy "🔒 Cần thêm 2 người", nút Bắt đầu tắt. Sao của host gửi kèm trạng thái lobby (`hostStars`), máy khách hiện cùng lý do khóa; thiếu sao → "🔒 Host cần X ⭐". Đủ 8 người thì mở: kiểm bằng unit test (chơi chung máy tối đa 4 người; 8 người chỉ có ở online). Màn chọn màn điều khiển bằng input của người đã tham gia (Nắm chọn, Ném quay lại, Lao rời), người khác bấm Nắm để vào; "Chơi chung máy" ở menu, "Chọn màn" ở menu tạm dừng, Esc ở màn kết quả đều về đây. 4 unit test (khóa người/sao/thừa người, sao của host trong lobby).*
 
 #### P29 · Lưu tiến trình
 - [x] Lưu và đọc `localStorage` theo schema `beast-movers-save-v1`

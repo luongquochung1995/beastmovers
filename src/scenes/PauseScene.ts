@@ -45,7 +45,10 @@ export class PauseScene extends Phaser.Scene {
     }
     if (!online) {
       items.push({ label: () => t('pause.restart'), onConfirm: () => game.restartLevel() });
-      items.push({ label: () => t('pause.levels'), onConfirm: () => game.quitTo(SceneKeys.Menu) });
+      items.push({
+        label: () => t('pause.levels'),
+        onConfirm: () => game.quitTo(SceneKeys.LevelSelect),
+      });
     } else {
       items.push({ label: () => t('pause.leave'), onConfirm: () => game.quitTo(SceneKeys.Menu) });
     }

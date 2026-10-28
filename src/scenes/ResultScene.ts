@@ -189,7 +189,7 @@ export class ResultScene extends Phaser.Scene {
       return;
     }
     const replay = () => this.scene.start(SceneKeys.Game);
-    const menu = () => this.scene.start(SceneKeys.Menu);
+    const menu = () => this.scene.start(SceneKeys.LevelSelect);
     this.input.keyboard?.once('keydown-ENTER', replay);
     this.input.keyboard?.once('keydown-ESC', menu);
     // Tay cầm: A chơi lại, B về menu.
