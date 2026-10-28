@@ -1,0 +1,17 @@
+[
+  {
+    "id": "grandma",
+    "name": { "en": "Grandma Tu", "vi": "Bà Tư" },
+    "voicePitch": 1.3,
+    "startSatisfaction": 50,
+    "sensitivity": {
+      "itemBroken": -15,
+      "itemDropped": -5,
+      "wallHit": -3,
+      "itemLoaded": 2,
+      "bigLiftFail": -8
+    },
+    "favoriteItems": ["teddy"],
+    "linesKey": "grandma"
+  }
+]

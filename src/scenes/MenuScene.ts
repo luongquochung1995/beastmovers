@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { getLocale, nextLocale, setLocale, t } from '../data/i18n';
 import { saveSettings } from '../data/settings';
 import { GAME_HEIGHT, GAME_TITLE, GAME_WIDTH, Theme } from '../ui/theme';
-import { SceneKeys } from './keys';
+import { RegistryKeys, SceneKeys } from './keys';
 
 export class MenuScene extends Phaser.Scene {
   constructor() {
@@ -35,11 +35,16 @@ export class MenuScene extends Phaser.Scene {
     this.button(cx, 560, t('menu.language'), '24px', () => this.switchLanguage());
 
     this.add
-      .text(cx, GAME_HEIGHT - 30, `v${__APP_VERSION__}`, {
-        fontFamily: Theme.font,
-        fontSize: '14px',
-        color: Theme.muted,
-      })
+      .text(
+        cx,
+        GAME_HEIGHT - 30,
+        `v${__APP_VERSION__} · ${t('menu.dataVersion', { hash: this.registry.get(RegistryKeys.DataHash) as string })}`,
+        {
+          fontFamily: Theme.font,
+          fontSize: '14px',
+          color: Theme.muted,
+        },
+      )
       .setOrigin(0.5);
 
     this.input.keyboard?.once('keydown-ENTER', () => this.scene.start(SceneKeys.Game));

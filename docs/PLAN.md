@@ -434,8 +434,7 @@ Ví dụ câu thoại:
     "bigLiftFail": ["Đông người mà không nhấc nổi à?"],
     "timeLow": ["Nhanh lên, xe sắp chạy rồi!"],
     "levelEnd": ["Thôi được, lần sau bà gọi người khác."]
-  },
-  "_cooldownSec": { "default": 4, "itemBroken": 2 }
+  }
 }
 ```
 
@@ -444,8 +443,9 @@ Ví dụ câu thoại:
 {
   "maxPlayers": 8,
   "maxLocalPlayers": 4,
+  "logicHz": 60,
   "runTripChance": 0.03,
-  "throwForce": 0.08,
+  "throwSpeed": 11,
   "grabRange": 40,
   "net": {
     "transport": "trystero",
@@ -459,6 +459,7 @@ Ví dụ câu thoại:
     "interpolationDelayMs": 100,
     "reconnectGraceSec": 30
   },
+  "dialogue": { "cooldownSec": { "default": 4, "itemBroken": 2 } },
   "debug": false
 }
 ```
@@ -555,7 +556,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P02 | Scene và vòng lặp game | A | ✔ | 2 ngày | ✅ | 2026-10-28 |
 | P03 | Input chung máy | A | ✔ | 3 ngày | ✅ | 2026-10-28 |
 | P04 | Nhân vật | A | ✔ | 3–4 ngày | ✅ | 2026-10-28 |
-| P05 | Data loader và validate | B | ✔ | 2–3 ngày | ⬜ | |
+| P05 | Data loader và validate | B | ✔ | 2–3 ngày | ✅ | 2026-10-28 |
 | P06 | Đồ vật dựng từ data | B | ✔ | 2 ngày | ⬜ | |
 | P07 | Nắm, thả, ném (1 người) | B | ✔ | 3 ngày | ⬜ | |
 | P08 | Khiêng nhiều người | B | ✔ | 5 ngày | ⬜ | |
@@ -593,7 +594,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P40 | Kiểm thử trình duyệt | G | | 2 ngày | ⬜ | |
 | P41 | Phát hành | G | | 2 ngày | ⬜ | |
 
-**Tiến độ:** 3/41 phase · Mốc A 🟨 · B ⬜ · C ⬜ · D ⬜ · E ⬜ · F ⬜ · G ⬜
+**Tiến độ:** 4/41 phase · Mốc A 🟨 · B 🟨 · C ⬜ · D ⬜ · E ⬜ · F ⬜ · G ⬜
 
 ---
 
@@ -645,14 +646,15 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 ### 🅱️ Mốc B — Vật lý và đồ đạc
 
 #### P05 · Data loader và validate
-- [ ] Viết `types.ts` cho `items`, `levels`, `landlords`, `lines`, `config`
-- [ ] Loader đọc toàn bộ JSON trong `public/data/`
-- [ ] Validate: thiếu trường, sai kiểu, `id` trùng, tham chiếu tới `id` không tồn tại
-- [ ] Kiểm tra màn khả thi: `minPlayers` ≥ `requiredGrabbers` của mọi đồ `strict` **bắt buộc** trong màn
-- [ ] Kiểm tra song ngữ: mọi `name` có đủ `en` + `vi`; `lines.en.json` và `lines.vi.json` cùng khóa, cùng số câu
-- [ ] Tính **hash của data** (dùng ở P20)
-- [ ] Hiện màn hình lỗi dễ đọc khi data sai
+- [x] Viết `types.ts` cho `items`, `levels`, `landlords`, `lines`, `config`
+- [x] Loader đọc toàn bộ JSON trong `public/data/`
+- [x] Validate: thiếu trường, sai kiểu, `id` trùng, tham chiếu tới `id` không tồn tại
+- [x] Kiểm tra màn khả thi: `minPlayers` ≥ `requiredGrabbers` của mọi đồ `strict` **bắt buộc** trong màn
+- [x] Kiểm tra song ngữ: mọi `name` có đủ `en` + `vi`; `lines.en.json` và `lines.vi.json` cùng khóa, cùng số câu
+- [x] Tính **hash của data** (dùng ở P20)
+- [x] Hiện màn hình lỗi dễ đọc khi data sai
 - **✅ Xong khi:** cố ý làm sai một file JSON thì game báo đúng file, đúng trường bị lỗi.
+- 📝 *Kiểm tra: 21 unit test (data thật hợp lệ; mỗi loại lỗi báo đúng file + đường dẫn trường, vd. `items.json › [fridge].size.w`; JSON sai cú pháp báo đúng dòng/cột; thiếu file; không báo lỗi dây chuyền). Trình duyệt: sửa data qua mạng thì màn hình lỗi hiện đúng 3 lỗi bằng tiếng Việt, JSON hỏng hiện dòng 5 cột 23 bằng tiếng Anh. Kèm theo: kiểm tra trường gõ sai tên, hash data hiện ở góc menu. Thay đổi nhỏ: `throwForce` → `throwSpeed`; cooldown thoại chuyển sang `config.json` (không phụ thuộc ngôn ngữ).*
 
 #### P06 · Đồ vật dựng từ data
 - [ ] Sinh đồ vật từ `items.json`: kích thước, khối lượng, ma sát, sprite
@@ -662,7 +664,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 
 #### P07 · Nắm, thả, ném (1 người)
 - [ ] Nắm món đồ gần nhất trong `grabRange`, gắn vào điểm nắm gần nhất
-- [ ] Thả ra, và ném theo hướng đang đi (`throwForce`)
+- [ ] Thả ra, và ném theo hướng đang đi (`throwSpeed`)
 - [ ] Mang đồ nặng thì đi chậm lại theo khối lượng
 - [ ] Viền sáng món đồ có thể nắm
 - **✅ Xong khi:** một người nhặt, mang và ném được thùng carton, gương, chậu cây.

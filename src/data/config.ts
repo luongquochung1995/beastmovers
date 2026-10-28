@@ -1,26 +1,8 @@
-/** Cấu hình chung đọc từ `public/data/config.json`. Validate đầy đủ sẽ làm ở P05. */
-export interface NetConfig {
-  transport: string;
-  fallbackTransport: string;
-  appId: string;
-  iceServers: { urls: string }[];
-  inputHz: number;
-  snapshotHz: number;
-  interpolationDelayMs: number;
-  reconnectGraceSec: number;
-}
+import type { GameConfig } from './types';
 
-export interface GameConfig {
-  maxPlayers: number;
-  maxLocalPlayers: number;
-  logicHz: number;
-  runTripChance: number;
-  throwForce: number;
-  grabRange: number;
-  net: NetConfig;
-  debug: boolean;
-}
+export type { GameConfig } from './types';
 
+/** Khóa trong registry của Phaser. */
 export const CONFIG_KEY = 'config';
 
 /** `?debug=1` trên URL bật chế độ debug mà không cần sửa file data. */

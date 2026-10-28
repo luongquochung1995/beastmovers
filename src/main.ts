@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { BootScene } from './scenes/BootScene';
+import { ErrorScene } from './scenes/ErrorScene';
 import { GameScene } from './scenes/GameScene';
 import { InputTestScene } from './scenes/InputTestScene';
 import { MenuScene } from './scenes/MenuScene';
@@ -24,7 +25,7 @@ const game = new Phaser.Game({
       debug: true, // tạo sẵn lớp vẽ debug, bật/tắt bằng F1
     },
   },
-  scene: [BootScene, MenuScene, InputTestScene, GameScene, ResultScene],
+  scene: [BootScene, ErrorScene, MenuScene, InputTestScene, GameScene, ResultScene],
 });
 
 // Cho kiểm thử tự động truy cập game khi chạy dev hoặc có `?debug` trên URL.

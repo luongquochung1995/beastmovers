@@ -1,0 +1,17 @@
+{
+  "grandma": {
+    "levelStart": [
+      "Nhẹ tay nhé mấy đứa, đồ của bà quý lắm.",
+      "Coi chừng cái tường, bà mới sơn đó."
+    ],
+    "itemBroken": ["Trời đất ơi!", "Ờ… giỏi. Giỏi lắm."],
+    "itemDropped": ["Tay chân để đâu vậy con?", "Tay ngủ gật hả?"],
+    "wallHit": ["Tường mới sơn đó!", "Cái tường nó làm gì con đâu!"],
+    "itemLoaded": ["Ừ, được.", "Cũng tạm."],
+    "catEscaped": ["Mimi! Về với bà nè!"],
+    "timeLow": ["Nhanh lên, xe sắp chạy rồi!"],
+    "levelEnd": ["Thôi được, lần sau bà gọi người khác."],
+    "bigLiftStart": ["Cẩn thận! CẨN THẬN!"],
+    "bigLiftFail": ["Đông người vậy mà không nhấc nổi à?"]
+  }
+}

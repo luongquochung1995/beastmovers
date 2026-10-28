@@ -1,0 +1,45 @@
+[
+  {
+    "id": "lv01_studio",
+    "name": { "en": "Studio Apartment", "vi": "Căn hộ studio" },
+    "tier": "solo",
+    "minPlayers": 1,
+    "maxPlayers": 8,
+    "recommendedPlayers": 2,
+    "unlockStars": 0,
+    "timeLimitSec": 300,
+    "map": "maps/studio.json",
+    "landlord": "grandma",
+    "truck": { "x": 900, "y": 300, "slots": 20, "hasHandbrake": false },
+    "spawns": [
+      { "item": "box", "x": 200, "y": 150, "required": true },
+      { "item": "box", "x": 250, "y": 150, "required": true },
+      { "item": "mirror", "x": 320, "y": 90, "required": false },
+      { "item": "plant", "x": 380, "y": 200, "required": false },
+      { "item": "teddy", "x": 150, "y": 300, "required": true }
+    ],
+    "playerSpawns": [
+      [100, 400],
+      [140, 400],
+      [180, 400],
+      [220, 400],
+      [100, 440],
+      [140, 440],
+      [180, 440],
+      [220, 440]
+    ],
+    "modifiers": [],
+    "stars": [500, 900, 1300],
+    "satisfactionMultiplier": 5,
+    "scaling": {
+      "basePlayers": 1,
+      "extraSpawnsPerPlayer": [
+        { "item": "box", "count": 2 },
+        { "item": "plant", "count": 1 }
+      ],
+      "timeDeltaPerPlayerSec": -10,
+      "starsPerExtraPlayer": [150, 250, 350],
+      "truckSlotsPerPlayer": 3
+    }
+  }
+]

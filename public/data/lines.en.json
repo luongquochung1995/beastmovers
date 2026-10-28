@@ -1,0 +1,17 @@
+{
+  "grandma": {
+    "levelStart": [
+      "Gently now, kids. Everything here is precious.",
+      "Mind the walls. I just painted them."
+    ],
+    "itemBroken": ["Good heavens!", "Oh… great. Just great."],
+    "itemDropped": ["Butterfingers!", "Did your hands fall asleep?"],
+    "wallHit": ["That wall was freshly painted!", "The wall did nothing to you!"],
+    "itemLoaded": ["Fine.", "That'll do."],
+    "catEscaped": ["Mittens! Come back to Grandma!"],
+    "timeLow": ["Hurry up, the truck is leaving!"],
+    "levelEnd": ["Well. Next time I'm calling someone else."],
+    "bigLiftStart": ["Careful! CAREFUL!"],
+    "bigLiftFail": ["All of you and you can't lift one thing?"]
+  }
+}
