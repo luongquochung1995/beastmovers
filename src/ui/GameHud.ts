@@ -3,6 +3,7 @@ import { getLocale, t } from '../data/i18n';
 import { PLAYER_STYLES } from '../entities/playerStyles';
 import type { LevelRuntime } from '../sim/LevelRuntime';
 import { edgeIndicator } from '../systems/cameraFit';
+import { PING_ICONS } from '../systems/ping';
 import type { World } from '../sim/World';
 import { moodFace } from '../systems/dialogue';
 import { formatClock, TIME_LOW_MS } from '../systems/levelClock';
@@ -109,11 +110,24 @@ export class GameHud {
     const zoom = this.camera.zoom;
     const area = { x: 0, y: HUD_TOP, w: GAME_WIDTH, h: GAME_HEIGHT - HUD_TOP };
     let n = 0;
-    for (const p of this.world.players) {
-      const screen = { x: (p.position.x - view.x) * zoom, y: (p.position.y - view.y) * zoom };
+    // Người chơi, rồi các ping đang hiện (ping ở ngoài khung hình cũng có mũi tên).
+    const targets = [
+      ...this.world.players.map((p) => ({
+        pos: p.position,
+        style: p.styleIndex,
+        label: `P${p.slotIndex + 1}`,
+      })),
+      ...this.world.pingLayer.markers.map((m) => ({
+        pos: m.pos,
+        style: m.style,
+        label: PING_ICONS[m.kind],
+      })),
+    ];
+    for (const target of targets) {
+      const screen = { x: (target.pos.x - view.x) * zoom, y: (target.pos.y - view.y) * zoom };
       const ind = edgeIndicator(screen, area, ARROW_MARGIN);
       if (!ind) continue;
-      const color = PLAYER_STYLES[p.styleIndex]!.color;
+      const color = PLAYER_STYLES[target.style]!.color;
       const { x, y } = ind.pos;
       const a = ind.angle;
       const tip = { x: x + Math.cos(a) * 16, y: y + Math.sin(a) * 16 };
@@ -136,7 +150,7 @@ export class GameHud {
           .setDepth(101);
       this.arrowLabels[n] = label;
       label
-        .setText(`P${p.slotIndex + 1}`)
+        .setText(target.label)
         .setPosition(x - Math.cos(a) * 14, y - Math.sin(a) * 14)
         .setVisible(true);
       n++;

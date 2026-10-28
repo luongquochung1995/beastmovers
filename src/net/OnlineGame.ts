@@ -177,6 +177,13 @@ export class OnlineGame {
   }
 
   /** Các ô toàn cục chơi trên máy này (camera chỉ ôm những người này). */
+  /** Ô trong màn của người chơi chung máy thứ `local` trên máy này. */
+  globalSlotOf(local: number): number | undefined {
+    const selfId = this.ctx.session.transport.selfId;
+    const i = this.ctx.roster.seats.findIndex((s) => s.peer === selfId && s.local === local);
+    return i < 0 ? undefined : i;
+  }
+
   ownSlots(): number[] {
     const selfId = this.ctx.session.transport.selfId;
     return this.ctx.roster.seats.flatMap((s, i) => (s.peer === selfId ? [i] : []));

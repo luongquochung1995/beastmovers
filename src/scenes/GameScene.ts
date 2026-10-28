@@ -3,12 +3,14 @@ import { t } from '../data/i18n';
 import type { LevelDef } from '../data/types';
 import { type BuiltLevel, buildLevel, playerSpawn } from '../sim/levelSetup';
 import { LevelRuntime } from '../sim/LevelRuntime';
-import { Btn, EMPTY_FRAME, isDown } from '../systems/input/InputFrame';
+import { Btn, EMPTY_FRAME, type InputFrame, isDown } from '../systems/input/InputFrame';
 import type { SimSlot } from '../sim/SimSlot';
 import type { Vec } from '../systems/geometry';
 import { fitCamera } from '../systems/cameraFit';
 import { SLOW_PING_MS } from '../net/OnlineGame';
+import { type PingHold, stepPing, WHEEL_HOLD_MS } from '../systems/ping';
 import { GameHud, HUD_TOP } from '../ui/GameHud';
+import { PingWheelView } from '../ui/PingWheelView';
 import { GAME_HEIGHT, GAME_WIDTH, Theme } from '../ui/theme';
 import type { HudScene } from './HudScene';
 import { RegistryKeys, SceneKeys } from './keys';
@@ -36,6 +38,8 @@ export class GameScene extends PlayScene {
   private startHeld = new Map<string, boolean>();
   /** Lúc đóng menu tạm dừng: phím Esc vừa dùng để đóng không được mở lại menu. */
   private pauseClosedAt = 0;
+  /** Vòng ping của người chơi trên máy này (chỉ để vẽ; ping thật do mô phỏng quyết định). */
+  private wheels = new Map<number, { hold: PingHold; prev: InputFrame; view: PingWheelView }>();
 
   constructor() {
     super(SceneKeys.Game);
@@ -57,6 +61,7 @@ export class GameScene extends PlayScene {
     this.leaving = false;
     this.startHeld = new Map();
     this.pauseClosedAt = 0;
+    this.wheels = new Map();
     this.cameras.main.setBounds(0, 0, map.width, map.height);
     this.cameraReady = false;
   }
@@ -143,6 +148,26 @@ export class GameScene extends PlayScene {
     this.lastFrameMs = frameMs;
     this.runtime.render(this.loop.alpha);
     this.updateCamera(frameMs);
+    this.updateWheels(frameMs);
+  }
+
+  /** Người chơi trên máy này giữ nút Ping: hiện vòng ping quanh nhân vật của họ. */
+  private updateWheels(frameMs: number): void {
+    for (const slot of this.inputs.slots) {
+      if (!slot) continue;
+      let w = this.wheels.get(slot.index);
+      if (!w) {
+        w = { hold: { heldMs: 0, choice: null }, prev: slot.cur, view: new PingWheelView(this) };
+        this.wheels.set(slot.index, w);
+      }
+      stepPing(w.hold, w.prev, slot.cur, frameMs);
+      w.prev = slot.cur;
+      const global = this.online ? this.online.globalSlotOf(slot.index) : slot.index;
+      const player = this.world.players.find((p) => p.slotIndex === global);
+      if (player && w.hold.heldMs >= WHEEL_HOLD_MS && !this.runtime.locked)
+        w.view.show(player.viewPosition, w.hold.choice);
+      else w.view.hide();
+    }
   }
 
   /** Camera chung: ôm mọi người chơi trên máy, trượt mượt tới khung hình mới. */

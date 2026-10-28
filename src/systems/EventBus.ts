@@ -2,6 +2,8 @@
  * Sự kiện trong màn chơi. Chủ nhà (P15), điểm số (P16), âm thanh và chơi online (P24)
  * đều nghe từ đây thay vì gọi thẳng vào nhau.
  */
+import type { PingKind } from './ping';
+
 export type ZoneKind = 'glass' | 'water' | 'soil';
 
 interface ItemRef {
@@ -37,7 +39,7 @@ export type GameEvent =
   | { type: 'zoneSpawned'; kind: ZoneKind; x: number; y: number }
   | { type: 'playerTripped'; slot: number; cause: string }
   /** Người chơi bấm Ping (gọi đồng đội). */
-  | { type: 'ping'; slot: number };
+  | { type: 'ping'; slot: number; kind: PingKind };
 
 export type GameEventType = GameEvent['type'];
 type Handler<T extends GameEventType> = (e: Extract<GameEvent, { type: T }>) => void;

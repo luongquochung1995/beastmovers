@@ -15,13 +15,21 @@ import {
 } from '../systems/damage';
 import type { DialogueEvent } from '../data/types';
 import { EventBus, type ZoneKind } from '../systems/EventBus';
-import { Btn, justPressed } from '../systems/input/InputFrame';
+import {
+  PING_ICONS,
+  type PingHold,
+  PING_ITEM_RANGE,
+  type PingKind,
+  steerFrame,
+  stepPing,
+} from '../systems/ping';
 import { dist, type Vec } from '../systems/geometry';
 import type { SimSlot } from './SimSlot';
 import { DEFAULT_MOTOR, type MotorParams } from '../systems/PlayerMotor';
 import type { Random } from '../systems/Random';
 import { t } from '../data/i18n';
 import { loadSettings } from '../data/settings';
+import { PingLayer } from '../ui/PingLayer';
 import { popText } from '../ui/popText';
 import { Theme } from '../ui/theme';
 import { createBehaviors } from './behaviors';
@@ -49,7 +57,8 @@ export type Fx =
   | { k: 'shake'; ms: number; intensity: number }
   | { k: 'say'; ev: DialogueEvent; index: number; item?: string }
   | { k: 'zone'; kind: ZoneKind; x: number; y: number; radius: number }
-  | { k: 'ping'; slot: number }
+  /** Ping: ở vị trí (x, y), hoặc lên món đồ `item` (uid) kèm số người còn thiếu `n`. */
+  | { k: 'ping'; slot: number; kind: PingKind; x: number; y: number; item?: number; n?: number }
   | { k: 'playerPop'; slot: number; text: TextSpec };
 
 export const textOf = (spec: TextSpec): string => (typeof spec === 'string' ? spec : t(spec.key));
@@ -118,6 +127,10 @@ export class World {
   private readonly scrapes = new Map<Item, number>();
   /** Việc chờ chạy sau bước vật lý (không thêm body giữa lúc Matter đang xử lý va chạm). */
   private readonly deferred: (() => void)[] = [];
+  /** Trạng thái nút Ping của từng người (giữ bao lâu, đang chọn ô nào trên vòng). */
+  private readonly pingHolds = new Map<number, PingHold>();
+  /** Ping đang hiện trên bản đồ (HUD đọc để vẽ mũi tên khi ping ở ngoài khung hình). */
+  readonly pingLayer: PingLayer;
   private timeMs = 0;
   private popTick = -1;
   private popsThisTick = 0;
@@ -131,6 +144,7 @@ export class World {
     this.motorParams = { ...DEFAULT_MOTOR, tripChancePerSec: config.runTripChance };
     this.grab = new GrabSystem(this);
     this.overlay = scene.add.graphics().setDepth(9_000);
+    this.pingLayer = new PingLayer(scene);
     scene.matter.world.on('collisionstart', this.onCollisionStart, this);
     this.bus.on('itemScrape', (e) => this.onScrape(e.item));
   }
@@ -287,13 +301,28 @@ export class World {
         // Máy khách: vùng mới sinh ở host (host đã tự tạo khi gọi addZone).
         if (!this.recordFx) this.addZone(f.kind, f.x, f.y, f.radius);
         break;
-      case 'ping':
+      case 'ping': {
+        const p = this.players.find((pl) => pl.slotIndex === f.slot);
+        this.pingLayer.add({
+          slot: f.slot,
+          style: p?.styleIndex ?? f.slot,
+          kind: f.kind,
+          n: f.n ?? 0,
+          pos: { x: f.x, y: f.y },
+          bornMs: this.scene.time.now,
+          ...(f.item !== undefined ? { item: f.item } : {}),
+        });
+        if (p) {
+          const at = p.viewPosition;
+          this.popAt(at.x, at.y - PLAYER_RADIUS - 6, PING_ICONS[f.kind], Theme.accent);
+        }
+        break;
+      }
       case 'playerPop': {
         const p = this.players.find((pl) => pl.slotIndex === f.slot);
         if (!p) break;
         const at = p.viewPosition;
-        const text = f.k === 'ping' ? '❗' : textOf(f.text);
-        this.popAt(at.x, at.y - PLAYER_RADIUS - 6, text, f.k === 'ping' ? Theme.accent : undefined);
+        this.popAt(at.x, at.y - PLAYER_RADIUS - 6, textOf(f.text));
         break;
       }
     }
@@ -467,21 +496,66 @@ export class World {
       item.setSurfaceFactor(this.surfaceAt(item.position)?.effect.itemFriction ?? 1);
       for (const b of item.behaviors) b.onStep?.(dt);
     }
+    // Đang giữ Ping: cần gạt dùng để chọn ô trên vòng ping, nhân vật đứng yên.
+    const steered = slots.map(
+      (s) => s && { ...s, prev: steerFrame(s.prev), cur: steerFrame(s.cur) },
+    );
     for (const p of this.players) {
-      const slot = slots[p.slotIndex];
-      if (!slot) continue;
+      const raw = slots[p.slotIndex];
+      const slot = steered[p.slotIndex];
+      if (!raw || !slot) continue;
       this.grab.handleButtons(p, slot);
-      if (justPressed(slot.prev, slot.cur, Btn.Ping)) {
-        this.bus.emit({ type: 'ping', slot: p.slotIndex });
-        this.fx({ k: 'ping', slot: p.slotIndex });
-      }
+      this.stepPing(p, raw, dt);
       p.fixedUpdate(slot.prev, slot.cur, dt, this.grab.holds.has(p), this.paramsFor(p));
       this.zoneTrip(p, dt);
     }
-    this.grab.applyCarry(slots, dt);
+    this.grab.applyCarry(steered, dt);
     this.scene.matter.world.step(dt);
     this.truck?.step();
     for (const fn of this.deferred.splice(0)) fn();
+  }
+
+  private stepPing(p: Player, slot: SimSlot, dt: number): void {
+    let hold = this.pingHolds.get(p.slotIndex);
+    if (!hold) this.pingHolds.set(p.slotIndex, (hold = { heldMs: 0, choice: null }));
+    const res = stepPing(hold, slot.prev, slot.cur, dt);
+    if (!res || this.remote) return;
+    const at = p.position;
+    let ping: Extract<Fx, { k: 'ping' }> = {
+      k: 'ping',
+      slot: p.slotIndex,
+      kind: res.kind === 'wheel' ? res.ping : 'come',
+      x: Math.round(at.x),
+      y: Math.round(at.y),
+    };
+    // Bấm nhanh gần món đồ đang thiếu người khiêng: "Cần thêm N người!" lên món đồ đó.
+    if (res.kind === 'tap') {
+      const item = this.itemNeedingHands(p);
+      if (item) {
+        const c = item.position;
+        const n = item.def.requiredGrabbers - item.carriers.size;
+        ping = { ...ping, kind: 'need', x: Math.round(c.x), y: Math.round(c.y), item: item.uid, n };
+      }
+    }
+    this.bus.emit({ type: 'ping', slot: p.slotIndex, kind: ping.kind });
+    this.fx(ping);
+  }
+
+  /** Món đồ cần nhiều người, còn thiếu người, gần `p` nhất. */
+  private itemNeedingHands(p: Player): Item | undefined {
+    let best: Item | undefined;
+    let bestD = Infinity;
+    for (const item of this.items) {
+      if (item.hidden || item.broken) continue;
+      if (item.def.requiredGrabbers < 2 || item.carriers.size >= item.def.requiredGrabbers)
+        continue;
+      const d = dist(item.position, p.position) - item.boundingRadius - PLAYER_RADIUS;
+      if (d < PING_ITEM_RANGE && d < bestD) {
+        bestD = d;
+        best = item;
+      }
+    }
+    return best;
   }
 
   /** Vùng sàn ở vị trí `p` (vùng thêm sau ưu tiên hơn). */
@@ -514,6 +588,12 @@ export class World {
     for (const item of this.items) item.render(alpha);
     for (const p of this.players) p.render(alpha, frameMs);
     this.grab.render(this.overlay, this.debugDraw);
+    // Ping lên món đồ thì đi theo món đồ.
+    this.pingLayer.render((m) => {
+      if (m.item === undefined) return null;
+      const item = this.items.find((i) => i.uid === m.item);
+      return item && !item.hidden ? item.viewPosition : null;
+    });
   }
 
   // ---------- Va chạm ----------

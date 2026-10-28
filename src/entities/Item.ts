@@ -143,6 +143,11 @@ export class Item {
     return this.damage.broken;
   }
 
+  /** Vị trí đang vẽ (đã nội suy). */
+  get viewPosition(): Vec {
+    return { x: this.view.x, y: this.view.y };
+  }
+
   get position(): Vec {
     return { x: this.body.position.x, y: this.body.position.y };
   }

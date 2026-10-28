@@ -581,7 +581,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P27 | Menu chính, cài đặt, hướng dẫn | E | ✔ | 3 ngày | ✅ | 2026-10-28 |
 | P28 | Màn chọn màn (khóa theo người và sao) | E | ✔ | 3 ngày | ✅ | 2026-10-28 |
 | P29 | Lưu tiến trình | E | ✔ | 2 ngày | ✅ | 2026-10-28 |
-| P30 | Ping nhanh và chỉ dẫn | E | ✔ | 3 ngày | ⬜ | |
+| P30 | Ping nhanh và chỉ dẫn | E | ✔ | 3 ngày | ✅ | 2026-10-28 |
 | P31 | 5 màn MVP (1 màn mỗi cấp) và 3 chủ nhà | F | ✔ | 5 ngày | ⬜ | |
 | P32 | Màn Solo và Đôi còn lại | F | | 5 ngày | ⬜ | |
 | P33 | Màn Đội còn lại | F | | 5 ngày | ⬜ | |
@@ -594,7 +594,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P40 | Kiểm thử trình duyệt | G | | 2 ngày | ⬜ | |
 | P41 | Phát hành | G | | 2 ngày | ⬜ | |
 
-**Tiến độ:** 26/41 phase · Mốc A 🟨 · B ✅ · C ✅ · D 🟨 · E 🟨 · F ⬜ · G ⬜
+**Tiến độ:** 27/41 phase · Mốc A 🟨 · B ✅ · C ✅ · D 🟨 · E ✅ · F ⬜ · G ⬜
 
 ---
 
@@ -906,14 +906,19 @@ Chưa làm: playtest người thật; 2 máy ở 2 mạng khác nhau qua relay c
 - 📝 *Kiểm tra (Chromium): qua màn → lưu `lv01_studio` 2 sao, 1000 điểm, 1 người, màn kết quả hiện "🏆 Kỷ lục mới!" (lần sau hiện "Kỷ lục: …"); trong lobby bấm C/H đổi màu, mũ → lưu vào hồ sơ; tải lại trang, tạo phòng mới → ô của mình đúng tên "Tèo", đúng màu, sao vẫn còn; cài đặt (rung màn hình, âm lượng, phím) giữ sau khi tải lại. Một khóa `beast-movers-save-v1` chứa `version`, `profile` (tên, màu, mũ), `levels` (sao, điểm cao nhất, số người lúc đạt), `settings` (ngôn ngữ, âm lượng, rung, phím). Bản 2: dữ liệu bản 1 (tên nằm trong `settings.playerName`) tự chuyển sang `profile.name`; giá trị sai kiểu bị bỏ, dữ liệu của bản game mới hơn thì dùng mặc định. Chỉ lưu khi qua màn, giữ số sao và điểm cao nhất. Online: mỗi máy tự lưu theo kết quả host gửi. "Xóa tiến trình" (bấm 2 lần để xác nhận) xóa sao và hồ sơ, giữ cài đặt. 6 unit test (nâng cấp, dữ liệu hỏng, giữ kỷ lục, xóa, trình duyệt chặn lưu trữ).*
 
 #### P30 · Ping nhanh và chỉ dẫn
-- [ ] Vòng ping: "Lại đây khiêng!", "Nâng lên!", "Buông ra!", "Bắt mèo!", "Mở cửa!"
-- [ ] Ping lên món đồ: "Cần thêm N người!"
-- [ ] Icon ping trên bản đồ, mũi tên chỉ hướng khi ping ở ngoài màn hình
-- [ ] Màu + ký hiệu riêng, phân biệt được với người mù màu
+- [x] Vòng ping: "Lại đây khiêng!", "Nâng lên!", "Buông ra!", "Bắt mèo!", "Mở cửa!"
+- [x] Ping lên món đồ: "Cần thêm N người!"
+- [x] Icon ping trên bản đồ, mũi tên chỉ hướng khi ping ở ngoài màn hình
+- [x] Màu + ký hiệu riêng, phân biệt được với người mù màu
 - **✅ Xong khi:** nhóm 6 người không nói chuyện vẫn gom đủ người khiêng bàn bi-a chỉ bằng ping.
+- 📝 *Kiểm tra (Chromium): giữ F → vòng ping hiện quanh nhân vật (5 ô, hình elip), nhân vật đứng yên trong lúc chọn; W → sáng ô "Lại đây khiêng!", nhả → ping `come` có vòng sóng màu của người ping + hình nhân vật (màu + ký hiệu riêng) + chữ, tồn tại 4 giây; đứng cạnh sofa (cần 2 người) bấm nhanh F → "👐 Cần thêm 2 người!" gắn lên sofa (đi theo món đồ); W+D → "Bắt mèo!". Online (2 tab): máy khách bấm F → host nhận ping của ô 1, máy khách hiện đúng ping với màu đã chọn ở lobby. Cách làm: bấm nhanh (< 0,22 s) = ping theo ngữ cảnh (đồ cần nhiều người còn thiếu người trong 70 px → `need`, không thì `come`); giữ = vòng ping, chọn bằng hướng (5 ô ở lên / chéo phải-lên / phải / xuống / trái nên 8 hướng bàn phím chọn được hết), nhả cần gạt trước vẫn giữ ô, giữ mà không chọn thì hủy. Mọi thứ tính từ `InputFrame` trong mô phỏng (host quyết định, gửi bằng hiệu ứng `ping` như P24); dự đoán phía máy khách cũng đứng yên khi giữ Ping. Ping ngoài khung hình có mũi tên màu ở mép màn hình (dùng chung với mũi tên người chơi, nhãn là biểu tượng ping). 5 unit test. ⚠️ Tiêu chí "6 người không nói chuyện gom đủ người khiêng bàn bi-a" cần playtest người thật (P39); chưa có màn bàn bi-a (P31).*
 
 **Ghi chú playtest mốc E:**
-_(ghi ở đây)_
+- Chưa playtest người thật; kiểm tra bằng Chromium (bàn phím giả lập, tay cầm giả lập qua `navigator.getGamepads`) + unit test.
+- Menu, cài đặt, chọn màn, kết quả, tạm dừng đều đi được chỉ bằng tay cầm; chưa thử tay cầm thật.
+- Mới có 1 màn thật: chọn màn và khóa theo người/sao được thử bằng màn chèn tạm; cần xem lại khi có đủ 5 màn (P31).
+- Vòng ping: cần người thật xem bấm nhanh/giữ (0,22 s) có tự nhiên không, và 5 ô có dễ chọn bằng cần gạt không.
+- Màn chọn màn: người thứ 2 dùng phím mũi tên phải bấm Enter để vào trước khi điều khiển được — cần xem người mới có hiểu không.
 
 ---
 

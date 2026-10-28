@@ -1,4 +1,5 @@
 import { Btn, frameAxis, type InputFrame, justPressed } from '../systems/input/InputFrame';
+import { steerFrame } from '../systems/ping';
 import {
   createMotorState,
   type MotorParams,
@@ -196,7 +197,12 @@ export class Predictor {
   private step(sim: Sim, prev: InputFrame, cur: InputFrame, dt: number): Sim {
     const r = stepMotor(
       sim.motor,
-      { move: frameAxis(cur), dashPressed: justPressed(prev, cur, Btn.Dash), carrying: false },
+      {
+        // Giống host: đang giữ Ping thì cần gạt chọn ô trên vòng ping, không đi.
+        move: frameAxis(steerFrame(cur)),
+        dashPressed: justPressed(prev, cur, Btn.Dash),
+        carrying: false,
+      },
       sim.vel,
       dt,
       this.params,
