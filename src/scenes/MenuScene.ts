@@ -14,7 +14,7 @@ export class MenuScene extends Phaser.Scene {
     const cx = GAME_WIDTH / 2;
 
     this.add
-      .text(cx, 210, GAME_TITLE, {
+      .text(cx, 170, GAME_TITLE, {
         fontFamily: Theme.font,
         fontSize: '80px',
         fontStyle: 'bold',
@@ -23,17 +23,18 @@ export class MenuScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     this.add
-      .text(cx, 290, t('menu.tagline'), {
+      .text(cx, 250, t('menu.tagline'), {
         fontFamily: Theme.font,
         fontSize: '24px',
         color: Theme.text,
       })
       .setOrigin(0.5);
 
-    this.button(cx, 400, t('menu.start'), '32px', () => this.scene.start(SceneKeys.Game));
-    this.button(cx, 490, t('menu.inputTest'), '24px', () => this.scene.start(SceneKeys.InputTest));
-    this.button(cx, 560, t('menu.sandbox'), '24px', () => this.scene.start(SceneKeys.Sandbox));
-    this.button(cx, 620, t('menu.language'), '24px', () => this.switchLanguage());
+    this.button(cx, 390, t('menu.start'), '32px', () => this.scene.start(SceneKeys.Game));
+    this.button(cx, 470, t('menu.online'), '28px', () => this.scene.start(SceneKeys.Online, {}));
+    this.button(cx, 540, t('menu.inputTest'), '22px', () => this.scene.start(SceneKeys.InputTest));
+    this.button(cx, 597, t('menu.sandbox'), '22px', () => this.scene.start(SceneKeys.Sandbox));
+    this.button(cx, 654, t('menu.language'), '22px', () => this.switchLanguage());
 
     this.add
       .text(
@@ -53,6 +54,7 @@ export class MenuScene extends Phaser.Scene {
     this.input.keyboard?.once('keydown-I', () => this.scene.start(SceneKeys.InputTest));
     this.input.keyboard?.once('keydown-L', () => this.switchLanguage());
     this.input.keyboard?.once('keydown-S', () => this.scene.start(SceneKeys.Sandbox));
+    this.input.keyboard?.once('keydown-O', () => this.scene.start(SceneKeys.Online, {}));
   }
 
   private button(x: number, y: number, label: string, fontSize: string, onClick: () => void) {

@@ -14,7 +14,9 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "phaser": "3.90.0"
+    "peerjs": "1.5.5",
+    "phaser": "3.90.0",
+    "trystero": "0.26.0"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

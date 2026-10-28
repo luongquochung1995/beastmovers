@@ -7,6 +7,7 @@ export const SceneKeys = {
   Game: 'Game',
   Result: 'Result',
   Hud: 'Hud',
+  Online: 'Online',
 } as const;
 
 /** Khóa trong `scene.registry`. */

@@ -571,7 +571,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P17 | HUD trong game | C | ✔ | 3 ngày | ✅ | 2026-10-28 |
 | P18 | Camera chung máy | C | ✔ | 2 ngày | ✅ | 2026-10-28 |
 | P19 | Tách simulation host/client | D | ✔ | 4–5 ngày | ✅ | 2026-10-28 |
-| P20 | Transport và phòng chơi | D | ✔ | 4 ngày | ⬜ | |
+| P20 | Transport và phòng chơi | D | ✔ | 4 ngày | 🟨 | |
 | P21 | Lobby online | D | ✔ | 3 ngày | ⬜ | |
 | P22 | Gửi input và snapshot | D | ✔ | 4 ngày | ⬜ | |
 | P23 | Nội suy và dự đoán | D | ✔ | 4 ngày | ⬜ | |
@@ -800,13 +800,14 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 - 📝 *Kiểm tra (Chromium): `?net=loopback&lag=100` — người chơi bàn phím và tay cầm vào giữa chừng, nắm/mang thùng lên xe được, giống hệt chơi chung máy; thêm dao động ±30ms + mất 10% gói → nắm thành công 10/10 lần (lần đầu chỉ 7/10 do hai gói tới dồn ghi đè cú bấm → host gộp nút giữa hai lần đọc). Snapshot màn 1 ~2,3KB JSON (13 đồ, 3 người). Cách làm: mô phỏng nhận input qua `SlotSource` (chơi chung máy, hoặc `HostInputHub` gom input từ mạng); máy khách gửi bằng `ClientInputSender` (30Hz, gộp nút giữa hai lần gửi); `Transport` chung + `LoopbackNetwork` (độ trễ, dao động, mất gói = gửi lại, giữ thứ tự). ⚠️ Mô phỏng vẫn chạy trên Matter.js trong Phaser (chưa phải hàm thuần tách khỏi Phaser); phần "chỉ đọc state để vẽ" ở máy khách làm ở P22. 10 unit test mạng/snapshot.*
 
 #### P20 · Transport và phòng chơi
-- [ ] Interface `Transport` chung; bản cài đặt Trystero
-- [ ] Tạo phòng: sinh mã 6 ký tự, link `?room=ABC123`
-- [ ] Vào phòng bằng mã hoặc link
-- [ ] Bắt tay khi vào: kiểm tra phiên bản game + hash data, sai thì từ chối kèm thông báo
-- [ ] Giới hạn tổng 8 người (tính cả người chơi chung máy)
-- [ ] Đọc `iceServers` (STUN/TURN) từ `config.json`
+- [x] Interface `Transport` chung; bản cài đặt Trystero
+- [x] Tạo phòng: sinh mã 6 ký tự, link `?room=ABC123`
+- [x] Vào phòng bằng mã hoặc link
+- [x] Bắt tay khi vào: kiểm tra phiên bản game + hash data, sai thì từ chối kèm thông báo
+- [x] Giới hạn tổng 8 người (tính cả người chơi chung máy)
+- [x] Đọc `iceServers` (STUN/TURN) từ `config.json`
 - **✅ Xong khi:** 2 máy ở 2 mạng khác nhau vào được cùng phòng bằng link.
+- 📝 *Kiểm tra (Chromium): (1) **Trystero thật**: 2 trình duyệt riêng (như 2 máy) vào cùng phòng qua WebRTC, relay nostr chạy trên máy (`?relay=ws://localhost:7777`, vì môi trường dev chặn relay công cộng) → vào phòng sau ~3 giây, ping ~50 ms, máy khách thoát thì host thấy ngay. (2) `?transport=broadcast` (các tab cùng trình duyệt): host tạo phòng, tab A vào bằng link, tab B gõ mã bằng bàn phím, tab C data khác → bị từ chối "Dữ liệu game khác host (7c072818 ≠ ad233c0f)"; đóng tab B → danh sách còn 2; host đóng → A báo "Host đã rời phòng". Sai phiên bản, đủ 8 người (tính cả người chơi chung máy), không tìm thấy host, host vào muộn: 7 unit test. Mã phòng bỏ ký tự dễ nhầm (0, O, 1, I, L) nên mã mẫu `ABC123` thực tế sẽ kiểu `4HHTQA`. ⏳ **Còn thiếu: thử 2 máy ở 2 mạng khác nhau qua relay công cộng** (cần deploy GitHub Pages ở P01). Nếu 2 mạng không nối được (NAT chặt) cần thêm TURN vào `config.json` → `net.iceServers` (có `username`/`credential`).*
 
 #### P21 · Lobby online
 - [ ] 8 ô người chơi: tên, màu, mũ, biểu tượng nguồn input, độ trễ (ms)

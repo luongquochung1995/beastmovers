@@ -89,7 +89,16 @@ export const configSchema = obj({
     transport: str({ minLen: 1 }),
     fallbackTransport: str({ minLen: 1 }),
     appId: str({ minLen: 1 }),
-    iceServers: arr(obj({ urls: str({ minLen: 1 }) })),
+    /** STUN/TURN cho WebRTC. TURN cần `username` + `credential`. */
+    iceServers: arr(
+      obj({
+        urls: str({ minLen: 1 }),
+        username: optional(str()),
+        credential: optional(str()),
+      }),
+    ),
+    /** Relay nostr để Trystero tìm nhau; bỏ trống thì dùng danh sách mặc định của Trystero. */
+    relayUrls: optional(arr(str({ minLen: 1 }))),
     inputHz: int({ min: 1 }),
     snapshotHz: int({ min: 1 }),
     interpolationDelayMs: num({ min: 0 }),

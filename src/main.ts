@@ -5,6 +5,7 @@ import { GameScene } from './scenes/GameScene';
 import { HudScene } from './scenes/HudScene';
 import { InputTestScene } from './scenes/InputTestScene';
 import { MenuScene } from './scenes/MenuScene';
+import { OnlineScene } from './scenes/OnlineScene';
 import { ResultScene } from './scenes/ResultScene';
 import { SandboxScene } from './scenes/SandboxScene';
 import { GAME_HEIGHT, GAME_WIDTH, Theme } from './ui/theme';
@@ -36,6 +37,7 @@ const game = new Phaser.Game({
     GameScene,
     ResultScene,
     HudScene,
+    OnlineScene,
   ],
 });
 

@@ -4,6 +4,7 @@ import { detectLocale, LOCALES, setDictionary, setLocale } from '../data/i18n';
 import { fetchText, loadGameData } from '../data/loader';
 import { loadSettings } from '../data/settings';
 import { ensurePlayerTextures } from '../entities/playerStyles';
+import { roomFromUrl } from '../net/room';
 import { KNOWN_BEHAVIORS } from '../systems/behaviors/names';
 import { InputManager } from '../systems/input/InputManager';
 import { GAME_HEIGHT, GAME_WIDTH, Theme } from '../ui/theme';
@@ -55,7 +56,10 @@ export class BootScene extends Phaser.Scene {
     // Một InputManager dùng chung cho cả game để người chơi đã tham gia được giữ qua các màn.
     this.registry.set(RegistryKeys.Input, new InputManager(config.maxLocalPlayers));
     ensurePlayerTextures(this);
-    this.scene.start(SceneKeys.Menu);
+    // Mở bằng link mời `?room=ABC123` thì vào thẳng phòng đó.
+    const room = roomFromUrl(window.location.search);
+    if (room) this.scene.start(SceneKeys.Online, { mode: 'join', code: room });
+    else this.scene.start(SceneKeys.Menu);
   }
 
   private async loadDictionariesBestEffort(): Promise<void> {
