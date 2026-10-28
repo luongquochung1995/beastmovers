@@ -14,6 +14,7 @@ import type { Snapshot } from '../net/snapshot';
 import { snapshotWorld } from '../net/worldSnapshot';
 import type { LevelRuntime } from '../sim/LevelRuntime';
 import type { SimSlot, SlotSource } from '../sim/SimSlot';
+import { Btn, isDown } from '../systems/input/InputFrame';
 import type { InputManager } from '../systems/input/InputManager';
 import { Random } from '../systems/Random';
 import { Theme } from '../ui/theme';
@@ -47,6 +48,11 @@ export abstract class PlayScene extends Phaser.Scene {
   /** Số bước logic đã chạy trong khung hình vừa rồi (cho bảng debug). */
   lastSteps = 0;
   private lastNow = 0;
+  /**
+   * Chỉ cho người mới vào sau khi mọi nút Nắm/Start của thiết bị chưa tham gia đã nhả:
+   * Enter vừa bấm ở menu cũng là nút Nắm của bố cục phím mũi tên.
+   */
+  private joinArmed = false;
 
   /** Dựng tường, sàn, đồ vật. */
   protected abstract buildLevel(): void;
@@ -66,6 +72,7 @@ export abstract class PlayScene extends Phaser.Scene {
     this.inputs = this.registry.get(RegistryKeys.Input) as InputManager;
     this.loop = new FixedLoop(this.config.logicHz);
     this.logicTicks = 0;
+    this.joinArmed = false;
     this.lastNow = performance.now();
     this.cameras.main.setBackgroundColor(Theme.bg);
 
@@ -103,6 +110,8 @@ export abstract class PlayScene extends Phaser.Scene {
     this.input.keyboard?.once('keydown-ESC', () => this.onExit());
 
     this.scene.launch(SceneKeys.Hud, { playKey: this.scene.key });
+    // Tạm dừng xong: không tính khoảng thời gian đã dừng vào vòng lặp logic.
+    this.events.on(Phaser.Scenes.Events.RESUME, () => (this.lastNow = performance.now()));
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.scene.stop(SceneKeys.Hud);
       this.world.destroy();
@@ -184,7 +193,17 @@ export abstract class PlayScene extends Phaser.Scene {
       this.logicTicks++;
       return;
     }
-    const allowJoin = this.allowJoin() && !this.online;
+    if (!this.joinArmed) {
+      this.joinArmed = !this.inputs
+        .allSources()
+        .some(
+          (src) =>
+            src.isConnected() &&
+            !this.inputs.slots.some((s) => s?.source === src) &&
+            isDown(src.read(), Btn.Grab | Btn.Start),
+        );
+    }
+    const allowJoin = this.allowJoin() && !this.online && this.joinArmed;
     this.sender?.tick(dt, allowJoin);
     for (const slot of this.slotSource.poll(allowJoin)) this.spawnPlayer(slot.index);
     this.world.step(dt, this.controlSlots());

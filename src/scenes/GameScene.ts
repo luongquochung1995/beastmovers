@@ -3,7 +3,7 @@ import { t } from '../data/i18n';
 import type { LevelDef } from '../data/types';
 import { type BuiltLevel, buildLevel, playerSpawn } from '../sim/levelSetup';
 import { LevelRuntime } from '../sim/LevelRuntime';
-import { EMPTY_FRAME } from '../systems/input/InputFrame';
+import { Btn, EMPTY_FRAME, isDown } from '../systems/input/InputFrame';
 import type { SimSlot } from '../sim/SimSlot';
 import type { Vec } from '../systems/geometry';
 import { fitCamera } from '../systems/cameraFit';
@@ -32,6 +32,10 @@ export class GameScene extends PlayScene {
   private cameraReady = false;
   /** Kiểm thử: khóa zoom camera (null = tự động). */
   cameraZoomOverride: number | null = null;
+  /** Nút Start của từng tay cầm ở khung trước (bấm Start để tạm dừng). */
+  private startHeld = new Map<string, boolean>();
+  /** Lúc đóng menu tạm dừng: phím Esc vừa dùng để đóng không được mở lại menu. */
+  private pauseClosedAt = 0;
 
   constructor() {
     super(SceneKeys.Game);
@@ -51,6 +55,8 @@ export class GameScene extends PlayScene {
     this.runtime = new LevelRuntime(this.world, this.built, this.gameData, client);
     if (client) this.online!.attachMirror(this.world, this.runtime, (s) => this.spawnPointFor(s));
     this.leaving = false;
+    this.startHeld = new Map();
+    this.pauseClosedAt = 0;
     this.cameras.main.setBounds(0, 0, map.width, map.height);
     this.cameraReady = false;
   }
@@ -110,7 +116,7 @@ export class GameScene extends PlayScene {
   }
 
   /** Rời phòng online, về menu. */
-  private leaveOnline(): void {
+  leaveOnline(): void {
     const net = this.online?.ctx;
     net?.session.close();
     this.registry.set(RegistryKeys.Net, null);
@@ -166,17 +172,68 @@ export class GameScene extends PlayScene {
     cam.centerOn(cx, cy);
   }
 
-  /**
-   * Esc: kết thúc sớm (xe chạy luôn). Máy khách online không kết thúc màn của cả phòng;
-   * nếu host đã thoát thì Esc đưa về menu.
-   */
+  /** Esc: mở menu tạm dừng (host đã thoát thì về menu). */
   protected onExit(): void {
-    if (this.online && !this.online.isHost) {
-      if (this.online.status().kind === 'hostGone') this.leaveOnline();
-      else this.input.keyboard?.once('keydown-ESC', () => this.onExit());
-      return;
+    this.input.keyboard?.once('keydown-ESC', () => this.onExit());
+    if (this.online?.status().kind === 'hostGone') return this.leaveOnline();
+    if (performance.now() - this.pauseClosedAt < 300) return;
+    this.openPause();
+  }
+
+  override update(): void {
+    // Tay cầm đã tham gia bấm Start: tạm dừng. Đọc trước khi chạy logic để cú bấm Start
+    // dùng để tham gia không bị tính luôn là tạm dừng.
+    for (const src of this.inputs.allSources()) {
+      if (src.kind !== 'gamepad') continue;
+      const down = src.isConnected() && isDown(src.read(), Btn.Start);
+      const joined = this.inputs.slots.some((s) => s?.source === src);
+      if (down && !this.startHeld.get(src.id) && joined) this.openPause();
+      this.startHeld.set(src.id, down);
     }
-    this.runtime.finishNow();
+    super.update();
+  }
+
+  /** null: chơi chung máy. */
+  onlineRole(): 'host' | 'client' | null {
+    if (!this.online) return null;
+    return this.online.isHost ? 'host' : 'client';
+  }
+
+  openPause(): void {
+    if (this.scene.isActive(SceneKeys.Pause) || this.leaving || this.runtime.locked) return;
+    // Chơi chung máy thì dừng hẳn; online thì game vẫn chạy.
+    if (!this.online) {
+      this.scene.pause();
+      this.scene.pause(SceneKeys.Hud);
+    }
+    this.scene.launch(SceneKeys.Pause);
+    this.scene.bringToTop(SceneKeys.Pause);
+  }
+
+  closePause(): void {
+    this.scene.stop(SceneKeys.Pause);
+    this.pauseClosedAt = performance.now();
+    if (!this.online) {
+      this.scene.resume(SceneKeys.Hud);
+      this.scene.resume();
+    }
+  }
+
+  /** Kết thúc sớm: xe chạy luôn (máy khách online không kết thúc màn của cả phòng). */
+  finishFromPause(): void {
+    this.closePause();
+    if (!this.online || this.online.isHost) this.runtime.finishNow();
+  }
+
+  restartLevel(): void {
+    this.scene.stop(SceneKeys.Pause);
+    this.scene.restart();
+  }
+
+  quitTo(key: string): void {
+    this.scene.stop(SceneKeys.Pause);
+    if (this.online) this.leaveOnline();
+    else this.scene.start(key);
   }
 
   protected override fixedUpdate(dt: number): void {

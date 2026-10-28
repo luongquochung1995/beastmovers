@@ -238,13 +238,13 @@ describe('Báo lỗi đúng file, đúng trường', () => {
 
   it('chữ giao diện thiếu khóa ở một ngôn ngữ', async () => {
     const issues = await issuesFor(
-      reader({ 'i18n/vi.json': (d: Record<string, string>) => delete d['menu.start'] }),
+      reader({ 'i18n/vi.json': (d: Record<string, string>) => delete d['menu.local'] }),
     );
     expect(issues).toContainEqual(
       expect.objectContaining({
         file: 'i18n/vi.json',
         code: 'i18nMismatch',
-        params: { key: 'menu.start', missingIn: 'vi' },
+        params: { key: 'menu.local', missingIn: 'vi' },
       }),
     );
   });

@@ -13,8 +13,20 @@ export interface KeyboardLayout {
   ping: string[];
 }
 
-/** Bố cục phím theo `KeyboardEvent.code` (không phụ thuộc kiểu bàn phím QWERTY/AZERTY). */
-export const KEYBOARD_LAYOUTS: readonly KeyboardLayout[] = [
+export const KEY_ACTIONS = [
+  'up',
+  'down',
+  'left',
+  'right',
+  'grab',
+  'throw',
+  'dash',
+  'ping',
+] as const;
+export type KeyAction = (typeof KEY_ACTIONS)[number];
+
+/** Bố cục phím mặc định theo `KeyboardEvent.code` (không phụ thuộc kiểu bàn phím QWERTY/AZERTY). */
+export const DEFAULT_LAYOUTS: readonly KeyboardLayout[] = [
   {
     nameKey: 'layout.wasd',
     up: ['KeyW'],
@@ -39,6 +51,102 @@ export const KEYBOARD_LAYOUTS: readonly KeyboardLayout[] = [
   },
 ];
 
+/** Phím chính của từng hành động trên từng bố cục (phím người chơi đã đổi). */
+export type KeyBindings = Partial<Record<string, string>>[];
+
+/** Phím dành cho menu/debug, không cho gán vào hành động. */
+export const RESERVED_KEYS = new Set(['Escape', 'F1', 'Tab', 'MetaLeft', 'MetaRight']);
+
+/** Phím chính đang dùng của một hành động. */
+export function primaryKey(bindings: KeyBindings, layout: number, action: KeyAction): string {
+  return bindings[layout]?.[action] ?? DEFAULT_LAYOUTS[layout]![action][0]!;
+}
+
+/**
+ * Dựng bố cục từ phím đã đổi: phím chính thay phím đầu của mặc định, các phím phụ mặc định
+ * (vd. Numpad) giữ lại nếu không trùng phím chính nào.
+ */
+export function effectiveLayouts(bindings: KeyBindings): KeyboardLayout[] {
+  const primaries = new Set(
+    DEFAULT_LAYOUTS.flatMap((_, i) => KEY_ACTIONS.map((a) => primaryKey(bindings, i, a))),
+  );
+  return DEFAULT_LAYOUTS.map((def, i) => {
+    const layout = { ...def };
+    for (const a of KEY_ACTIONS) {
+      const alts = def[a].slice(1).filter((c) => !primaries.has(c));
+      layout[a] = [primaryKey(bindings, i, a), ...alts];
+    }
+    return layout;
+  });
+}
+
+/**
+ * Gán phím `code` cho `action` của bố cục `layout`. Phím đó đang là phím chính của hành động
+ * khác (bố cục nào cũng vậy) thì hai bên đổi chỗ cho nhau, để không hành động nào mất phím.
+ */
+export function rebindKey(
+  bindings: KeyBindings,
+  layout: number,
+  action: KeyAction,
+  code: string,
+): KeyBindings {
+  const next: KeyBindings = DEFAULT_LAYOUTS.map((_, i) => ({ ...bindings[i] }));
+  const old = primaryKey(bindings, layout, action);
+  DEFAULT_LAYOUTS.forEach((_, i) => {
+    for (const a of KEY_ACTIONS) {
+      if ((i !== layout || a !== action) && primaryKey(bindings, i, a) === code) next[i]![a] = old;
+    }
+  });
+  next[layout]![action] = code;
+  return next;
+}
+
+/** Bố cục đang dùng (đổi bằng `applyKeyBindings`). */
+export let KEYBOARD_LAYOUTS: readonly KeyboardLayout[] = DEFAULT_LAYOUTS;
+
+export function applyKeyBindings(bindings: KeyBindings | undefined): void {
+  KEYBOARD_LAYOUTS = effectiveLayouts(bindings ?? []);
+}
+
+/** Tên phím ngắn gọn để hiện trên màn hình. */
+export function keyLabel(code: string): string {
+  const named: Record<string, string> = {
+    ArrowUp: '↑',
+    ArrowDown: '↓',
+    ArrowLeft: '←',
+    ArrowRight: '→',
+    Space: 'Space',
+    Enter: 'Enter',
+    NumpadEnter: 'Num Enter',
+    ShiftLeft: 'Shift L',
+    ShiftRight: 'Shift R',
+    ControlLeft: 'Ctrl L',
+    ControlRight: 'Ctrl R',
+    AltLeft: 'Alt L',
+    AltRight: 'Alt R',
+    Backspace: '⌫',
+    Backquote: '`',
+    Minus: '-',
+    Equal: '=',
+    BracketLeft: '[',
+    BracketRight: ']',
+    Backslash: '\\',
+    Semicolon: ';',
+    Quote: "'",
+    Comma: ',',
+    Period: '.',
+    Slash: '/',
+  };
+  if (named[code]) return named[code];
+  let m = /^Key([A-Z])$/.exec(code);
+  if (m) return m[1]!;
+  m = /^Digit(\d)$/.exec(code);
+  if (m) return m[1]!;
+  m = /^Numpad(.+)$/.exec(code);
+  if (m) return `Num ${m[1]}`;
+  return code;
+}
+
 const anyDown = (keys: ReadonlySet<string>, codes: readonly string[]) =>
   codes.some((c) => keys.has(c));
 
@@ -58,6 +166,11 @@ export function frameFromKeys(keys: ReadonlySet<string>, layout: KeyboardLayout)
   return { mx: quantizeAxis(x), my: quantizeAxis(y), buttons };
 }
 
+/** Phím đang được gán cho một hành động (bố cục hiện tại). */
+function isGameKey(code: string): boolean {
+  return KEYBOARD_LAYOUTS.some((l) => KEY_ACTIONS.some((a) => l[a].includes(code)));
+}
+
 /** Theo dõi các phím đang nhấn trên toàn trang. */
 export class KeyboardTracker {
   readonly keys = new Set<string>();
@@ -66,21 +179,8 @@ export class KeyboardTracker {
    * hay khi máy chậm) vẫn được tính là đang nhấn ở lần đọc kế tiếp.
    */
   private readonly tapped = new Set<string>();
-  private readonly gameCodes: Set<string>;
 
   constructor(private readonly target: Window = window) {
-    this.gameCodes = new Set(
-      KEYBOARD_LAYOUTS.flatMap((l) => [
-        ...l.up,
-        ...l.down,
-        ...l.left,
-        ...l.right,
-        ...l.grab,
-        ...l.throw,
-        ...l.dash,
-        ...l.ping,
-      ]),
-    );
     target.addEventListener('keydown', this.onDown);
     target.addEventListener('keyup', this.onUp);
     target.addEventListener('blur', this.onBlur);
@@ -108,7 +208,7 @@ export class KeyboardTracker {
     this.keys.add(e.code);
     this.tapped.add(e.code);
     // Chặn cuộn trang bằng phím mũi tên / Space khi đang chơi.
-    if (this.gameCodes.has(e.code)) e.preventDefault();
+    if (isGameKey(e.code)) e.preventDefault();
   };
 
   private readonly onUp = (e: KeyboardEvent) => {

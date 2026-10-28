@@ -5,6 +5,7 @@ import { PLAYER_STYLES, playerTextureKey } from '../entities/playerStyles';
 import type { NetContext } from '../net/netContext';
 import type { LevelResult } from '../sim/LevelRuntime';
 import { moodFace } from '../systems/dialogue';
+import { MenuInput } from '../ui/menuInput';
 import { GAME_HEIGHT, GAME_WIDTH, Theme } from '../ui/theme';
 import { RegistryKeys, SceneKeys } from './keys';
 
@@ -162,10 +163,20 @@ export class ResultScene extends Phaser.Scene {
       };
       this.input.keyboard?.once('keydown-ENTER', leave);
       this.input.keyboard?.once('keydown-ESC', leave);
+      new MenuInput(this, (a) => (a === 'confirm' || a === 'back') && leave(), undefined, false);
       return;
     }
-    this.input.keyboard?.once('keydown-ENTER', () => this.scene.start(SceneKeys.Game));
-    this.input.keyboard?.once('keydown-ESC', () => this.scene.start(SceneKeys.Menu));
+    const replay = () => this.scene.start(SceneKeys.Game);
+    const menu = () => this.scene.start(SceneKeys.Menu);
+    this.input.keyboard?.once('keydown-ENTER', replay);
+    this.input.keyboard?.once('keydown-ESC', menu);
+    // Tay cầm: A chơi lại, B về menu.
+    new MenuInput(
+      this,
+      (a) => (a === 'confirm' ? replay() : a === 'back' && menu()),
+      undefined,
+      false,
+    );
   }
 }
 

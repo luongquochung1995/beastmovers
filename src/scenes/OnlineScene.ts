@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { CONFIG_KEY } from '../data/config';
 import { getLocale, t } from '../data/i18n';
-import { loadSettings, saveSettings } from '../data/settings';
+import { loadProfile, saveProfile } from '../data/settings';
 import type { GameConfig } from '../data/types';
 import type { GameData } from '../data/validate';
 import { playerTextureKey } from '../entities/playerStyles';
@@ -21,6 +21,7 @@ import { RoomSession } from '../net/session';
 import { TrysteroTransport } from '../net/TrysteroTransport';
 import { Btn, isDown, justPressed } from '../systems/input/InputFrame';
 import type { InputManager } from '../systems/input/InputManager';
+import { MenuInput } from '../ui/menuInput';
 import { GAME_HEIGHT, GAME_WIDTH, Theme } from '../ui/theme';
 import { RegistryKeys, SceneKeys } from './keys';
 
@@ -101,6 +102,20 @@ export class OnlineScene extends Phaser.Scene {
     this.onPaste = (e) => this.typeCode(e.clipboardData?.getData('text') ?? '', true);
     document.addEventListener('paste', this.onPaste);
 
+    // Tay cầm ngoài lobby: A tạo phòng / thử lại, B quay lại.
+    new MenuInput(
+      this,
+      (a) => {
+        if (this.lobby || this.editing) return;
+        if (a === 'back') this.leave();
+        else if (a === 'confirm') {
+          if (!this.session) this.open(generateRoomCode(), 'host');
+          else if (this.failed()) this.retry();
+        }
+      },
+      undefined,
+      false,
+    );
     if (data.mode === 'join') this.open(data.code, 'client');
     else if (data.mode === 'create') this.open(generateRoomCode(), 'host');
     else this.drawChoose();
@@ -200,14 +215,16 @@ export class OnlineScene extends Phaser.Scene {
     const key = slots.map((s) => `${s.index}:${s.source.id}`).join(',');
     if (!force && key === this.localKey) return;
     this.localKey = key;
-    const saved = loadSettings().playerName;
+    const profile = loadProfile();
     const names = DEFAULT_NAMES[getLocale()];
     const seats: LocalSeat[] = slots.map((s, i) => {
       const existing = this.mySeat(s.index);
       const name =
         existing?.name ??
-        (i === 0 && saved ? saved : names[Math.floor(Math.random() * names.length)]!);
-      return { local: s.index, source: s.source.kind, name };
+        (i === 0 && profile.name ? profile.name : names[Math.floor(Math.random() * names.length)]!);
+      // Người chơi đầu tiên trên máy dùng lại màu và mũ đã lưu.
+      const look = i === 0 ? { color: profile.color, hat: profile.hat } : {};
+      return { local: s.index, source: s.source.kind, name, ...look };
     });
     this.lobby.setLocalSeats(seats);
   }
@@ -223,6 +240,10 @@ export class OnlineScene extends Phaser.Scene {
     const joined = this.inputs.poll(this.joinArmed && this.editing === null);
     if (joined.length) this.syncLocalSeats();
     if (this.editing) return;
+    // Nút Back/Select trên tay cầm: rời phòng.
+    for (const pad of navigator.getGamepads?.() ?? []) {
+      if (pad?.connected && pad.buttons[8]?.pressed && this.joinArmed) return this.leave();
+    }
     for (const slot of this.inputs.slots) {
       if (!slot || joined.includes(slot)) continue;
       if (justPressed(slot.prev, slot.cur, Btn.Throw)) this.cycleColor(slot.index);
@@ -239,12 +260,17 @@ export class OnlineScene extends Phaser.Scene {
   private cycleColor(local: number): void {
     const seat = this.mySeat(local);
     if (!seat || !this.lobby) return;
-    this.lobby.setLook(local, { color: nextFreeColor(this.lobby.state.seats, seat.color, seat) });
+    const color = nextFreeColor(this.lobby.state.seats, seat.color, seat);
+    this.lobby.setLook(local, { color });
+    if (local === this.firstLocal()) saveProfile({ color });
   }
 
   private cycleHat(local: number): void {
     const seat = this.mySeat(local);
-    if (seat) this.lobby?.setLook(local, { hat: (seat.hat + 1) % HATS.length });
+    if (!seat) return;
+    const hat = (seat.hat + 1) % HATS.length;
+    this.lobby?.setLook(local, { hat });
+    if (local === this.firstLocal()) saveProfile({ hat });
   }
 
   private toggleReady(): void {
@@ -390,14 +416,17 @@ export class OnlineScene extends Phaser.Scene {
     const status = this.statusText();
     this.text(cx, 300, status.text, 24, status.color);
     // Không vào được: hướng dẫn, thử lại, hoặc chơi chung máy.
-    const k = this.session?.state.kind;
-    const failed = this.error !== null || k === 'noHost' || k === 'hostLeft';
-    if (failed) {
+    if (this.failed()) {
       this.text(cx, 400, t('online.tips'), 18, Theme.muted).setLineSpacing(6);
       this.button(cx - 150, 520, t('online.retry'), () => this.retry(), 22);
       this.button(cx + 150, 520, t('online.playLocal'), () => this.playLocal(), 22);
     }
     this.text(cx, GAME_HEIGHT - 40, this.footer(t('online.leaveHint')), 18, Theme.muted);
+  }
+
+  private failed(): boolean {
+    const k = this.session?.state.kind;
+    return this.error !== null || k === 'noHost' || k === 'hostLeft';
   }
 
   /** Thử vào lại phòng này từ đầu (kênh truyền mới). */
@@ -609,7 +638,7 @@ export class OnlineScene extends Phaser.Scene {
     const name = ed.text.trim();
     if (commit && name) {
       this.lobby?.setLook(ed.local, { name });
-      if (ed.local === this.firstLocal()) saveSettings({ playerName: name });
+      if (ed.local === this.firstLocal()) saveProfile({ name });
     }
     this.redraw();
   }

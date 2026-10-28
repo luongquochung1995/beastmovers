@@ -8,6 +8,11 @@ export const SceneKeys = {
   Result: 'Result',
   Hud: 'Hud',
   Online: 'Online',
+  Settings: 'Settings',
+  Keys: 'Keys',
+  Help: 'Help',
+  Pause: 'Pause',
+  LevelSelect: 'LevelSelect',
 } as const;
 
 /** Khóa trong `scene.registry`. */

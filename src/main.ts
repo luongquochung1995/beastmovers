@@ -1,13 +1,20 @@
 import Phaser from 'phaser';
+// Font có đủ dấu tiếng Việt, đóng gói cùng game (không tải từ máy chủ khác).
+import '@fontsource/nunito/400.css';
+import '@fontsource/nunito/700.css';
 import { BootScene } from './scenes/BootScene';
 import { ErrorScene } from './scenes/ErrorScene';
 import { GameScene } from './scenes/GameScene';
+import { HelpScene } from './scenes/HelpScene';
 import { HudScene } from './scenes/HudScene';
 import { InputTestScene } from './scenes/InputTestScene';
+import { KeysScene } from './scenes/KeysScene';
 import { MenuScene } from './scenes/MenuScene';
 import { OnlineScene } from './scenes/OnlineScene';
+import { PauseScene } from './scenes/PauseScene';
 import { ResultScene } from './scenes/ResultScene';
 import { SandboxScene } from './scenes/SandboxScene';
+import { SettingsScene } from './scenes/SettingsScene';
 import { GAME_HEIGHT, GAME_WIDTH, Theme } from './ui/theme';
 
 /**
@@ -44,6 +51,10 @@ const game = new Phaser.Game({
     ResultScene,
     HudScene,
     OnlineScene,
+    SettingsScene,
+    KeysScene,
+    HelpScene,
+    PauseScene,
   ],
 });
 

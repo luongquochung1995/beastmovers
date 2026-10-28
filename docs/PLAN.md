@@ -578,7 +578,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P24 | Đồng bộ sự kiện | D | ✔ | 2 ngày | ✅ | 2026-10-28 |
 | P25 | Rớt mạng, lỗi kết nối, dự phòng | D | ✔ | 4 ngày | ✅ | 2026-10-28 |
 | P26 | Test 8 người online | D | ✔ | 3 ngày | 🟨 | |
-| P27 | Menu chính, cài đặt, hướng dẫn | E | ✔ | 3 ngày | ⬜ | |
+| P27 | Menu chính, cài đặt, hướng dẫn | E | ✔ | 3 ngày | ✅ | 2026-10-28 |
 | P28 | Màn chọn màn (khóa theo người và sao) | E | ✔ | 3 ngày | ⬜ | |
 | P29 | Lưu tiến trình | E | ✔ | 2 ngày | ⬜ | |
 | P30 | Ping nhanh và chỉ dẫn | E | ✔ | 3 ngày | ⬜ | |
@@ -594,7 +594,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P40 | Kiểm thử trình duyệt | G | | 2 ngày | ⬜ | |
 | P41 | Phát hành | G | | 2 ngày | ⬜ | |
 
-**Tiến độ:** 23/41 phase · Mốc A 🟨 · B ✅ · C ✅ · D 🟨 · E ⬜ · F ⬜ · G ⬜
+**Tiến độ:** 24/41 phase · Mốc A 🟨 · B ✅ · C ✅ · D 🟨 · E 🟨 · F ⬜ · G ⬜
 
 ---
 
@@ -880,12 +880,13 @@ Chưa làm: playtest người thật; 2 máy ở 2 mạng khác nhau qua relay c
 ### 🅴 Mốc E — Giao diện và tiến trình
 
 #### P27 · Menu chính, cài đặt, hướng dẫn
-- [ ] Menu: Chơi chung máy · Tạo phòng · Vào phòng · Cài đặt · Hướng dẫn
-- [ ] Cài đặt: âm lượng, rung màn hình, toàn màn hình, đổi phím
-- [ ] Trang hướng dẫn điều khiển (bàn phím và tay cầm)
-- [ ] Font tiếng Việt đầy đủ dấu
+- [x] Menu: Chơi chung máy · Tạo phòng · Vào phòng · Cài đặt · Hướng dẫn
+- [x] Cài đặt: âm lượng, rung màn hình, toàn màn hình, đổi phím
+- [x] Trang hướng dẫn điều khiển (bàn phím và tay cầm)
+- [x] Font tiếng Việt đầy đủ dấu
 - [x] Chọn ngôn ngữ English / Tiếng Việt, lưu lựa chọn (làm sớm cùng lúc đổi tên game)
 - **✅ Xong khi:** đi hết các menu chỉ bằng tay cầm.
+- 📝 *Kiểm tra (Chromium, tay cầm giả lập qua `navigator.getGamepads`, không chạm bàn phím/chuột): menu chính → Hướng dẫn → B về → Cài đặt → chỉnh âm lượng 80→90% (◀ ▶), tắt rung màn hình (đã lưu) → Đổi phím → B → B về menu; Chơi chung máy → A tham gia → Start mở menu tạm dừng → "Kết thúc màn" → xe chạy → Kết quả → A chơi lại. Đổi phím: người 1 Lên → I, Phải → E (E đang là Ném nên Ném nhận lại phím D — đổi chỗ, không hành động nào mất phím), trang Hướng dẫn hiện đúng phím mới; Esc/F1/Tab không gán được. Font Nunito (gói `@fontsource/nunito`, đóng gói cùng game, có bộ chữ tiếng Việt) được chờ tải xong ở Boot trước khi vẽ chữ. Thêm: **menu tạm dừng** (Esc / Start; chơi chung máy dừng thật, online chỉ mở menu, host có "Kết thúc màn") thay cho "Esc = kết thúc ngay"; màn kết quả và màn vào phòng online dùng được tay cầm (A/B, nút Back rời lobby). Lỗi tìm thấy: Enter bấm ở menu cũng là nút Nắm của bố cục mũi tên nên người 2 tự vào màn → giờ chỉ cho vào sau khi nút đã nhả. Âm lượng áp cho giọng chủ nhà (Web Audio). Toàn màn hình chỉ bật được bằng phím/chuột (trình duyệt không coi nút tay cầm là thao tác người dùng) → báo rõ. 8 unit test (điều hướng, lặp phím, gộp tay cầm, đổi phím). ⚠️ Chưa thử tay cầm thật.*
 
 #### P28 · Màn chọn màn (khóa theo người và sao)
 - [ ] Danh sách màn lọc theo cấp 🟢🔵🟣🟠🔴

@@ -3,12 +3,14 @@
  * quanh giọng của nhân vật. Dùng Web Audio, không cần file âm thanh.
  * Trình duyệt chỉ cho phát tiếng sau khi người chơi đã bấm phím/chuột; lỗi thì bỏ qua im lặng.
  */
-let ctx: AudioContext | null = null;
+import { audioContext, masterVolume } from './mixer';
 
-export function speakGibberish(text: string, pitch: number, volume = 0.05): void {
+export function speakGibberish(text: string, pitch: number, loudness = 0.05): void {
+  const volume = loudness * masterVolume();
+  if (volume <= 0) return;
   try {
-    ctx ??= new AudioContext();
-    if (ctx.state === 'suspended') void ctx.resume();
+    const ctx = audioContext();
+    if (!ctx) return;
     const syllables = Math.min(14, Math.max(3, Math.round(text.length / 4)));
     let t = ctx.currentTime + 0.02;
     for (let i = 0; i < syllables; i++) {

@@ -7,6 +7,7 @@ import { ensurePlayerTextures } from '../entities/playerStyles';
 import { roomFromUrl } from '../net/room';
 import { KNOWN_BEHAVIORS } from '../systems/behaviors/names';
 import { InputManager } from '../systems/input/InputManager';
+import { applySavedSettings } from '../ui/prefs';
 import { GAME_HEIGHT, GAME_WIDTH, Theme } from '../ui/theme';
 import { RegistryKeys, SceneKeys } from './keys';
 
@@ -29,7 +30,11 @@ export class BootScene extends Phaser.Scene {
   }
 
   private async load$(): Promise<void> {
-    const result = await loadGameData(fetchText(), { knownBehaviors: KNOWN_BEHAVIORS });
+    const [result] = await Promise.all([
+      loadGameData(fetchText(), { knownBehaviors: KNOWN_BEHAVIORS }),
+      loadFonts(),
+    ]);
+    applySavedSettings();
     const locale = detectLocale({
       urlLang: new URLSearchParams(window.location.search).get('lang'),
       saved: loadSettings().language ?? null,
@@ -74,4 +79,18 @@ export class BootScene extends Phaser.Scene {
       }),
     );
   }
+}
+
+/**
+ * Canvas không tự vẽ lại khi font tải xong, nên phải chờ font (cả phần chữ có dấu) trước khi
+ * vẽ chữ đầu tiên. Lỗi hoặc quá 3 giây thì dùng font dự phòng của hệ thống.
+ */
+async function loadFonts(): Promise<void> {
+  if (!document.fonts) return;
+  const sample = 'Aa Ữữ Đđ ệ';
+  const load = Promise.all([
+    document.fonts.load('400 20px Nunito', sample),
+    document.fonts.load('700 20px Nunito', sample),
+  ]).catch(() => []);
+  await Promise.race([load, new Promise((r) => setTimeout(r, 3000))]);
 }

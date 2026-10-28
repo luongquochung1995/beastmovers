@@ -18,6 +18,9 @@ export interface LocalSeat {
   local: number;
   source: InputSourceKind;
   name: string;
+  /** Màu / mũ muốn dùng (đã lưu từ lần trước); host chỉ nhận nếu màu chưa ai dùng. */
+  color?: number | undefined;
+  hat?: number | undefined;
 }
 
 /** Một ô trong lobby. Thứ tự trong `LobbyState.seats` = số thứ tự người chơi khi vào màn. */
@@ -79,6 +82,15 @@ export function nextFreeColor(seats: readonly LobbySeat[], from: number, self?: 
   }
   return from;
 }
+
+function preferredColor(seats: readonly LobbySeat[], wanted: number | undefined): number {
+  const valid = Number.isInteger(wanted) && wanted! >= 0 && wanted! < COLOR_COUNT;
+  if (valid && !seats.some((s) => s.color === wanted)) return wanted!;
+  return nextFreeColor(seats, COLOR_COUNT - 1);
+}
+
+const validHat = (hat: number | undefined): hat is number =>
+  hat !== undefined && Number.isInteger(hat) && hat >= 0 && hat < HATS.length;
 
 /**
  * Lobby online, host quyết định mọi thứ: máy khách gửi yêu cầu (người chơi trên máy,
@@ -233,8 +245,8 @@ export class Lobby {
           cleanName(seat.name) || prev?.name || `P${all.length + 1}`,
           all.map((s) => s.name),
         ),
-        color: prev?.color ?? nextFreeColor(all, COLOR_COUNT - 1),
-        hat: prev?.hat ?? 0,
+        color: prev?.color ?? preferredColor(all, seat.color),
+        hat: prev?.hat ?? (validHat(seat.hat) ? seat.hat : 0),
       });
     }
     // Giữ thứ tự: máy cũ giữ chỗ, người mới thêm vào cuối.
@@ -264,14 +276,7 @@ export class Lobby {
     ) {
       seat.color = patch.color;
     }
-    if (
-      patch.hat !== undefined &&
-      Number.isInteger(patch.hat) &&
-      patch.hat >= 0 &&
-      patch.hat < HATS.length
-    ) {
-      seat.hat = patch.hat;
-    }
+    if (validHat(patch.hat)) seat.hat = patch.hat;
     this.changed();
   }
 
