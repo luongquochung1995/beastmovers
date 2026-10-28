@@ -1,0 +1,626 @@
+{
+  "type": "map",
+  "version": "1.10",
+  "tiledversion": "1.10.2",
+  "orientation": "orthogonal",
+  "renderorder": "right-down",
+  "infinite": false,
+  "compressionlevel": -1,
+  "width": 50,
+  "height": 30,
+  "tilewidth": 32,
+  "tileheight": 32,
+  "nextlayerid": 7,
+  "nextobjectid": 37,
+  "tilesets": [],
+  "layers": [
+    {
+      "id": 1,
+      "name": "floors",
+      "type": "objectgroup",
+      "draworder": "topdown",
+      "opacity": 1,
+      "visible": true,
+      "x": 0,
+      "y": 0,
+      "objects": [
+        {
+          "id": 5,
+          "name": "Hành lang",
+          "type": "floor",
+          "x": 24,
+          "y": 24,
+          "width": 976,
+          "height": 176,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "color",
+              "type": "string",
+              "value": "#3d3a48"
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "name": "Phòng A",
+          "type": "floor",
+          "x": 24,
+          "y": 216,
+          "width": 306,
+          "height": 720,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "color",
+              "type": "string",
+              "value": "#3a3346"
+            }
+          ]
+        },
+        {
+          "id": 7,
+          "name": "Phòng B",
+          "type": "floor",
+          "x": 346,
+          "y": 216,
+          "width": 314,
+          "height": 720,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "color",
+              "type": "string",
+              "value": "#33384a"
+            }
+          ]
+        },
+        {
+          "id": 8,
+          "name": "Phòng C",
+          "type": "floor",
+          "x": 676,
+          "y": 216,
+          "width": 324,
+          "height": 720,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "color",
+              "type": "string",
+              "value": "#3b3a33"
+            }
+          ]
+        },
+        {
+          "id": 9,
+          "name": "Sân",
+          "type": "floor",
+          "x": 1024,
+          "y": 24,
+          "width": 552,
+          "height": 912,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "color",
+              "type": "string",
+              "value": "#2c3330"
+            },
+            {
+              "name": "outdoor",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 10,
+          "name": "Cổng",
+          "type": "floor",
+          "x": 1000,
+          "y": 60,
+          "width": 24,
+          "height": 130,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "color",
+              "type": "string",
+              "value": "#3d3a48"
+            }
+          ]
+        },
+        {
+          "id": 11,
+          "name": "Cửa phòng",
+          "type": "floor",
+          "x": 130,
+          "y": 200,
+          "width": 90,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "color",
+              "type": "string",
+              "value": "#3d3a48"
+            }
+          ]
+        },
+        {
+          "id": 12,
+          "name": "Cửa phòng",
+          "type": "floor",
+          "x": 450,
+          "y": 200,
+          "width": 90,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "color",
+              "type": "string",
+              "value": "#3d3a48"
+            }
+          ]
+        },
+        {
+          "id": 13,
+          "name": "Cửa phòng",
+          "type": "floor",
+          "x": 790,
+          "y": 200,
+          "width": 90,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "color",
+              "type": "string",
+              "value": "#3d3a48"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "walls",
+      "type": "objectgroup",
+      "draworder": "topdown",
+      "opacity": 1,
+      "visible": true,
+      "x": 0,
+      "y": 0,
+      "objects": [
+        {
+          "id": 1,
+          "name": "",
+          "type": "wall",
+          "x": 0,
+          "y": 0,
+          "width": 1600,
+          "height": 24,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 2,
+          "name": "",
+          "type": "wall",
+          "x": 0,
+          "y": 936,
+          "width": 1600,
+          "height": 24,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 3,
+          "name": "",
+          "type": "wall",
+          "x": 0,
+          "y": 24,
+          "width": 24,
+          "height": 912,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 4,
+          "name": "",
+          "type": "wall",
+          "x": 1576,
+          "y": 24,
+          "width": 24,
+          "height": 912,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 14,
+          "name": "",
+          "type": "wall",
+          "x": 1000,
+          "y": 24,
+          "width": 24,
+          "height": 36,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 15,
+          "name": "",
+          "type": "wall",
+          "x": 1000,
+          "y": 190,
+          "width": 24,
+          "height": 746,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 16,
+          "name": "",
+          "type": "wall",
+          "x": 24,
+          "y": 200,
+          "width": 106,
+          "height": 16,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 17,
+          "name": "",
+          "type": "wall",
+          "x": 220,
+          "y": 200,
+          "width": 230,
+          "height": 16,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 18,
+          "name": "",
+          "type": "wall",
+          "x": 540,
+          "y": 200,
+          "width": 250,
+          "height": 16,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 19,
+          "name": "",
+          "type": "wall",
+          "x": 880,
+          "y": 200,
+          "width": 120,
+          "height": 16,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 20,
+          "name": "",
+          "type": "wall",
+          "x": 330,
+          "y": 216,
+          "width": 16,
+          "height": 720,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 21,
+          "name": "",
+          "type": "wall",
+          "x": 660,
+          "y": 216,
+          "width": 16,
+          "height": 720,
+          "rotation": 0,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "doors",
+      "type": "objectgroup",
+      "draworder": "topdown",
+      "opacity": 1,
+      "visible": true,
+      "x": 0,
+      "y": 0,
+      "objects": [
+        {
+          "id": 22,
+          "name": "Cổng",
+          "type": "door",
+          "x": 1004,
+          "y": 62,
+          "width": 16,
+          "height": 126,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "hinge",
+              "type": "string",
+              "value": "start"
+            }
+          ]
+        },
+        {
+          "id": 23,
+          "name": "Cửa phòng A",
+          "type": "door",
+          "x": 132,
+          "y": 202,
+          "width": 86,
+          "height": 12,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "hinge",
+              "type": "string",
+              "value": "start"
+            }
+          ]
+        },
+        {
+          "id": 24,
+          "name": "Cửa phòng B",
+          "type": "door",
+          "x": 452,
+          "y": 202,
+          "width": 86,
+          "height": 12,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "hinge",
+              "type": "string",
+              "value": "end"
+            }
+          ]
+        },
+        {
+          "id": 25,
+          "name": "Cửa phòng C",
+          "type": "door",
+          "x": 792,
+          "y": 202,
+          "width": 86,
+          "height": 12,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "hinge",
+              "type": "string",
+              "value": "start"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "markers",
+      "type": "objectgroup",
+      "draworder": "topdown",
+      "opacity": 1,
+      "visible": true,
+      "x": 0,
+      "y": 0,
+      "objects": [
+        {
+          "id": 26,
+          "name": "",
+          "type": "hideSpot",
+          "x": 60,
+          "y": 400,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 27,
+          "name": "",
+          "type": "hideSpot",
+          "x": 300,
+          "y": 900,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 28,
+          "name": "",
+          "type": "hideSpot",
+          "x": 380,
+          "y": 400,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 29,
+          "name": "",
+          "type": "hideSpot",
+          "x": 630,
+          "y": 900,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 30,
+          "name": "",
+          "type": "hideSpot",
+          "x": 720,
+          "y": 400,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 31,
+          "name": "",
+          "type": "hideSpot",
+          "x": 960,
+          "y": 900,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 32,
+          "name": "",
+          "type": "landlordPath",
+          "x": 200,
+          "y": 110,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true,
+          "properties": [
+            {
+              "name": "order",
+              "type": "int",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "id": 33,
+          "name": "",
+          "type": "landlordPath",
+          "x": 600,
+          "y": 110,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true,
+          "properties": [
+            {
+              "name": "order",
+              "type": "int",
+              "value": 2
+            }
+          ]
+        },
+        {
+          "id": 34,
+          "name": "",
+          "type": "landlordPath",
+          "x": 940,
+          "y": 110,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true,
+          "properties": [
+            {
+              "name": "order",
+              "type": "int",
+              "value": 3
+            }
+          ]
+        },
+        {
+          "id": 35,
+          "name": "",
+          "type": "landlordPath",
+          "x": 600,
+          "y": 140,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true,
+          "properties": [
+            {
+              "name": "order",
+              "type": "int",
+              "value": 4
+            }
+          ]
+        },
+        {
+          "id": 36,
+          "name": "",
+          "type": "landlordPath",
+          "x": 180,
+          "y": 400,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true,
+          "properties": [
+            {
+              "name": "order",
+              "type": "int",
+              "value": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "zones",
+      "type": "objectgroup",
+      "draworder": "topdown",
+      "opacity": 1,
+      "visible": true,
+      "x": 0,
+      "y": 0,
+      "objects": []
+    },
+    {
+      "id": 6,
+      "name": "stairs",
+      "type": "objectgroup",
+      "draworder": "topdown",
+      "opacity": 1,
+      "visible": true,
+      "x": 0,
+      "y": 0,
+      "objects": []
+    }
+  ]
+}

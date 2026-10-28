@@ -1,0 +1,29 @@
+{
+  "maxPlayers": 8,
+  "maxLocalPlayers": 4,
+  "logicHz": 60,
+  "runTripChance": 0.03,
+  "throwSpeed": 11,
+  "grabRange": 40,
+  "net": {
+    "transport": "trystero",
+    "fallbackTransport": "peerjs",
+    "appId": "beast-movers-v1",
+    "iceServers": [
+      {
+        "urls": "stun:stun.l.google.com:19302"
+      }
+    ],
+    "inputHz": 30,
+    "snapshotHz": 20,
+    "interpolationDelayMs": 100,
+    "reconnectGraceSec": 30
+  },
+  "dialogue": {
+    "cooldownSec": {
+      "default": 4,
+      "itemBroken": 2
+    }
+  },
+  "debug": false
+}

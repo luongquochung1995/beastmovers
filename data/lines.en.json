@@ -1,0 +1,397 @@
+{
+  "grandma": {
+    "levelStart": [
+      "Gently now, kids. Everything here is precious.",
+      "Mind the walls. I just painted them.",
+      "I'll be watching. Don't break anything.",
+      "The truck won't wait forever. Hurry!",
+      "Every single thing here has a memory, you hear?"
+    ],
+    "itemBroken": [
+      "Good heavens!",
+      "Oh… great. Just great.",
+      "I've had that since I was a girl!",
+      "Well, that's broken for good.",
+      "That's coming out of your pay!"
+    ],
+    "itemDropped": [
+      "Butterfingers!",
+      "Did your hands fall asleep?",
+      "It's on the floor! It's on the floor!",
+      "I saw that, you know.",
+      "Hold on to it properly!"
+    ],
+    "wallHit": [
+      "That wall was freshly painted!",
+      "The wall did nothing to you!",
+      "Hey, hey, you're scratching my walls!",
+      "Slow down, this is a home, not a football pitch!",
+      "Another mark on the wall…"
+    ],
+    "itemLoaded": [
+      "Fine.",
+      "That'll do.",
+      "Stack it neatly.",
+      "Good, keep going.",
+      "Well, that's better."
+    ],
+    "catEscaped": [
+      "Mittens! Come back to Grandma!",
+      "The cat is scared of you lot!",
+      "Gently, she scratches!",
+      "Mittens, sweetie, come out!",
+      "If my cat runs off I'll cry, I swear!"
+    ],
+    "timeLow": [
+      "Hurry up, the truck is leaving!",
+      "One minute left!",
+      "Faster, kids, faster!",
+      "The driver is honking already!",
+      "Time's almost up, don't just stand there!"
+    ],
+    "levelEnd": [
+      "Well. Next time I'm calling someone else.",
+      "Fine, five stars… I suppose.",
+      "Oh, is that it then?",
+      "Be gentler next time, alright?",
+      "Thank you, kids… I think."
+    ],
+    "bigLiftStart": [
+      "Careful! CAREFUL!",
+      "Slowly, don't you drop it!",
+      "One, two, three… lift!",
+      "Watch that corner!",
+      "I can't even look…"
+    ],
+    "bigLiftFail": [
+      "All of you and you can't lift one thing?",
+      "Who let go?!",
+      "Oh my floor, my poor floor!",
+      "Did you lot have breakfast?",
+      "I could carry that better myself!"
+    ],
+    "changeMind": [
+      "Oh, and take the {item} too!",
+      "I changed my mind, take the {item} as well.",
+      "Wait, the {item} has to come too!",
+      "Silly me, the {item} too, dear.",
+      "Just bring the {item} along for me."
+    ]
+  },
+  "collector": {
+    "levelStart": [
+      "Every piece here is older than your grandparents. Act accordingly.",
+      "Touch with your eyes first. Then, reluctantly, with your hands.",
+      "That mirror survived two wars. Let's see if it survives you.",
+      "I've catalogued everything. I WILL notice.",
+      "Slowly. Antiques can smell fear."
+    ],
+    "itemBroken": [
+      "That was eighteenth century!",
+      "Priceless. It WAS priceless.",
+      "I need to sit down.",
+      "You've just made history. In the bad way.",
+      "I'm adding that to the invoice. In bold."
+    ],
+    "itemDropped": [
+      "Gravity is not your colleague!",
+      "Did it bounce? Tell me it didn't bounce.",
+      "Two hands. Two! You have them!",
+      "My heart just did the same thing.",
+      "Careful, that's patina, not dirt!"
+    ],
+    "wallHit": [
+      "That wall is listed heritage!",
+      "Mind the plaster, it's original.",
+      "Are you steering or bowling?",
+      "Another dent. Wonderful. Very authentic.",
+      "Corners, gentlemen. They have corners."
+    ],
+    "itemLoaded": [
+      "Mm. Acceptable.",
+      "Strap it. Then strap it again.",
+      "Gently into the truck. Like tucking in a baby.",
+      "One more relic saved.",
+      "Fine. Don't let it look out the window."
+    ],
+    "catEscaped": [
+      "Who let a cat into an antique shop?!",
+      "Not near the porcelain! NOT near the porcelain!",
+      "That cat is younger than everything here and twice as fragile.",
+      "Catch it before it appraises something.",
+      "Shoo! Shoo, you furry vandal!"
+    ],
+    "timeLow": [
+      "The truck won't wait. Neither will my lawyer.",
+      "Faster — but not THAT fast!",
+      "One minute. Prioritise the old stuff. All of it is old stuff.",
+      "Tick tock, like my grandfather clock. Which you'd better not break.",
+      "Hurry, gently. Gently, hurry!"
+    ],
+    "levelEnd": [
+      "I'll be checking every item with a magnifying glass.",
+      "Adequate. I've seen worse. Once. In 1974.",
+      "Leave your names. For the insurance company.",
+      "Well. The shop is empty, at least.",
+      "Next time I'm hiring museum staff."
+    ],
+    "bigLiftStart": [
+      "All together now — like a string quartet!",
+      "That piano has seen better days. Don't make it see worse.",
+      "Lift with your legs, not with my money.",
+      "Steady... steady... I'm not breathing until it's down.",
+      "Four hands, one rhythm!"
+    ],
+    "bigLiftFail": [
+      "Who let go?! I demand a name!",
+      "That was a chord I never want to hear again.",
+      "Teamwork! Look it up!",
+      "You dropped a century on my floor.",
+      "Again. And this time, all of you."
+    ],
+    "changeMind": [
+      "Actually, the {item} comes too. It's... sentimental.",
+      "On reflection, I can't live without the {item}.",
+      "Add the {item} to the list. Don't ask why.",
+      "The {item}! How could I forget the {item}!",
+      "I just remembered the {item} is worth a fortune."
+    ]
+  },
+  "celebrity": {
+    "levelStart": [
+      "Darlings! Make it quick, I have a photoshoot.",
+      "Please don't touch anything that's been on magazine covers.",
+      "Every item here has its own fan club.",
+      "The piano is insured for more than all of you combined.",
+      "Smile! You never know who's filming."
+    ],
+    "itemBroken": [
+      "That was a GIFT from a FAN!",
+      "Somebody call my publicist.",
+      "I can't look. Tell me when it's over.",
+      "This is going straight to my podcast.",
+      "Oh no, oh no, oh NO, darling!"
+    ],
+    "itemDropped": [
+      "Butterfingers is not a good look!",
+      "Pick it up like the cameras are rolling!",
+      "Ew. Floor.",
+      "That's not how we do things in this house.",
+      "Drama is MY job, not yours."
+    ],
+    "wallHit": [
+      "That wall is in my music video!",
+      "Mind the gold leaf, sweetie!",
+      "Bump the wall one more time and it's a lawsuit.",
+      "Gentle! The house has feelings too.",
+      "Ouch. I felt that in my soul."
+    ],
+    "itemLoaded": [
+      "Fabulous. Next!",
+      "That's going to look gorgeous in the new place.",
+      "Good job, babe. Not great. Good.",
+      "Put the logo facing out, please.",
+      "Mwah! Love that for us."
+    ],
+    "catEscaped": [
+      "Princess! Mommy's little princess, come back!",
+      "That cat has more followers than you!",
+      "Catch her! But don't mess up her fur!",
+      "If she gets out, the paparazzi will get her!",
+      "Someone bring the diamond cat carrier!"
+    ],
+    "timeLow": [
+      "One minute! My car is already here!",
+      "Faster, darlings, faster! Like a remix!",
+      "I'm going to be late and it'll be YOUR fault.",
+      "The paparazzi are waiting outside! Hurry!",
+      "Tick-tock, superstars!"
+    ],
+    "levelEnd": [
+      "Thank you, thank you, no autographs!",
+      "I'll rate you on my socials. Maybe.",
+      "Well, that was a show.",
+      "Air kisses! Don't call me, I'll call you.",
+      "That's a wrap, darlings!"
+    ],
+    "bigLiftStart": [
+      "All eight of you! Like a boy band!",
+      "Lift on three. One, two, FABULOUS!",
+      "My Grammy piano is in your hands. Literally.",
+      "Choreography, people! In sync!",
+      "Careful, that's going on tour!"
+    ],
+    "bigLiftFail": [
+      "Who dropped my piano?! Who?!",
+      "Eight people and not one brain?",
+      "That note was flat. The piano too, now.",
+      "I'm going to cry and it'll ruin my makeup.",
+      "Again! From the top! With feeling!"
+    ],
+    "changeMind": [
+      "Oh! The {item} is coming too. It matches my aura.",
+      "My stylist says the {item} stays with me.",
+      "Can't leave the {item}, it was in my last music video!",
+      "Add the {item}, darling. Don't argue with a star.",
+      "Wait wait wait — the {item}! I need the {item}!"
+    ]
+  },
+  "startup": {
+    "levelStart": [
+      "Guys, this is a zero-clutter move. Ship it lean.",
+      "Think of each item as a feature. Most of them we'll deprecate.",
+      "I own exactly one of everything. Please don't make it zero.",
+      "Let's move fast and NOT break things.",
+      "Quick stand-up: lift, carry, load. Questions? No? Great."
+    ],
+    "itemBroken": [
+      "That's... a hard pivot.",
+      "Okay, we're officially pre-revenue now.",
+      "Breathe. Breathe. It was just matter.",
+      "Let's call that a learning.",
+      "Fewer things. I guess that's on brand."
+    ],
+    "itemDropped": [
+      "Gravity is not a growth strategy!",
+      "That drop was not in the roadmap.",
+      "Pick it up. Iterate.",
+      "Bug report: item fell. Severity: me, crying.",
+      "Hands are an API. Use them properly."
+    ],
+    "wallHit": [
+      "Those walls are matte white. MATTE. WHITE.",
+      "Every scuff is visible in a minimalist home!",
+      "Negative space, people. Respect it.",
+      "I paid a consultant to choose that wall.",
+      "Bump the wall again and I'm writing a postmortem."
+    ],
+    "itemLoaded": [
+      "Shipped.",
+      "Clean. Efficient. I love it.",
+      "That's one less thing. Literally.",
+      "Great execution, team.",
+      "Mark it done on the board!"
+    ],
+    "catEscaped": [
+      "Whose cat is that? I don't own a cat. Do I own a cat?",
+      "The cat is not part of the MVP!",
+      "Contain the cat. It's a scope creep with whiskers.",
+      "It's adding chaos. We said no chaos.",
+      "Catch it before it disrupts the industry."
+    ],
+    "timeLow": [
+      "Sixty seconds to launch!",
+      "We're shipping in a minute, ready or not.",
+      "Crunch time! But, like, mindful crunch.",
+      "Final sprint, everybody!",
+      "The deadline is not a suggestion."
+    ],
+    "levelEnd": [
+      "Let's do a quick retro. Actually, let's not.",
+      "Five stars. Maybe four. I'll send a survey.",
+      "My new place has even less stuff. Thanks to you.",
+      "Good sprint. See you next quarter.",
+      "I feel lighter already. Spiritually and financially."
+    ],
+    "bigLiftStart": [
+      "Six people, one table. That's real synergy.",
+      "Align on the vision. Then lift.",
+      "Cross-functional lifting! I love it.",
+      "This is the only big thing I own. Please.",
+      "Steady hands, steady growth."
+    ],
+    "bigLiftFail": [
+      "Who dropped the ball? And the table?",
+      "That's a blocker. A big, heavy blocker.",
+      "Communication, team! Use the pings!",
+      "We need better alignment. Physically.",
+      "Rollback! Rollback!"
+    ],
+    "changeMind": [
+      "Wait, the {item} sparks joy. It comes with us.",
+      "New requirement: the {item} is in scope now.",
+      "I pivoted. The {item} stays with me.",
+      "On second thought, the {item} is core to my identity.",
+      "Quick change of plan: add the {item}. Sorry. Not sorry."
+    ]
+  },
+  "catlady": {
+    "levelStart": [
+      "Mind the babies! All six of them!",
+      "Please don't step on anyone's tail.",
+      "The cats come first. Then the furniture. Then you.",
+      "If you hear hissing, that's normal. If you hear crying, that's me.",
+      "Every cat goes in a carrier. No exceptions. Good luck."
+    ],
+    "itemBroken": [
+      "Oh no! Did it hit a kitty?!",
+      "Broken? Fine. As long as the cats are okay.",
+      "Mochi will never forgive you.",
+      "That was their favourite scratching mirror!",
+      "Glass on the floor! Everybody freeze, paws up!"
+    ],
+    "itemDropped": [
+      "Loud noises scare the babies!",
+      "Shh! Gently! Cat ears are very sensitive!",
+      "Now they're all under the bed. Thanks.",
+      "You startled Bánh Bao.",
+      "Pick it up quietly. Like a cat would."
+    ],
+    "wallHit": [
+      "Careful, that wall has their climbing shelves!",
+      "Bonk. Like Sushi when she misjudges a jump.",
+      "Gentle with the walls, they're scratch-proof, not you-proof.",
+      "Every bump wakes somebody up.",
+      "Watch the corners, there might be a tail there!"
+    ],
+    "itemLoaded": [
+      "Good! Purr-fect!",
+      "Put the soft things near the carriers, please.",
+      "Nice. The cats approve. I can tell.",
+      "One step closer to our new home!",
+      "Thank you, sweetie."
+    ],
+    "catEscaped": [
+      "MOCHI! Come back to mommy!",
+      "Not again! Who opened the door?!",
+      "Shake the treat bag! Shake it!",
+      "She's fast but she always goes under the bed.",
+      "Don't chase her! Make her think it's her idea!"
+    ],
+    "timeLow": [
+      "One minute! Are all the babies in?!",
+      "Count the cats! Count them again!",
+      "The truck won't leave without my kids!",
+      "Hurry, but don't scare them!",
+      "Quick, quick! Mochi's still out there!"
+    ],
+    "levelEnd": [
+      "Everyone say bye to the old house!",
+      "Thank you! The cats will tolerate you forever.",
+      "I'm counting them one more time. Just in case.",
+      "You smell like cat now. Welcome to the family.",
+      "Next time bring treats."
+    ],
+    "bigLiftStart": [
+      "Careful, Sushi likes to sleep on top of that!",
+      "Check for cats underneath first!",
+      "Slowly, slowly, nobody's tail under there?",
+      "All together, gently, like carrying a sleeping kitten.",
+      "Heave! Softly!"
+    ],
+    "bigLiftFail": [
+      "That thud just sent three cats up the curtains.",
+      "Who let go?! The babies are traumatised!",
+      "Even the cats work better as a team.",
+      "Try again, and this time, say 'one, two, meow'.",
+      "I felt that in my whiskers."
+    ],
+    "changeMind": [
+      "Oh, the {item}! The kids love sleeping on the {item}!",
+      "Bring the {item} too, it smells like home to them.",
+      "Mochi just sat on the {item}. That means it's coming.",
+      "I can't leave the {item}, the cats would riot.",
+      "Add the {item}, please. Cat's orders."
+    ]
+  }
+}
