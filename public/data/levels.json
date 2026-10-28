@@ -837,6 +837,342 @@
     "scaling": null
   },
   {
+    "id": "lv08_six_cats",
+    "name": {
+      "en": "House of Six Cats",
+      "vi": "Nhà 6 con mèo"
+    },
+    "tier": "team",
+    "minPlayers": 4,
+    "maxPlayers": 8,
+    "recommendedPlayers": 4,
+    "unlockStars": 7,
+    "timeLimitSec": 420,
+    "map": "maps/six_cats.json",
+    "landlord": "grandma",
+    "truck": {
+      "x": 1500,
+      "y": 340,
+      "slots": 30,
+      "hasHandbrake": false,
+      "facing": "left"
+    },
+    "spawns": [
+      {
+        "item": "safe",
+        "x": 600,
+        "y": 300,
+        "required": true
+      },
+      {
+        "item": "cat",
+        "x": 200,
+        "y": 700,
+        "required": true
+      },
+      {
+        "item": "cat",
+        "x": 600,
+        "y": 820,
+        "required": true
+      },
+      {
+        "item": "cat",
+        "x": 1000,
+        "y": 300,
+        "required": true
+      },
+      {
+        "item": "cat",
+        "x": 200,
+        "y": 250,
+        "required": false
+      },
+      {
+        "item": "cat",
+        "x": 1000,
+        "y": 820,
+        "required": false
+      },
+      {
+        "item": "cat",
+        "x": 620,
+        "y": 1000,
+        "required": false
+      },
+      {
+        "item": "cat_carrier",
+        "x": 1300,
+        "y": 700,
+        "required": false
+      },
+      {
+        "item": "cat_carrier",
+        "x": 1360,
+        "y": 700,
+        "required": false
+      },
+      {
+        "item": "cat_carrier",
+        "x": 1300,
+        "y": 760,
+        "required": false
+      },
+      {
+        "item": "cat_carrier",
+        "x": 1360,
+        "y": 760,
+        "required": false
+      },
+      {
+        "item": "box",
+        "x": 100,
+        "y": 950,
+        "required": false
+      },
+      {
+        "item": "box",
+        "x": 160,
+        "y": 950,
+        "required": false
+      },
+      {
+        "item": "box",
+        "x": 700,
+        "y": 620,
+        "required": false
+      },
+      {
+        "item": "teddy",
+        "x": 1100,
+        "y": 1000,
+        "required": false
+      },
+      {
+        "item": "plant",
+        "x": 60,
+        "y": 60,
+        "required": false
+      },
+      {
+        "item": "mirror",
+        "x": 950,
+        "y": 50,
+        "required": false
+      }
+    ],
+    "playerSpawns": [
+      [1290, 520],
+      [1340, 520],
+      [1290, 570],
+      [1340, 570],
+      [1290, 880],
+      [1340, 880],
+      [1290, 930],
+      [1340, 930]
+    ],
+    "modifiers": [],
+    "stars": [1300, 1500, 1750],
+    "satisfactionMultiplier": 8,
+    "scaling": null
+  },
+  {
+    "id": "lv09_slope_house",
+    "name": {
+      "en": "House on a Hill",
+      "vi": "Nhà trên dốc"
+    },
+    "tier": "team",
+    "minPlayers": 4,
+    "maxPlayers": 8,
+    "recommendedPlayers": 4,
+    "unlockStars": 8,
+    "timeLimitSec": 360,
+    "map": "maps/slope_house.json",
+    "landlord": "collector",
+    "truck": {
+      "x": 1300,
+      "y": 850,
+      "slots": 28,
+      "hasHandbrake": true,
+      "facing": "left"
+    },
+    "spawns": [
+      {
+        "item": "upright_piano",
+        "x": 400,
+        "y": 300,
+        "required": true
+      },
+      {
+        "item": "box",
+        "x": 100,
+        "y": 100,
+        "required": true
+      },
+      {
+        "item": "box",
+        "x": 160,
+        "y": 100,
+        "required": true
+      },
+      {
+        "item": "teddy",
+        "x": 900,
+        "y": 500,
+        "required": true
+      },
+      {
+        "item": "mirror",
+        "x": 300,
+        "y": 50,
+        "required": false
+      },
+      {
+        "item": "plant",
+        "x": 680,
+        "y": 560,
+        "required": false
+      },
+      {
+        "item": "fish_tank",
+        "x": 900,
+        "y": 200,
+        "required": false
+      },
+      {
+        "item": "box",
+        "x": 1000,
+        "y": 100,
+        "required": false
+      },
+      {
+        "item": "box",
+        "x": 100,
+        "y": 160,
+        "required": false
+      },
+      {
+        "item": "plant",
+        "x": 60,
+        "y": 560,
+        "required": false
+      }
+    ],
+    "playerSpawns": [
+      [1600, 680],
+      [1650, 680],
+      [1600, 730],
+      [1650, 730],
+      [1600, 900],
+      [1650, 900],
+      [1600, 950],
+      [1650, 950]
+    ],
+    "modifiers": ["slope"],
+    "stars": [1750, 2000, 2250],
+    "satisfactionMultiplier": 8,
+    "scaling": null
+  },
+  {
+    "id": "lv10_walkup",
+    "name": {
+      "en": "Walk-up Apartment",
+      "vi": "Chung cư không thang máy"
+    },
+    "tier": "team",
+    "minPlayers": 4,
+    "maxPlayers": 8,
+    "recommendedPlayers": 4,
+    "unlockStars": 9,
+    "timeLimitSec": 420,
+    "map": "maps/walkup.json",
+    "landlord": "grandma",
+    "truck": {
+      "x": 1600,
+      "y": 860,
+      "slots": 28,
+      "hasHandbrake": false,
+      "facing": "left"
+    },
+    "spawns": [
+      {
+        "item": "safe",
+        "x": 200,
+        "y": 300,
+        "required": true
+      },
+      {
+        "item": "box",
+        "x": 100,
+        "y": 100,
+        "required": true
+      },
+      {
+        "item": "box",
+        "x": 160,
+        "y": 100,
+        "required": true
+      },
+      {
+        "item": "mirror",
+        "x": 900,
+        "y": 60,
+        "required": true
+      },
+      {
+        "item": "teddy",
+        "x": 950,
+        "y": 450,
+        "required": false
+      },
+      {
+        "item": "plant",
+        "x": 60,
+        "y": 480,
+        "required": false
+      },
+      {
+        "item": "fish_tank",
+        "x": 600,
+        "y": 300,
+        "required": false
+      },
+      {
+        "item": "box",
+        "x": 700,
+        "y": 100,
+        "required": false
+      },
+      {
+        "item": "box",
+        "x": 760,
+        "y": 100,
+        "required": false
+      },
+      {
+        "item": "mirror",
+        "x": 400,
+        "y": 50,
+        "required": false
+      }
+    ],
+    "playerSpawns": [
+      [1480, 120],
+      [1530, 120],
+      [1480, 170],
+      [1530, 170],
+      [1480, 450],
+      [1530, 450],
+      [1480, 500],
+      [1530, 500]
+    ],
+    "modifiers": ["stairs"],
+    "stars": [1550, 1800, 2000],
+    "satisfactionMultiplier": 8,
+    "scaling": null
+  },
+  {
     "id": "lv12_billiard_hall",
     "name": {
       "en": "Billiard Hall",

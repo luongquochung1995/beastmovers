@@ -18,7 +18,7 @@ class Map:
     def __init__(self, w, h):
         self.w, self.h = w, h
         self.next_id = 1
-        self.layers = {k: [] for k in ("floors", "walls", "doors", "markers", "zones")}
+        self.layers = {k: [] for k in ("floors", "walls", "doors", "markers", "zones", "stairs")}
         # Tường bao bản đồ
         self.wall(0, 0, w, BORDER)
         self.wall(0, h - BORDER, w, BORDER)
@@ -68,6 +68,9 @@ class Map:
         if y1 > y:
             self.wall(x, y, t, y1 - y)
 
+    def stairs(self, x, y, w, h):
+        self.obj("stairs", "stairs", x, y, w, h)
+
     def door(self, name, x, y, w, h, hinge="start"):
         self.obj("doors", "door", x, y, w, h, name=name, props=[("hinge", "string", hinge)])
 
@@ -79,12 +82,12 @@ class Map:
             self.obj("markers", "landlordPath", x, y, point=True, props=[("order", "int", i)])
 
     def save(self, file):
-        names = ["floors", "walls", "doors", "markers", "zones"]
+        names = ["floors", "walls", "doors", "markers", "zones", "stairs"]
         m = {
             "type": "map", "version": "1.10", "tiledversion": "1.10.2",
             "orientation": "orthogonal", "renderorder": "right-down", "infinite": False,
             "compressionlevel": -1, "width": self.w // TILE, "height": self.h // TILE,
-            "tilewidth": TILE, "tileheight": TILE, "nextlayerid": 6,
+            "tilewidth": TILE, "tileheight": TILE, "nextlayerid": len(names) + 1,
             "nextobjectid": self.next_id, "tilesets": [],
             "layers": [{"id": i + 1, "name": n, "type": "objectgroup", "draworder": "topdown",
                         "opacity": 1, "visible": True, "x": 0, "y": 0,
@@ -272,6 +275,89 @@ def tube_house():
     m.save("tube_house.json")
 
 
+def six_cats():
+    """Màn 8 – Nhà 6 con mèo: 6 phòng có cửa (mèo đẩy cửa chạy qua), két sắt 4 người."""
+    m = Map(1800, 1100)
+    names = [("Phòng khách", "#3b3346"), ("Phòng mèo", "#4a3a46"), ("Phòng ngủ", "#33384a"),
+             ("Phòng đọc", "#3a3a46"), ("Bếp", "#463f2e"), ("Kho", "#3a3530")]
+    for i, (name, color) in enumerate(names):
+        x = 24 + (i % 3) * 400
+        y = 24 if i < 3 else 556
+        m.floor(name, x, y, 376 if i % 3 < 2 else 376, 516 if i < 3 else 520, color)
+    m.yard(1224, 24, 552, 1052)
+    # Tường dọc giữa các phòng: cửa có cánh 110 px; lối giữa phòng khách và phòng mèo rộng 170
+    # (đường khiêng két sắt), lối phòng mèo → phòng ngủ cũng 170.
+    m.vwall(400, 24, 1076, gaps=[(200, 370), (760, 870)])
+    m.vwall(800, 24, 1076, gaps=[(200, 370), (760, 870)])
+    m.hwall(540, 24, 1200, gaps=[(150, 260), (550, 660), (950, 1060)])
+    m.vwall(1200, 24, 1076, gaps=[(250, 430), (760, 870)], t=24)
+    for a, b in [(150, 260), (550, 660), (950, 1060)]:
+        m.floor("Lối", a, 540, b - a, 16, "#3b3346")
+    for x in (400, 800):
+        m.floor("Lối", x, 200, 16, 170, "#3b3346")
+        m.floor("Lối", x, 760, 16, 110, "#3b3346")
+    m.floor("Cửa chính", 1200, 250, 24, 180, "#3b3346")
+    m.floor("Cửa sau", 1200, 760, 24, 110, "#3b3346")
+    m.door("Cửa P1–P4", 152, 542, 106, 12)
+    m.door("Cửa P2–P5", 552, 542, 106, 12, hinge="end")
+    m.door("Cửa P3–P6", 952, 542, 106, 12)
+    m.door("Cửa P4–P5", 402, 762, 12, 106)
+    m.door("Cửa P5–P6", 802, 762, 12, 106, hinge="end")
+    m.door("Cửa sau", 1204, 762, 16, 106)
+    for p in [(200, 120), (330, 450), (600, 100), (520, 440), (1000, 120), (1120, 460),
+              (120, 700), (300, 1000), (620, 650), (700, 1000), (1000, 700), (1120, 1000)]:
+        m.hide(*p)
+    m.path((200, 300), (600, 300), (1000, 300), (1000, 820), (600, 820), (200, 820))
+    m.save("six_cats.json")
+
+
+def slope_house():
+    """Màn 9 – Nhà trên dốc: lối ra rộng 240 px xuống sân dốc; xe tải có phanh tay."""
+    m = Map(1800, 1100)
+    m.floor("Phòng khách", 24, 24, 700, 576, "#3b3346")
+    m.floor("Phòng ngủ", 740, 24, 360, 576, "#33384a")
+    m.floor("Hiên", 400, 600, 240, 16, "#3b3346")
+    m.floor("Lối", 724, 120, 16, 240, "#3b3346")
+    m.yard(24, 616, 1752, 460)
+    m.floor("Sân bên", 1116, 24, 660, 592, YARD, outdoor=True)
+    m.hwall(600, 24, 1100, gaps=[(400, 640)])
+    m.vwall(724, 24, 600, gaps=[(120, 360)])
+    m.vwall(1100, 24, 616)
+    for p in [(60, 300), (680, 60), (1060, 560), (900, 300)]:
+        m.hide(*p)
+    m.path((200, 150), (600, 150), (900, 200), (900, 500), (500, 500), (200, 450))
+    m.save("slope_house.json")
+
+
+def walkup():
+    """Màn 10 – Chung cư không thang máy: căn hộ trên lầu, 2 đoạn cầu thang hẹp có góc rẽ."""
+    m = Map(1856, 1100)
+    m.floor("Căn hộ", 24, 24, 976, 496, "#3b3346")
+    m.floor("Chiếu nghỉ", 500, 860, 170, 216, "#4a4458")
+    m.floor("Sảnh", 1200, 500, 200, 576, "#3d3a48")
+    m.yard(1424, 24, 408, 1052)
+    m.floor("Cửa căn hộ", 500, 520, 170, 16, "#3b3346")
+    m.floor("Cổng", 1400, 760, 24, 200, "#3d3a48")
+    m.stairs(500, 536, 170, 324)   # đoạn 1: đi xuống
+    m.stairs(670, 876, 530, 200)   # đoạn 2: rẽ phải ra sảnh
+    m.hwall(520, 24, 1016, gaps=[(500, 670)])
+    m.vwall(1000, 24, 520)
+    m.vwall(484, 536, 1076)
+    m.vwall(670, 536, 860)
+    m.hwall(860, 686, 1200)
+    m.wall(24, 536, 460, 540)       # khối nhà bên dưới (không vào được)
+    m.wall(1016, 24, 384, 460)
+    m.wall(1016, 484, 184, 376)
+    m.wall(686, 536, 330, 324)     # giữa hai đoạn cầu thang
+    m.hwall(484, 1200, 1400)
+    m.vwall(1400, 24, 1076, gaps=[(760, 960)], t=24)
+    m.door("Cửa căn hộ", 502, 522, 166, 12)
+    for p in [(60, 300), (940, 60), (900, 460)]:
+        m.hide(*p)
+    m.path((200, 150), (800, 150), (900, 450), (580, 450), (200, 400))
+    m.save("walkup.json")
+
+
 if __name__ == "__main__":
     townhouse()
     antique_shop()
@@ -281,3 +367,6 @@ if __name__ == "__main__":
     cat_house()
     rainy_house()
     tube_house()
+    six_cats()
+    slope_house()
+    walkup()

@@ -108,7 +108,8 @@ export class Predictor {
   maxError = 0;
 
   constructor(
-    private readonly params: MotorParams,
+    /** Thông số di chuyển, cố định hoặc theo vị trí (cầu thang, vũng nước) như ở host. */
+    private readonly params: MotorParams | ((p: Vec) => MotorParams),
     private readonly radius: number,
     private readonly obstacles: () => readonly Obstacle[],
   ) {}
@@ -205,7 +206,7 @@ export class Predictor {
       },
       sim.vel,
       dt,
-      this.params,
+      typeof this.params === 'function' ? this.params(sim.pos) : this.params,
       () => 1, // không vấp ngẫu nhiên khi dự đoán; host quyết định
     );
     // Vận tốc tính theo bước 60 Hz như Matter.

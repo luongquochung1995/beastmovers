@@ -301,7 +301,8 @@ export class OnlineGame {
   private predictor(slot: number): Predictor {
     let p = this.predictors.get(slot);
     if (!p) {
-      p = new Predictor(this.world?.motorParams ?? DEFAULT_MOTOR, PLAYER_RADIUS, () =>
+      const world = this.world;
+      p = new Predictor(world ? (pos) => world.paramsAt(pos) : DEFAULT_MOTOR, PLAYER_RADIUS, () =>
         this.obstacles(),
       );
       this.predictors.set(slot, p);

@@ -84,6 +84,8 @@ const SCRAPES_PER_DAMAGE = 2;
 const ZONE_TRIP_MIN_SPEED = 1;
 /** Va nhẹ hơn mức này thì không báo cho hành vi đặc biệt (tránh chạm lướt). */
 const BEHAVIOR_MIN_IMPACT = 1.5;
+/** Trên cầu thang đi chậm còn bấy nhiêu phần tốc độ đi bộ. */
+const STAIRS_SPEED = 0.55;
 /** Thả mèo cách mép đồ chứa trong khoảng này thì mèo chui vào. */
 const CONTAIN_RANGE = 30;
 
@@ -96,6 +98,8 @@ export class World {
   readonly items: Item[] = [];
   readonly walls: MatterJS.BodyType[] = [];
   readonly zones: Zone[] = [];
+  /** Cầu thang: đi chậm, không chạy được. */
+  readonly stairs: Rect[] = [];
   readonly doors: Door[] = [];
   /** Vật bấm Nắm để dùng (cần phanh tay…). */
   readonly interactables: Interactable[] = [];
@@ -153,6 +157,20 @@ export class World {
 
   addFloor(r: Rect, color: number = Theme.floor): void {
     this.scene.add.rectangle(r.x, r.y, r.w, r.h, color).setOrigin(0).setDepth(-1000);
+  }
+
+  /** Cầu thang: các bậc vẽ sọc ngang (hoặc dọc nếu cầu thang hẹp ngang). */
+  addStairs(r: Rect): void {
+    this.stairs.push(r);
+    const g = this.scene.add.graphics().setDepth(-950);
+    g.fillStyle(0x5d5470, 1).fillRect(r.x, r.y, r.w, r.h);
+    g.lineStyle(3, 0x2b2838, 0.8);
+    const vertical = r.h >= r.w;
+    for (let i = 14; i < (vertical ? r.h : r.w); i += 18) {
+      if (vertical) g.lineBetween(r.x, r.y + i, r.x + r.w, r.y + i);
+      else g.lineBetween(r.x + i, r.y, r.x + i, r.y + r.h);
+    }
+    g.lineStyle(2, 0xb39ddb, 0.6).strokeRect(r.x, r.y, r.w, r.h);
   }
 
   addDoor(r: Rect, hinge: 'start' | 'end'): Door {
@@ -567,8 +585,18 @@ export class World {
   }
 
   private paramsFor(p: Player): MotorParams {
-    const accel = this.surfaceAt(p.position)?.effect.accel;
-    return accel == null ? this.motorParams : { ...this.motorParams, accel };
+    return this.paramsAt(p.position);
+  }
+
+  /** Thông số di chuyển tại vị trí `p`: vũng nước/đất (trơn), cầu thang (chậm, không chạy). */
+  paramsAt(p: Vec): MotorParams {
+    const accel = this.surfaceAt(p)?.effect.accel;
+    let params = accel == null ? this.motorParams : { ...this.motorParams, accel };
+    if (this.stairs.some((r) => p.x >= r.x && p.x <= r.x + r.w && p.y >= r.y && p.y <= r.y + r.h)) {
+      const speed = params.walkSpeed * STAIRS_SPEED;
+      params = { ...params, walkSpeed: speed, runSpeed: speed };
+    }
+    return params;
   }
 
   private zoneTrip(p: Player, dt: number): void {

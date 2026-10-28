@@ -10,7 +10,7 @@
   "height": 30,
   "tilewidth": 32,
   "tileheight": 32,
-  "nextlayerid": 6,
+  "nextlayerid": 7,
   "nextobjectid": 39,
   "tilesets": [],
   "layers": [
@@ -623,6 +623,17 @@
     {
       "id": 5,
       "name": "zones",
+      "type": "objectgroup",
+      "draworder": "topdown",
+      "opacity": 1,
+      "visible": true,
+      "x": 0,
+      "y": 0,
+      "objects": []
+    },
+    {
+      "id": 6,
+      "name": "stairs",
       "type": "objectgroup",
       "draworder": "topdown",
       "opacity": 1,

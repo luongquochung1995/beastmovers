@@ -25,6 +25,7 @@ import {
  * - `markers`: điểm; loại `hideSpot` (chỗ nấp của mèo) hoặc `landlordPath`
  *   (đường đi của chủ nhà, theo thuộc tính `order`, không có thì theo id).
  * - `zones`: hình tròn/elip hoặc chữ nhật; loại `water`, `soil`, `glass`.
+ * - `stairs`: hình chữ nhật cầu thang (đi chậm, không chạy được).
  * Lớp khác (vd. lớp ô gạch để trang trí) được bỏ qua.
  */
 
@@ -93,6 +94,7 @@ export interface MapLayout {
   hideSpots: { x: number; y: number }[];
   landlordPath: { x: number; y: number }[];
   zones: { kind: MapZoneKind; x: number; y: number; radius: number }[];
+  stairs: MapRect[];
 }
 
 const DEFAULT_FLOOR = 0x2b2838;
@@ -123,6 +125,7 @@ export function parseMap(file: string, map: TiledMap, issues: Issue[]): MapLayou
     hideSpots: [],
     landlordPath: [],
     zones: [],
+    stairs: [],
   };
   const path: { order: number; x: number; y: number }[] = [];
 
@@ -197,6 +200,11 @@ export function parseMap(file: string, map: TiledMap, issues: Issue[]): MapLayou
             y: r.y + r.h / 2,
             radius: Math.min(r.w, r.h) / 2,
           });
+          break;
+        }
+        case 'stairs': {
+          const r = rectOf(o);
+          if (needsSize(r)) layout.stairs.push(r);
           break;
         }
         default:

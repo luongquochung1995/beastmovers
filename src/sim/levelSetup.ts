@@ -28,6 +28,7 @@ export function buildLevel(
   for (const w of map.walls) world.addWall(w);
   for (const d of map.doors) world.addDoor(d.rect, d.hinge);
   for (const z of map.zones) world.addZone(z.kind, z.x, z.y, z.radius);
+  for (const r of map.stairs) world.addStairs(r);
   world.hideSpots = map.hideSpots.map((p) => ({ ...p }));
 
   world.truck = new Truck(world, level.truck, map, level.modifiers.includes('slope'));

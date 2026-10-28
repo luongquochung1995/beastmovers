@@ -584,7 +584,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P30 | Ping nhanh và chỉ dẫn | E | ✔ | 3 ngày | ✅ | 2026-10-28 |
 | P31 | 5 màn MVP (1 màn mỗi cấp) và 3 chủ nhà | F | ✔ | 5 ngày | 🟨 | |
 | P32 | Màn Solo và Đôi còn lại | F | | 5 ngày | 🟨 | |
-| P33 | Màn Đội còn lại | F | | 5 ngày | ⬜ | |
+| P33 | Màn Đội còn lại | F | | 5 ngày | 🟨 | |
 | P34 | Màn Đại đội và Full nhà còn lại | F | | 5 ngày | ⬜ | |
 | P35 | Co giãn theo số người (scaling) | F | | 3 ngày | ⬜ | |
 | P36 | Thêm 2 chủ nhà và bộ thoại | F | | 3 ngày | ⬜ | |
@@ -946,10 +946,11 @@ Chưa làm: playtest người thật; 2 máy ở 2 mạng khác nhau qua relay c
 - 📝 *Kiểm tra (Chromium, bot tay cầm giả lập như P31): **màn 2** — 1 người mang gương (bắt buộc, dễ vỡ) từ phòng A qua cửa 90 px, dọc hành lang ra xe 13 giây, gương còn nguyên 3 nấc; **màn 3** — 2 con mèo (1 bắt buộc) + 2 lồng ở sân, người lại gần thì mèo chạy 147 px, 9 chỗ nấp không ở góc phòng; **màn 5** — 22 vũng nước rải trên sân, người chạy rồi thả phím trên vũng trượt 35 px (sàn khô 10 px), 2 người khiêng tủ lạnh qua sân trơn mất 32 giây (ngoài sân), lên xe vẫn nằm yên; **màn 6** — nhà dài 2560 px, 4 gian, cửa giữa các gian 150 px: 2 người khiêng tủ lạnh từ bếp trong cùng ra xe 28 giây, sofa 18 giây. Modifier **`rain`**: sàn có thuộc tính `outdoor` trong bản đồ Tiled là sân ngoài trời; có mưa thì rải vũng nước (trơn như nước đổ) theo id màn (host và máy khách ra y hệt nhau, không cần gửi qua mạng), không đặt trong thùng xe; mưa rơi xiên + lớp xanh mờ chỉ để nhìn. Màn 6 không bắt buộc máy chạy bộ (cần 3 người, màn tối thiểu 2) — để làm đồ thưởng cho nhóm 3+. Sao mở khóa dàn lại cho 9 màn: 0 / 1 / 2 / 3 / 4 / 5 / 6 / 10 / 14 (màn 1–7, 12, 16). 1 unit test (vũng nước). ⚠️ Chưa đạt "Xong khi": cần người thật chơi mỗi màn ≥ 2 lần để chỉnh mốc sao (P39). Màn 1–5 đều dùng chủ nhà Bà Tư (P36 thêm chủ nhà mới).*
 
 #### P33 · Màn Đội còn lại
-- [ ] 🟣 Màn 8 – Nhà 6 con mèo
-- [ ] 🟣 Màn 9 – Nhà trên dốc (modifier `slope`)
-- [ ] 🟣 Màn 10 – Chung cư không thang máy (modifier `stairs`)
+- [x] 🟣 Màn 8 – Nhà 6 con mèo
+- [x] 🟣 Màn 9 – Nhà trên dốc (modifier `slope`)
+- [x] 🟣 Màn 10 – Chung cư không thang máy (modifier `stairs`)
 - **✅ Xong khi:** test với đúng 4 người, mỗi màn qua được trong thời gian quy định.
+- 📝 *Kiểm tra (Chromium, bot 4 tay cầm giả lập như P31): **màn 8** — 6 phòng có cửa cánh (mèo đẩy cửa chạy qua), 6 con mèo (3 bắt buộc), 4 lồng ở sân; 4 người khiêng két sắt qua lối 170 px ra xe 19,5 giây. **Màn 9** — xe tải trên dốc mới vào đã nhả phanh: trôi 101 px trong 3 giây; kéo phanh tay → dừng; 4 người khiêng piano đứng xuống sân ra xe 21 giây. **Màn 10** — căn hộ trên lầu, 2 đoạn cầu thang (rộng 170 và 200 px) có góc rẽ 90°; 4 người khiêng két sắt xuống cầu thang ra xe 47,5 giây (gần 25 giây trên cầu thang). Modifier **`stairs`**: lớp `stairs` trong bản đồ Tiled (hình chữ nhật), trên cầu thang đi bằng 55% tốc độ đi bộ và không chạy được; vẽ thành bậc sọc. Dự đoán phía máy khách giờ lấy thông số di chuyển theo vị trí như host (cầu thang, vũng nước) nên không bị kéo giật khi đi qua. Mèo mở cửa: mèo vốn đã đẩy được cửa có bản lề nên không thêm cơ chế mới. Sao mở khóa: 7 / 8 / 9. ⚠️ Chưa đạt "Xong khi": bot mới thử phần khiêng đồ to (dư nhiều thời gian: 20–48 giây trên 360–420 giây), chưa thử bắt đủ 3 con mèo ở màn 8; cần nhóm 4 người thật.*
 
 #### P34 · Màn Đại đội và Full nhà còn lại
 - [ ] 🟠 Màn 11 – Phòng gym
