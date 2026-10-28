@@ -74,7 +74,7 @@
   "menu.sandbox": "🧪  Sandbox  (S)",
   "sandbox.title": "Sandbox",
   "sandbox.help": "Click: place item  ·  Right-click: remove  ·  Wheel or [ ]: choose item  ·  C: clear  ·  Esc: menu",
-  "sandbox.stats": "{mass} kg · {people} people · {rule} · durability {durability}",
+  "sandbox.stats": "{mass} kg · needs {people} · {rule} · durability {durability}",
   "liftRule.free": "anyone can drag",
   "liftRule.drag": "drags if short-handed",
   "liftRule.strict": "won't budge if short-handed",
