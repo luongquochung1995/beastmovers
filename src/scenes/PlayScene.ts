@@ -5,7 +5,14 @@ import type { GameData } from '../data/validate';
 import { World } from '../sim/World';
 import { FixedLoop } from '../systems/FixedLoop';
 import type { Vec } from '../systems/geometry';
-import type { InputManager, PlayerSlot } from '../systems/input/InputManager';
+import { ClientInputSender, HostInputHub, LocalSlotSource } from '../net/inputLink';
+import { LoopbackNetwork } from '../net/LoopbackNetwork';
+import { parseNetOptions } from '../net/netOptions';
+import type { Snapshot } from '../net/snapshot';
+import { snapshotWorld } from '../net/worldSnapshot';
+import type { LevelRuntime } from '../sim/LevelRuntime';
+import type { SimSlot, SlotSource } from '../sim/SimSlot';
+import type { InputManager } from '../systems/input/InputManager';
 import { Random } from '../systems/Random';
 import { Theme } from '../ui/theme';
 import type { HudScene } from './HudScene';
@@ -23,6 +30,11 @@ export abstract class PlayScene extends Phaser.Scene {
   protected config!: GameConfig;
   protected gameData!: GameData;
   protected logicTicks = 0;
+  /** Nguồn ô người chơi cho mô phỏng (chơi chung máy, hoặc đi qua mạng). */
+  protected slotSource!: SlotSource;
+  private sender: ClientInputSender | null = null;
+  /** Mô tả chế độ mạng cho bảng debug (null = chơi chung máy trực tiếp). */
+  netInfo: string | null = null;
   /** Bảng debug đang bật (F1). */
   debugVisible = false;
   /** Số bước logic đã chạy trong khung hình vừa rồi (cho bảng debug). */
@@ -55,7 +67,7 @@ export abstract class PlayScene extends Phaser.Scene {
 
     // Chưa ai tham gia thì người dùng WASD tự vào làm người chơi 1.
     if (this.inputs.slots.every((s) => s === null)) this.inputs.join('kb0');
-    for (const slot of this.inputs.slots) if (slot) this.spawnPlayer(slot);
+    this.setupSlotSource();
 
     this.debugVisible = this.config.debug;
     this.world.debugDraw = this.debugVisible;
@@ -77,6 +89,35 @@ export abstract class PlayScene extends Phaser.Scene {
       this.scene.stop(SceneKeys.Hud);
       this.world.destroy();
     });
+  }
+
+  /**
+   * Chơi chung máy: dùng thẳng InputManager. `?net=loopback`: input của máy này đi vòng
+   * qua mạng giả (độ trễ, mất gói) tới bộ gom input của host, y như máy khách online.
+   */
+  private setupSlotSource(): void {
+    const opts = parseNetOptions(window.location.search);
+    this.sender = null;
+    this.netInfo = null;
+    if (opts.mode === 'loopback') {
+      const net = new LoopbackNetwork({
+        latencyMs: opts.lagMs,
+        jitterMs: opts.jitterMs,
+        loss: opts.loss,
+      });
+      const hub = new HostInputHub(net.join('host'), this.config.maxPlayers);
+      const link = net.join('local');
+      this.sender = new ClientInputSender(link, 'host', this.inputs, this.config.net.inputHz);
+      this.slotSource = hub;
+      this.netInfo = `loopback ${opts.lagMs}ms ±${opts.jitterMs} loss ${opts.loss}`;
+      this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+        link.close();
+        hub.destroy();
+      });
+      return;
+    }
+    this.slotSource = new LocalSlotSource(this.inputs);
+    for (const slot of this.slotSource.slots) if (slot) this.spawnPlayer(slot);
   }
 
   private setPhysicsDebug(on: boolean): void {
@@ -101,7 +142,9 @@ export abstract class PlayScene extends Phaser.Scene {
 
   /** Mọi logic game chạy ở đây, đúng `logicHz` lần mỗi giây. */
   protected fixedUpdate(dt: number): void {
-    for (const slot of this.inputs.poll(this.allowJoin())) this.spawnPlayer(slot);
+    const allowJoin = this.allowJoin();
+    this.sender?.tick(dt, allowJoin);
+    for (const slot of this.slotSource.poll(allowJoin)) this.spawnPlayer(slot);
     this.world.step(dt, this.controlSlots());
     this.logicTicks++;
   }
@@ -112,13 +155,24 @@ export abstract class PlayScene extends Phaser.Scene {
   }
 
   /** Input đưa vào mô phỏng (lớp con có thể khóa điều khiển, vd. khi hết giờ). */
-  protected controlSlots(): readonly (PlayerSlot | null)[] {
-    return this.inputs.slots;
+  protected controlSlots(): readonly (SimSlot | null)[] {
+    return this.slotSource.slots;
   }
 
-  private spawnPlayer(slot: PlayerSlot): void {
+  private spawnPlayer(slot: SimSlot): void {
+    if (this.world.players.some((p) => p.slotIndex === slot.index)) return;
     const p = this.spawnPointFor(slot.index);
     this.world.addPlayer(slot.index, p.x, p.y);
+  }
+
+  /** Màn chơi đang chạy (null ở sandbox). */
+  protected levelRuntime(): LevelRuntime | null {
+    return null;
+  }
+
+  /** Ảnh chụp trạng thái để gửi cho máy khách. */
+  snapshot(): Snapshot {
+    return snapshotWorld(this.world, this.levelRuntime());
   }
 
   /** Dùng cho kiểm thử tự động (Playwright) khi bật `?debug`. */

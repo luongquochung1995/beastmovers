@@ -5,7 +5,7 @@ import { PLAYER_RADIUS, PLAYER_STYLES } from '../entities/playerStyles';
 import { computeCarry, pointVelocity } from '../systems/carry';
 import { dist, lerpVec } from '../systems/geometry';
 import { Btn, EMPTY_FRAME, frameAxis, justPressed } from '../systems/input/InputFrame';
-import type { PlayerSlot } from '../systems/input/InputManager';
+import type { SimSlot } from './SimSlot';
 import type { World } from './World';
 
 /** Độ cứng của "cánh tay" nối người với điểm nắm. Thấp thì mềm, đồ lắc lư. */
@@ -56,7 +56,7 @@ export class GrabSystem {
   }
 
   /** Bước 1 (trước khi nhân vật di chuyển): đọc nút Nắm / Ném. */
-  handleButtons(p: Player, slot: PlayerSlot): void {
+  handleButtons(p: Player, slot: SimSlot): void {
     const hold = this.holds.get(p);
     if (p.motor.mode === 'fallen') {
       if (hold) this.release(p, 'dropped');
@@ -177,7 +177,7 @@ export class GrabSystem {
    * Bước 2 (sau khi nhân vật di chuyển, trước `world.step`): tính vận tốc của mọi món đồ
    * đang được nắm và kéo người nắm đi theo điểm nắm của họ.
    */
-  applyCarry(slots: readonly (PlayerSlot | null)[], dtMs: number): void {
+  applyCarry(slots: readonly (SimSlot | null)[], dtMs: number): void {
     const matterBody = this.world.scene.matter.body;
     for (const [p, ms] of this.passThrough) {
       if (ms - dtMs > 0) this.passThrough.set(p, ms - dtMs);

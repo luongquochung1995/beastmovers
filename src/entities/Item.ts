@@ -199,8 +199,12 @@ export class Item {
 
   /** Đổi emoji trên món đồ (null = trở về emoji gốc trong data). */
   setIcon(text: string | null): void {
+    this.iconOverride = text;
     this.icon?.setText(text ?? this.def.icon ?? '');
   }
+
+  /** Emoji đang đè lên emoji gốc (😺 khi có mèo trong lồng, 💨 khi máy chạy bộ chạy). */
+  iconOverride: string | null = null;
 
   /** Vật vừa bị ném: bay gần như không ma sát sàn trong `ms`. */
   setAirborne(ms: number): void {

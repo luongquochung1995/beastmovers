@@ -51,7 +51,7 @@ export class HudScene extends Phaser.Scene {
     const on = this.play.debugVisible;
     this.debug.setVisible(on);
     this.eventLog.setVisible(on);
-    this.debug.update(this.play.lastSteps);
+    this.debug.update(this.play.lastSteps, this.play.netInfo);
     this.play.updateHud(this);
   }
 }

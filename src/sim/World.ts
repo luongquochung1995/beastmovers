@@ -15,7 +15,7 @@ import {
 } from '../systems/damage';
 import { EventBus, type ZoneKind } from '../systems/EventBus';
 import { dist, type Vec } from '../systems/geometry';
-import type { PlayerSlot } from '../systems/input/InputManager';
+import type { SimSlot } from './SimSlot';
 import { DEFAULT_MOTOR, type MotorParams } from '../systems/PlayerMotor';
 import type { Random } from '../systems/Random';
 import { t } from '../data/i18n';
@@ -370,7 +370,7 @@ export class World {
   // ---------- Vòng lặp ----------
 
   /** Một bước logic. `slots[i]` là input của người chơi ô i trên máy này. */
-  step(dt: number, slots: readonly (PlayerSlot | null)[]): void {
+  step(dt: number, slots: readonly (SimSlot | null)[]): void {
     this.bus.tick++;
     this.timeMs += dt;
     this.updateContainers(dt);

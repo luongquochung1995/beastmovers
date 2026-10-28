@@ -204,6 +204,11 @@ export class Truck {
     return new Set(this.cargo.loaded.keys());
   }
 
+  /** Xe đã dời bao xa so với chỗ đỗ ban đầu (trôi dốc, chạy đi). */
+  get offsetPos(): Vec {
+    return { ...this.offset };
+  }
+
   get bedRect(): Rect {
     return { ...this.bed };
   }

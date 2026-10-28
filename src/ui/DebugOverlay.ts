@@ -52,7 +52,7 @@ export class DebugOverlay {
   }
 
   /** Gọi mỗi khung hình với số bước logic vừa chạy. */
-  update(stepsThisFrame: number): void {
+  update(stepsThisFrame: number, netInfo: string | null = null): void {
     this.stepsThisWindow += stepsThisFrame;
     const now = performance.now();
     const elapsed = now - this.windowStart;
@@ -75,6 +75,7 @@ export class DebugOverlay {
       const width = Math.max(...rows.map(([label]) => label.length));
       this.text.setText([
         ...rows.map(([label, value]) => `${label.padEnd(width)} : ${value}`),
+        ...(netInfo ? [`net: ${netInfo}`] : []),
         t('debug.toggle'),
       ]);
     }

@@ -570,7 +570,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P16 | Tính điểm và màn kết quả | C | ✔ | 3 ngày | ✅ | 2026-10-28 |
 | P17 | HUD trong game | C | ✔ | 3 ngày | ✅ | 2026-10-28 |
 | P18 | Camera chung máy | C | ✔ | 2 ngày | ✅ | 2026-10-28 |
-| P19 | Tách simulation host/client | D | ✔ | 4–5 ngày | ⬜ | |
+| P19 | Tách simulation host/client | D | ✔ | 4–5 ngày | ✅ | 2026-10-28 |
 | P20 | Transport và phòng chơi | D | ✔ | 4 ngày | ⬜ | |
 | P21 | Lobby online | D | ✔ | 3 ngày | ⬜ | |
 | P22 | Gửi input và snapshot | D | ✔ | 4 ngày | ⬜ | |
@@ -594,7 +594,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P40 | Kiểm thử trình duyệt | G | | 2 ngày | ⬜ | |
 | P41 | Phát hành | G | | 2 ngày | ⬜ | |
 
-**Tiến độ:** 17/41 phase · Mốc A 🟨 · B ✅ · C ✅ · D ⬜ · E ⬜ · F ⬜ · G ⬜
+**Tiến độ:** 18/41 phase · Mốc A 🟨 · B ✅ · C ✅ · D 🟨 · E ⬜ · F ⬜ · G ⬜
 
 ---
 
@@ -792,11 +792,12 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 ### 🅳 Mốc D — Chơi online P2P
 
 #### P19 · Tách simulation host/client
-- [ ] Tách `Simulation` thuần: `step(state, inputs[]) → state`, không đụng tới việc vẽ hình
-- [ ] `GameState` có thể chuyển thành dữ liệu để gửi qua mạng (serialize): vật thể, người chơi, đồng hồ, độ hài lòng, điểm
-- [ ] `Renderer` chỉ đọc state để vẽ
-- [ ] `LoopbackTransport`: giả lập mạng ngay trong một máy (có thể thêm độ trễ và mất gói)
+- [x] Tách `Simulation` thuần: `step(state, inputs[]) → state`, không đụng tới việc vẽ hình
+- [x] `GameState` có thể chuyển thành dữ liệu để gửi qua mạng (serialize): vật thể, người chơi, đồng hồ, độ hài lòng, điểm
+- [x] `Renderer` chỉ đọc state để vẽ
+- [x] `LoopbackTransport`: giả lập mạng ngay trong một máy (có thể thêm độ trễ và mất gói)
 - **✅ Xong khi:** chơi chung máy vẫn chạy y như cũ nhưng đi qua `LoopbackTransport`; bật giả lập 100 ms trễ vẫn chơi được.
+- 📝 *Kiểm tra (Chromium): `?net=loopback&lag=100` — người chơi bàn phím và tay cầm vào giữa chừng, nắm/mang thùng lên xe được, giống hệt chơi chung máy; thêm dao động ±30ms + mất 10% gói → nắm thành công 10/10 lần (lần đầu chỉ 7/10 do hai gói tới dồn ghi đè cú bấm → host gộp nút giữa hai lần đọc). Snapshot màn 1 ~2,3KB JSON (13 đồ, 3 người). Cách làm: mô phỏng nhận input qua `SlotSource` (chơi chung máy, hoặc `HostInputHub` gom input từ mạng); máy khách gửi bằng `ClientInputSender` (30Hz, gộp nút giữa hai lần gửi); `Transport` chung + `LoopbackNetwork` (độ trễ, dao động, mất gói = gửi lại, giữ thứ tự). ⚠️ Mô phỏng vẫn chạy trên Matter.js trong Phaser (chưa phải hàm thuần tách khỏi Phaser); phần "chỉ đọc state để vẽ" ở máy khách làm ở P22. 10 unit test mạng/snapshot.*
 
 #### P20 · Transport và phòng chơi
 - [ ] Interface `Transport` chung; bản cài đặt Trystero

@@ -3,7 +3,7 @@ import type { LevelDef } from '../data/types';
 import { type BuiltLevel, buildLevel, playerSpawn } from '../sim/levelSetup';
 import { LevelRuntime } from '../sim/LevelRuntime';
 import { EMPTY_FRAME } from '../systems/input/InputFrame';
-import type { PlayerSlot } from '../systems/input/InputManager';
+import type { SimSlot } from '../sim/SimSlot';
 import type { Vec } from '../systems/geometry';
 import { fitCamera } from '../systems/cameraFit';
 import { GameHud, HUD_TOP } from '../ui/GameHud';
@@ -65,6 +65,10 @@ export class GameScene extends PlayScene {
     return playerSpawn(this.levelDef, slotIndex);
   }
 
+  protected override levelRuntime(): LevelRuntime {
+    return this.runtime;
+  }
+
   override updateHud(): void {
     this.hud?.update(this.lastFrameMs);
   }
@@ -117,7 +121,7 @@ export class GameScene extends PlayScene {
   }
 
   /** Hết giờ: mọi người buông tay điều khiển (input rỗng). */
-  protected override controlSlots(): readonly (PlayerSlot | null)[] {
+  protected override controlSlots(): readonly (SimSlot | null)[] {
     if (!this.runtime.locked) return super.controlSlots();
     return super.controlSlots().map((s) => s && { ...s, prev: EMPTY_FRAME, cur: EMPTY_FRAME });
   }
