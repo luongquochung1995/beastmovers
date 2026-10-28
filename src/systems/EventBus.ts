@@ -25,6 +25,11 @@ export type GameEvent =
   | ({ type: 'catEscaped' } & ItemRef)
   | ({ type: 'catCaught'; container: number } & ItemRef)
   | ({ type: 'catScratch'; slot: number } & ItemRef)
+  | ({ type: 'itemLoaded' } & ItemRef)
+  | ({ type: 'itemUnloaded' } & ItemRef)
+  | ({ type: 'truckFull' } & ItemRef)
+  | { type: 'handbrake'; on: boolean; slot: number }
+  | { type: 'truckRolling' }
   | { type: 'zoneSpawned'; kind: ZoneKind; x: number; y: number }
   | { type: 'playerTripped'; slot: number; cause: string };
 

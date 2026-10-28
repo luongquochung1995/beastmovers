@@ -90,6 +90,14 @@ export class GrabSystem {
   }
 
   private tryGrab(p: Player): void {
+    // Vật tương tác (cần phanh…) ở trong tầm tay thì dùng nó trước.
+    const it = this.world.interactables.find(
+      (k) => dist(p.position, k.position()) - PLAYER_RADIUS <= k.radius,
+    );
+    if (it) {
+      it.use(p);
+      return;
+    }
     const target = this.findTarget(p);
     if (target) this.attach(p, target.item, target.point);
   }

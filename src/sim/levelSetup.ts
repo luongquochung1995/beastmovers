@@ -2,6 +2,7 @@ import type { MapLayout } from '../data/map';
 import type { LevelDef } from '../data/types';
 import type { Item } from '../entities/Item';
 import type { Vec } from '../systems/geometry';
+import { Truck } from './Truck';
 import type { World } from './World';
 
 export interface BuiltLevel {
@@ -19,6 +20,8 @@ export function buildLevel(world: World, level: LevelDef, map: MapLayout): Built
   for (const d of map.doors) world.addDoor(d.rect, d.hinge);
   for (const z of map.zones) world.addZone(z.kind, z.x, z.y, z.radius);
   world.hideSpots = map.hideSpots.map((p) => ({ ...p }));
+
+  world.truck = new Truck(world, level.truck, map, level.modifiers.includes('slope'));
 
   const required = new Set<number>();
   const items = level.spawns.map((s) => {

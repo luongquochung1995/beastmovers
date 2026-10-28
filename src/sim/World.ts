@@ -23,7 +23,15 @@ import { popText } from '../ui/popText';
 import { Theme } from '../ui/theme';
 import { createBehaviors } from './behaviors';
 import { GrabSystem } from './GrabSystem';
+import type { Truck } from './Truck';
 import { Zone } from './Zone';
+
+export interface Interactable {
+  position(): Vec;
+  /** Bán kính bấm được tính từ mép nhân vật. */
+  radius: number;
+  use(p: Player): void;
+}
 
 export interface Rect {
   x: number;
@@ -53,6 +61,9 @@ export class World {
   readonly walls: MatterJS.BodyType[] = [];
   readonly zones: Zone[] = [];
   readonly doors: Door[] = [];
+  /** Vật bấm Nắm để dùng (cần phanh tay…). */
+  readonly interactables: Interactable[] = [];
+  truck: Truck | null = null;
   /** Chỗ nấp của mèo (do màn chơi đặt). */
   hideSpots: Vec[] = [];
   /** Mèo → đồ chứa đang nhốt nó. */
@@ -371,6 +382,7 @@ export class World {
     }
     this.grab.applyCarry(slots, dt);
     this.scene.matter.world.step(dt);
+    this.truck?.step();
     for (const fn of this.deferred.splice(0)) fn();
   }
 
@@ -399,6 +411,7 @@ export class World {
   }
 
   render(alpha: number, frameMs: number): void {
+    this.truck?.render();
     for (const d of this.doors) d.render();
     for (const item of this.items) item.render(alpha);
     for (const p of this.players) p.render(alpha, frameMs);
@@ -484,6 +497,14 @@ export class World {
         status: i.status,
       })),
       zones: this.zones.map((z) => ({ kind: z.kind, x: Math.round(z.x), y: Math.round(z.y) })),
+      truck: this.truck && {
+        used: this.truck.used,
+        capacity: this.truck.capacity,
+        loaded: [...this.truck.loadedUids],
+        handbrake: this.truck.handbrakeOn,
+        x: Math.round(this.truck.bedRect.x),
+        y: Math.round(this.truck.bedRect.y),
+      },
       events: this.bus.history.map((l) => l.event.type),
     };
   }

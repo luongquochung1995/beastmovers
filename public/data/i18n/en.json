@@ -97,5 +97,8 @@
   "dataError.outOfMap": "Position ({x}, {y}) is outside the map ({w}×{h})",
   "dataError.mapRotation": "Object {id}: rotated objects are not supported",
   "dataError.mapEmptyRect": "Object {id} has no size",
-  "dataError.mapColor": "\"{value}\" is not a color (#rrggbb)"
+  "dataError.mapColor": "\"{value}\" is not a color (#rrggbb)",
+  "truck.full": "Truck's full!",
+  "truck.handbrakeOn": "Handbrake on",
+  "truck.handbrakeOff": "Handbrake off"
 }

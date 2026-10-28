@@ -97,5 +97,8 @@
   "dataError.outOfMap": "Vị trí ({x}, {y}) nằm ngoài bản đồ ({w}×{h})",
   "dataError.mapRotation": "Đối tượng {id}: chưa hỗ trợ xoay",
   "dataError.mapEmptyRect": "Đối tượng {id} không có kích thước",
-  "dataError.mapColor": "\"{value}\" không phải màu (#rrggbb)"
+  "dataError.mapColor": "\"{value}\" không phải màu (#rrggbb)",
+  "truck.full": "Xe đầy!",
+  "truck.handbrakeOn": "Đã kéo phanh tay",
+  "truck.handbrakeOff": "Đã nhả phanh tay"
 }

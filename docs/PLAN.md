@@ -564,7 +564,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P10 | Hành vi đặc biệt của đồ | B | ✔ | 4 ngày | ✅ | 2026-10-28 |
 | P11 | Mèo AI | B | ✔ | 3 ngày | ✅ | 2026-10-28 |
 | P12 | Bản đồ và level loader | C | ✔ | 4 ngày | ✅ | 2026-10-28 |
-| P13 | Xe tải | C | ✔ | 3 ngày | ⬜ | |
+| P13 | Xe tải | C | ✔ | 3 ngày | ✅ | 2026-10-28 |
 | P14 | Đồng hồ và điều kiện qua màn | C | ✔ | 2 ngày | ⬜ | |
 | P15 | Chủ nhà NPC | C | ✔ | 4 ngày | ⬜ | |
 | P16 | Tính điểm và màn kết quả | C | ✔ | 3 ngày | ⬜ | |
@@ -594,7 +594,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P40 | Kiểm thử trình duyệt | G | | 2 ngày | ⬜ | |
 | P41 | Phát hành | G | | 2 ngày | ⬜ | |
 
-**Tiến độ:** 11/41 phase · Mốc A 🟨 · B ✅ · C 🟨 · D ⬜ · E ⬜ · F ⬜ · G ⬜
+**Tiến độ:** 12/41 phase · Mốc A 🟨 · B ✅ · C 🟨 · D ⬜ · E ⬜ · F ⬜ · G ⬜
 
 ---
 
@@ -732,11 +732,12 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 - 📝 *Kiểm tra: Chromium dựng `lv01_studio` hoàn toàn từ `levels.json` + `maps/studio.json`: 10 tường, 2 cửa, 13 món đồ (3 bắt buộc), 5 chỗ nấp, người chơi ở đúng điểm xuất hiện. Đi qua cửa chính → cửa xoay 31° rồi tự khép lại. Bản đồ dùng định dạng JSON của Tiled (lớp `floors`, `walls`, `doors`, `markers`, `zones`), mở và sửa được bằng Tiled; bản đầu được sinh bằng `tools/make-studio-map.py` chứ chưa vẽ tay trong Tiled. Validate bản đồ: thiếu file, đường dẫn ngoài `maps/`, vị trí ngoài bản đồ, đối tượng xoay, loại vùng lạ, màu sai (5 unit test). Xe tải, chủ nhà và modifier dựng ở P13/P15. Thêm: HudScene chạy song song để HUD và debug không bị camera zoom.*
 
 #### P13 · Xe tải
-- [ ] Vùng thùng xe; đồ đặt vào thì tính là "đã lên xe" (phát sự kiện `itemLoaded`)
-- [ ] Giới hạn `slots`; đầy thì không nhận thêm
-- [ ] Xếp chồng ẩu thì đồ trượt rơi ra (`itemUnloaded`)
-- [ ] Phanh tay (`hasHandbrake`) cho modifier `slope`
+- [x] Vùng thùng xe; đồ đặt vào thì tính là "đã lên xe" (phát sự kiện `itemLoaded`)
+- [x] Giới hạn `slots`; đầy thì không nhận thêm
+- [x] Xếp chồng ẩu thì đồ trượt rơi ra (`itemUnloaded`) — phần "xe chạy thì đồ sát cửa thùng rơi ra" làm cùng cảnh xe chạy ở P16
+- [x] Phanh tay (`hasHandbrake`) cho modifier `slope`
 - **✅ Xong khi:** chất đầy xe, đồ thừa bị rơi ra; trên dốc quên kéo phanh tay thì xe lăn đi.
+- 📝 *Kiểm tra (Chromium): mang thùng vào xe → `itemLoaded`, cabin hiện 1/20; ném thùng vào xe → lên xe; kéo thùng ra → `itemUnloaded`, trả chỗ; xe 3 chỗ chất 4 thùng → thùng thứ 4 bị `truckFull` và bị đẩy dần ra cửa thùng; modifier `slope`: xe trôi ~55px/1,5s kéo theo đồ trên xe, bấm Nắm ở cần phanh → dừng hẳn. Đồ được tính "lên xe" khi nằm trọn trong thùng (sai số 6px), không ai cầm, không đang bay, gần như đứng yên. Xe quay được 4 hướng (`truck.facing`). 6 unit test sổ hàng.*
 
 #### P14 · Đồng hồ và điều kiện qua màn
 - [ ] Đếm ngược theo `timeLimitSec`; còn 60 giây thì phát `timeLow`

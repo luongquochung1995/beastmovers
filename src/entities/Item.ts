@@ -33,6 +33,8 @@ export class Item {
   readonly carriers = new Map<number, { slotIndex: number }>();
   carryState: CarryState;
   damage: DamageState;
+  /** Đã nằm trên xe tải (do Truck cập nhật). */
+  loaded = false;
   /** Trạng thái AI hiện tại (mèo), để debug và kiểm thử. */
   status = '';
   /** Đang nằm trong đồ chứa (mèo trong lồng): không vẽ, không có trong thế giới vật lý. */

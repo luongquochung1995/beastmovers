@@ -14,7 +14,7 @@
     "map": "maps/studio.json",
     "landlord": "grandma",
     "truck": {
-      "x": 1360,
+      "x": 1330,
       "y": 430,
       "slots": 20,
       "hasHandbrake": false,
