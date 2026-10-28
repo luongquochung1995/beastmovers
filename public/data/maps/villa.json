@@ -93,6 +93,11 @@
               "name": "color",
               "type": "string",
               "value": "#2c3330"
+            },
+            {
+              "name": "outdoor",
+              "type": "bool",
+              "value": true
             }
           ]
         },

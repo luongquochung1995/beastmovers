@@ -60,7 +60,8 @@ export class Truck {
   handbrakeOn: boolean;
   /** Bản đồ có dốc (modifier `slope`): nhả phanh thì xe trôi. */
   readonly onSlope: boolean;
-  private bed: Rect;
+  /** Thùng xe (tọa độ thế giới). */
+  bed: Rect;
   /** Hình bao toàn bộ xe (thùng, vách, cabin) để chặn xe trôi ra ngoài bản đồ. */
   private extent: Rect;
   private readonly openingNormal: Vec;

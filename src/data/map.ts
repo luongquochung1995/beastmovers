@@ -18,7 +18,7 @@ import {
  * các lớp đối tượng (object layer). Tọa độ là pixel, cùng hệ tọa độ với `levels.json`.
  *
  * Lớp theo tên:
- * - `floors`: hình chữ nhật sàn; thuộc tính `color` (#rrggbb).
+ * - `floors`: hình chữ nhật sàn; thuộc tính `color` (#rrggbb), `outdoor` (bool, sân ngoài trời).
  * - `walls`: hình chữ nhật tường.
  * - `doors`: hình chữ nhật cánh cửa; thuộc tính `hinge` = `start` (mặc định) hoặc `end`
  *   (bản lề ở đầu trái/trên hay đầu phải/dưới của cánh cửa).
@@ -86,7 +86,8 @@ export interface MapLayout {
   /** Kích thước bản đồ (pixel). */
   width: number;
   height: number;
-  floors: { rect: MapRect; color: number }[];
+  /** `outdoor`: sân ngoài trời (modifier `rain` làm ướt). */
+  floors: { rect: MapRect; color: number; outdoor: boolean }[];
   walls: MapRect[];
   doors: { rect: MapRect; hinge: 'start' | 'end' }[];
   hideSpots: { x: number; y: number }[];
@@ -146,7 +147,11 @@ export function parseMap(file: string, map: TiledMap, issues: Issue[]): MapLayou
           const c = color === undefined ? DEFAULT_FLOOR : parseColor(color);
           if (c === null)
             report(ctx, `${at}.properties.color`, 'mapColor', { value: String(color) });
-          layout.floors.push({ rect: r, color: c ?? DEFAULT_FLOOR });
+          layout.floors.push({
+            rect: r,
+            color: c ?? DEFAULT_FLOOR,
+            outdoor: prop(o, 'outdoor') === true,
+          });
           break;
         }
         case 'walls': {

@@ -3,6 +3,7 @@ import type { LevelDef } from '../data/types';
 import type { Item } from '../entities/Item';
 import type { Vec } from '../systems/geometry';
 import { Truck } from './Truck';
+import { rainPuddles } from '../systems/rain';
 import type { World } from './World';
 
 export interface BuiltLevel {
@@ -30,6 +31,10 @@ export function buildLevel(
   world.hideSpots = map.hideSpots.map((p) => ({ ...p }));
 
   world.truck = new Truck(world, level.truck, map, level.modifiers.includes('slope'));
+  if (level.modifiers.includes('rain')) {
+    for (const p of rainPuddles(level.id, map, world.truck.bed))
+      world.addZone('water', p.x, p.y, p.radius);
+  }
 
   const required = new Set<number>();
   const items = (spawnItems ? level.spawns : []).map((s) => {

@@ -583,7 +583,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P29 | Lưu tiến trình | E | ✔ | 2 ngày | ✅ | 2026-10-28 |
 | P30 | Ping nhanh và chỉ dẫn | E | ✔ | 3 ngày | ✅ | 2026-10-28 |
 | P31 | 5 màn MVP (1 màn mỗi cấp) và 3 chủ nhà | F | ✔ | 5 ngày | 🟨 | |
-| P32 | Màn Solo và Đôi còn lại | F | | 5 ngày | ⬜ | |
+| P32 | Màn Solo và Đôi còn lại | F | | 5 ngày | 🟨 | |
 | P33 | Màn Đội còn lại | F | | 5 ngày | ⬜ | |
 | P34 | Màn Đại đội và Full nhà còn lại | F | | 5 ngày | ⬜ | |
 | P35 | Co giãn theo số người (scaling) | F | | 3 ngày | ⬜ | |
@@ -938,11 +938,12 @@ Chưa làm: playtest người thật; 2 máy ở 2 mạng khác nhau qua relay c
 **🎯 MỐC MVP: có thể phát hành bản demo tại đây.**
 
 #### P32 · Màn Solo và Đôi còn lại
-- [ ] 🟢 Màn 2 – Phòng trọ sinh viên
-- [ ] 🟢 Màn 3 – Nhà có mèo
-- [ ] 🔵 Màn 5 – Ngày mưa (modifier `rain`)
-- [ ] 🔵 Màn 6 – Nhà ống dài
+- [x] 🟢 Màn 2 – Phòng trọ sinh viên
+- [x] 🟢 Màn 3 – Nhà có mèo
+- [x] 🔵 Màn 5 – Ngày mưa (modifier `rain`)
+- [x] 🔵 Màn 6 – Nhà ống dài
 - **✅ Xong khi:** mỗi màn được chơi thử ít nhất 2 lần, đạt 3 sao được nhưng không dễ.
+- 📝 *Kiểm tra (Chromium, bot tay cầm giả lập như P31): **màn 2** — 1 người mang gương (bắt buộc, dễ vỡ) từ phòng A qua cửa 90 px, dọc hành lang ra xe 13 giây, gương còn nguyên 3 nấc; **màn 3** — 2 con mèo (1 bắt buộc) + 2 lồng ở sân, người lại gần thì mèo chạy 147 px, 9 chỗ nấp không ở góc phòng; **màn 5** — 22 vũng nước rải trên sân, người chạy rồi thả phím trên vũng trượt 35 px (sàn khô 10 px), 2 người khiêng tủ lạnh qua sân trơn mất 32 giây (ngoài sân), lên xe vẫn nằm yên; **màn 6** — nhà dài 2560 px, 4 gian, cửa giữa các gian 150 px: 2 người khiêng tủ lạnh từ bếp trong cùng ra xe 28 giây, sofa 18 giây. Modifier **`rain`**: sàn có thuộc tính `outdoor` trong bản đồ Tiled là sân ngoài trời; có mưa thì rải vũng nước (trơn như nước đổ) theo id màn (host và máy khách ra y hệt nhau, không cần gửi qua mạng), không đặt trong thùng xe; mưa rơi xiên + lớp xanh mờ chỉ để nhìn. Màn 6 không bắt buộc máy chạy bộ (cần 3 người, màn tối thiểu 2) — để làm đồ thưởng cho nhóm 3+. Sao mở khóa dàn lại cho 9 màn: 0 / 1 / 2 / 3 / 4 / 5 / 6 / 10 / 14 (màn 1–7, 12, 16). 1 unit test (vũng nước). ⚠️ Chưa đạt "Xong khi": cần người thật chơi mỗi màn ≥ 2 lần để chỉnh mốc sao (P39). Màn 1–5 đều dùng chủ nhà Bà Tư (P36 thêm chủ nhà mới).*
 
 #### P33 · Màn Đội còn lại
 - [ ] 🟣 Màn 8 – Nhà 6 con mèo

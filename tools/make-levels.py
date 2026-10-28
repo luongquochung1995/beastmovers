@@ -44,10 +44,74 @@ def stars(level):
 
 LEVELS = [
     {
+        "id": "lv02_student_room",
+        "name": {"en": "Student Boarding House", "vi": "Phòng trọ sinh viên"},
+        "tier": "solo", "minPlayers": 1, "maxPlayers": 8, "recommendedPlayers": 2,
+        "unlockStars": 1, "timeLimitSec": 240, "map": "maps/student_room.json",
+        "landlord": "grandma",
+        "truck": {"x": 1330, "y": 300, "slots": 20, "hasHandbrake": False, "facing": "left"},
+        "spawns": spawns(
+            [("mirror", 180, 480), ("box", 100, 800), ("box", 500, 700), ("teddy", 600, 880)],
+            [("mirror", 840, 600), ("box", 160, 800), ("box", 750, 800), ("box", 560, 700),
+             ("plant", 280, 260), ("plant", 950, 300), ("fish_tank", 420, 400),
+             ("book", 400, 880), ("book", 900, 880)],
+        ),
+        "playerSpawns": yard(1090, 520, 760),
+        "modifiers": [], "satisfactionMultiplier": 5, "scaling": None,
+    },
+    {
+        "id": "lv03_cat_house",
+        "name": {"en": "House with a Cat", "vi": "Nhà có mèo"},
+        "tier": "solo", "minPlayers": 1, "maxPlayers": 8, "recommendedPlayers": 2,
+        "unlockStars": 2, "timeLimitSec": 300, "map": "maps/cat_house.json",
+        "landlord": "grandma",
+        "truck": {"x": 1330, "y": 640, "slots": 20, "hasHandbrake": False, "facing": "left"},
+        "spawns": spawns(
+            [("cat", 300, 300), ("teddy", 120, 880), ("box", 850, 100), ("box", 900, 100)],
+            [("cat", 850, 700), ("cat_carrier", 1150, 380), ("cat_carrier", 1210, 380),
+             ("box", 850, 160), ("plant", 640, 60), ("plant", 60, 600), ("mirror", 300, 50),
+             ("fish_tank", 750, 880)],
+        ),
+        "playerSpawns": yard(1090, 120, 860),
+        "modifiers": [], "satisfactionMultiplier": 5, "scaling": None,
+    },
+    {
+        "id": "lv05_rainy_day",
+        "name": {"en": "Rainy Day", "vi": "Ngày mưa"},
+        "tier": "duo", "minPlayers": 2, "maxPlayers": 8, "recommendedPlayers": 2,
+        "unlockStars": 4, "timeLimitSec": 300, "map": "maps/rainy_house.json",
+        "landlord": "grandma",
+        "truck": {"x": 1340, "y": 760, "slots": 24, "hasHandbrake": False, "facing": "left"},
+        "spawns": spawns(
+            [("fridge", 400, 300), ("sofa", 200, 480), ("box", 100, 700), ("box", 160, 700)],
+            [("box", 100, 760), ("box", 160, 760), ("plant", 640, 560), ("plant", 60, 60),
+             ("mirror", 350, 50), ("teddy", 600, 880), ("fish_tank", 500, 700)],
+        ),
+        "playerSpawns": yard(800, 120, 700),
+        "modifiers": ["rain"], "satisfactionMultiplier": 6, "scaling": None,
+    },
+    {
+        "id": "lv06_tube_house",
+        "name": {"en": "Long Tube House", "vi": "Nhà ống dài"},
+        "tier": "duo", "minPlayers": 2, "maxPlayers": 8, "recommendedPlayers": 3,
+        "unlockStars": 5, "timeLimitSec": 360, "map": "maps/tube_house.json",
+        "landlord": "collector",
+        "truck": {"x": 2300, "y": 340, "slots": 28, "hasHandbrake": False, "facing": "left"},
+        "spawns": spawns(
+            [("fridge", 250, 340), ("sofa", 750, 120), ("box", 100, 560), ("box", 160, 560),
+             ("box", 100, 620), ("mirror", 1250, 60)],
+            [("treadmill", 1250, 560), ("box", 160, 620), ("plant", 60, 60), ("plant", 1960, 60),
+             ("teddy", 760, 620), ("fish_tank", 1760, 600), ("book", 1300, 340),
+             ("mirror", 1760, 60)],
+        ),
+        "playerSpawns": yard(2100, 80, 560),
+        "modifiers": [], "satisfactionMultiplier": 6, "scaling": None,
+    },
+    {
         "id": "lv04_townhouse",
         "name": {"en": "Ground-Floor Townhouse", "vi": "Nhà phố 1 trệt"},
         "tier": "duo", "minPlayers": 2, "maxPlayers": 8, "recommendedPlayers": 2,
-        "unlockStars": 1, "timeLimitSec": 300, "map": "maps/townhouse.json",
+        "unlockStars": 3, "timeLimitSec": 300, "map": "maps/townhouse.json",
         "landlord": "grandma",
         "truck": {"x": 1330, "y": 460, "slots": 24, "hasHandbrake": False, "facing": "left"},
         "spawns": spawns(
@@ -63,7 +127,7 @@ LEVELS = [
         "id": "lv07_antique_shop",
         "name": {"en": "Antique Shop", "vi": "Tiệm đồ cổ"},
         "tier": "team", "minPlayers": 4, "maxPlayers": 8, "recommendedPlayers": 4,
-        "unlockStars": 3, "timeLimitSec": 360, "map": "maps/antique_shop.json",
+        "unlockStars": 6, "timeLimitSec": 360, "map": "maps/antique_shop.json",
         "landlord": "collector",
         "truck": {"x": 1330, "y": 370, "slots": 28, "hasHandbrake": False, "facing": "left"},
         "spawns": spawns(
@@ -79,7 +143,7 @@ LEVELS = [
         "id": "lv12_billiard_hall",
         "name": {"en": "Billiard Hall", "vi": "Quán bi-a"},
         "tier": "squad", "minPlayers": 6, "maxPlayers": 8, "recommendedPlayers": 6,
-        "unlockStars": 5, "timeLimitSec": 420, "map": "maps/billiard_hall.json",
+        "unlockStars": 10, "timeLimitSec": 420, "map": "maps/billiard_hall.json",
         "landlord": "collector",
         "truck": {"x": 1500, "y": 470, "slots": 36, "hasHandbrake": False, "facing": "left"},
         "spawns": spawns(
@@ -95,7 +159,7 @@ LEVELS = [
         "id": "lv16_celebrity_villa",
         "name": {"en": "Celebrity Villa", "vi": "Biệt thự người nổi tiếng"},
         "tier": "full", "minPlayers": 8, "maxPlayers": 8, "recommendedPlayers": 8,
-        "unlockStars": 7, "timeLimitSec": 480, "map": "maps/villa.json",
+        "unlockStars": 14, "timeLimitSec": 480, "map": "maps/villa.json",
         "landlord": "celebrity",
         "truck": {"x": 1650, "y": 430, "slots": 40, "hasHandbrake": False, "facing": "left"},
         "spawns": spawns(
@@ -156,6 +220,8 @@ def main():
             levels.append(lv)
         print(lv["id"], "stars", lv["stars"])
     errors += check(levels[0])
+    # Thứ tự trong file = số thứ tự màn (lv01, lv02, …).
+    levels.sort(key=lambda l: l["id"])
     path.write_text(json.dumps(levels, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     if errors:
         print("\n".join(errors))

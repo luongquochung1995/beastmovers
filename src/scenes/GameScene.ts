@@ -11,6 +11,7 @@ import { SLOW_PING_MS } from '../net/OnlineGame';
 import { type PingHold, stepPing, WHEEL_HOLD_MS } from '../systems/ping';
 import { GameHud, HUD_TOP } from '../ui/GameHud';
 import { PingWheelView } from '../ui/PingWheelView';
+import { RainView } from '../ui/RainView';
 import { GAME_HEIGHT, GAME_WIDTH, Theme } from '../ui/theme';
 import type { HudScene } from './HudScene';
 import { RegistryKeys, SceneKeys } from './keys';
@@ -27,6 +28,7 @@ export class GameScene extends PlayScene {
   runtime!: LevelRuntime;
   private leaving = false;
   private hud: GameHud | null = null;
+  private rain: RainView | null = null;
   private netPing: Phaser.GameObjects.Text | null = null;
   private netBanner: Phaser.GameObjects.Text | null = null;
   private hostGoneHandled = false;
@@ -67,6 +69,9 @@ export class GameScene extends PlayScene {
   }
 
   override createHud(hud: HudScene): void {
+    this.rain = this.levelDef.modifiers.includes('rain')
+      ? new RainView(hud, GAME_WIDTH, GAME_HEIGHT)
+      : null;
     this.hud = new GameHud(hud, this.runtime, this.world, this.cameras.main);
     hud.add
       .text(GAME_WIDTH / 2, GAME_HEIGHT - 14, t(this.online ? 'game.hintOnline' : 'game.hint'), {
@@ -140,6 +145,7 @@ export class GameScene extends PlayScene {
   }
 
   override updateHud(): void {
+    this.rain?.update(this.lastFrameMs);
     this.hud?.update(this.lastFrameMs);
     this.updateNetHud();
   }

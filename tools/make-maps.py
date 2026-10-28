@@ -36,8 +36,15 @@ class Map:
         self.layers[layer].append(o)
         return o
 
-    def floor(self, name, x, y, w, h, color):
-        self.obj("floors", "floor", x, y, w, h, name=name, props=[("color", "string", color)])
+    def floor(self, name, x, y, w, h, color, outdoor=False):
+        props = [("color", "string", color)]
+        if outdoor:
+            props.append(("outdoor", "bool", True))
+        self.obj("floors", "floor", x, y, w, h, name=name, props=props)
+
+    def yard(self, x, y, w, h):
+        """Sân ngoài trời (modifier `rain` rải vũng nước ở đây)."""
+        self.floor("Sân", x, y, w, h, YARD, outdoor=True)
 
     def wall(self, x, y, w, h):
         self.obj("walls", "wall", x, y, w, h)
@@ -100,7 +107,7 @@ def townhouse():
     m.floor("Phòng khách", 24, 24, 976, 496, "#3b3346")
     m.floor("Phòng ngủ", 24, 536, 456, 400, "#33384a")
     m.floor("Bếp", 496, 536, 504, 400, "#463f2e")
-    m.floor("Sân", 1024, 24, 552, 912, YARD)
+    m.yard(1024, 24, 552, 912)
     m.floor("Ngưỡng cửa", 1000, 380, 24, 160, "#3b3346")
     m.floor("Lối phòng ngủ", 200, 520, 100, 16, "#3b3346")
     m.floor("Lối bếp", 680, 520, 150, 16, "#3b3346")
@@ -121,7 +128,7 @@ def antique_shop():
     m = Map(1600, 960)
     m.floor("Phòng trưng bày", 24, 24, 976, 536, "#4a3a32")
     m.floor("Kho", 24, 576, 976, 360, "#3a3530")
-    m.floor("Sân", 1024, 24, 552, 912, YARD)
+    m.yard(1024, 24, 552, 912)
     m.floor("Cửa tiệm", 1000, 260, 24, 220, "#4a3a32")
     m.floor("Vòm kho", 400, 560, 220, 16, "#4a3a32")
     m.vwall(1000, 24, 936, gaps=[(260, 480)], t=24)
@@ -141,7 +148,7 @@ def billiard_hall():
     m.floor("Sảnh bi-a", 24, 24, 1156, 676, "#2f4436")
     m.floor("Kho", 24, 716, 560, 360, "#3a3530")
     m.floor("Quầy bar", 600, 716, 580, 360, "#463a2e")
-    m.floor("Sân", 1204, 24, 572, 1052, YARD)
+    m.yard(1204, 24, 572, 1052)
     m.floor("Cửa quán", 1180, 300, 24, 340, "#2f4436")
     m.floor("Lối kho", 200, 700, 240, 16, "#2f4436")
     m.floor("Lối bar", 760, 700, 200, 16, "#2f4436")
@@ -162,7 +169,7 @@ def villa():
     m.floor("Đại sảnh", 24, 24, 1276, 736, "#4a4258")
     m.floor("Phòng tranh", 24, 776, 900, 400, "#3d4052")
     m.floor("Phòng ngủ", 940, 776, 360, 400, "#4b3846")
-    m.floor("Sân", 1324, 24, 652, 1152, YARD)
+    m.yard(1324, 24, 652, 1152)
     m.floor("Cửa lớn", 1300, 250, 24, 360, "#4a4258")
     m.floor("Lối phòng tranh", 300, 760, 340, 16, "#4a4258")
     m.floor("Lối phòng ngủ", 1060, 760, 120, 16, "#4a4258")
@@ -176,8 +183,101 @@ def villa():
     m.save("villa.json")
 
 
+def student_room():
+    """Màn 2 – Phòng trọ sinh viên: hành lang dài, 3 phòng nhỏ cửa 90 px, gương dễ vỡ."""
+    m = Map(1600, 960)
+    m.floor("Hành lang", 24, 24, 976, 176, "#3d3a48")
+    m.floor("Phòng A", 24, 216, 306, 720, "#3a3346")
+    m.floor("Phòng B", 346, 216, 314, 720, "#33384a")
+    m.floor("Phòng C", 676, 216, 324, 720, "#3b3a33")
+    m.yard(1024, 24, 552, 912)
+    m.floor("Cổng", 1000, 60, 24, 130, "#3d3a48")
+    for a, b in [(130, 220), (450, 540), (790, 880)]:
+        m.floor("Cửa phòng", a, 200, b - a, 16, "#3d3a48")
+    m.vwall(1000, 24, 936, gaps=[(60, 190)], t=24)
+    m.hwall(200, 24, 1000, gaps=[(130, 220), (450, 540), (790, 880)])
+    m.vwall(330, 216, 936)
+    m.vwall(660, 216, 936)
+    m.door("Cổng", 1004, 62, 16, 126)
+    m.door("Cửa phòng A", 132, 202, 86, 12)
+    m.door("Cửa phòng B", 452, 202, 86, 12, hinge="end")
+    m.door("Cửa phòng C", 792, 202, 86, 12)
+    for p in [(60, 400), (300, 900), (380, 400), (630, 900), (720, 400), (960, 900)]:
+        m.hide(*p)
+    m.path((200, 110), (600, 110), (940, 110), (600, 140), (180, 400))
+    m.save("student_room.json")
+
+
+def cat_house():
+    """Màn 3 – Nhà có mèo: nhiều phòng, nhiều chỗ nấp cho mèo."""
+    m = Map(1600, 960)
+    m.floor("Phòng khách", 24, 24, 676, 496, "#3b3346")
+    m.floor("Phòng ngủ", 716, 24, 284, 496, "#33384a")
+    m.floor("Phòng làm việc", 24, 536, 476, 400, "#3a3a46")
+    m.floor("Bếp", 516, 536, 484, 400, "#463f2e")
+    m.yard(1024, 24, 552, 912)
+    m.floor("Ngưỡng cửa", 1000, 380, 24, 120, "#3b3346")
+    m.floor("Lối phòng ngủ", 700, 200, 16, 100, "#3b3346")
+    m.floor("Lối phòng làm việc", 150, 520, 100, 16, "#3b3346")
+    m.floor("Lối bếp", 700, 520, 100, 16, "#3b3346")
+    m.vwall(1000, 24, 936, gaps=[(380, 500)], t=24)
+    m.vwall(700, 24, 520, gaps=[(200, 300)])
+    m.hwall(520, 24, 1000, gaps=[(150, 250), (700, 800)])
+    m.vwall(500, 536, 936)
+    m.door("Cửa chính", 1004, 382, 16, 116)
+    # Chỗ nấp: gầm giường, sau sofa, dưới bàn… (không đặt ở góc phòng — ngõ cụt).
+    for p in [(350, 120), (150, 300), (600, 420), (860, 120), (860, 440), (300, 700),
+              (120, 860), (650, 640), (900, 860)]:
+        m.hide(*p)
+    m.path((350, 260), (600, 120), (850, 300), (940, 440), (750, 700), (300, 760), (300, 420))
+    m.save("cat_house.json")
+
+
+def rainy_house():
+    """Màn 5 – Ngày mưa: nhà nhỏ, sân rộng và trơn, xe tải ở góc xa."""
+    m = Map(1600, 960)
+    m.floor("Phòng khách", 24, 24, 676, 576, "#3b3346")
+    m.floor("Bếp", 24, 616, 676, 320, "#463f2e")
+    m.yard(724, 24, 852, 912)
+    m.floor("Ngưỡng cửa", 700, 400, 24, 160, "#3b3346")
+    m.floor("Lối bếp", 300, 600, 150, 16, "#3b3346")
+    m.vwall(700, 24, 936, gaps=[(400, 560)], t=24)
+    m.hwall(600, 24, 700, gaps=[(300, 450)])
+    m.door("Cửa chính", 704, 402, 16, 156)
+    # Mái hiên che mưa trước cửa (tường thấp) để có chỗ khô.
+    m.wall(760, 330, 120, 16)
+    m.wall(760, 614, 120, 16)
+    for p in [(60, 300), (640, 60), (400, 880), (120, 880)]:
+        m.hide(*p)
+    m.path((200, 150), (600, 150), (620, 480), (350, 480), (350, 780), (150, 780))
+    m.save("rainy_house.json")
+
+
+def tube_house():
+    """Màn 6 – Nhà ống dài: 4 gian nối nhau, cửa giữa các gian 150 px; chuyền tay đồ ra trước."""
+    m = Map(2560, 704)
+    rooms = [("Bếp", 24, 476, "#463f2e"), ("Phòng ngủ", 516, 484, "#33384a"),
+             ("Phòng khách", 1016, 484, "#3b3346"), ("Gian trước", 1516, 484, "#3d3a48")]
+    for name, x, w, color in rooms:
+        m.floor(name, x, 24, w, 656, color)
+    m.yard(2024, 24, 512, 656)
+    for x in (500, 1000, 1500):
+        m.floor("Lối", x, 260, 16, 150, "#3d3a48")
+        m.vwall(x, 24, 680, gaps=[(260, 410)])
+    m.floor("Cửa trước", 2000, 250, 24, 180, "#3d3a48")
+    m.vwall(2000, 24, 680, gaps=[(250, 430)], t=24)
+    for p in [(250, 600), (760, 80), (1250, 600), (1760, 80)]:
+        m.hide(*p)
+    m.path((250, 340), (760, 340), (1260, 340), (1760, 340), (1260, 200), (760, 500))
+    m.save("tube_house.json")
+
+
 if __name__ == "__main__":
     townhouse()
     antique_shop()
     billiard_hall()
     villa()
+    student_room()
+    cat_house()
+    rainy_house()
+    tube_house()
