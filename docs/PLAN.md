@@ -1,4 +1,4 @@
-# Game 2 — Co-op Chuyển Nhà ("Dọn Nhà Kiểu Gì Đây?!" – tên tạm)
+# Beast Movers — Game co-op chuyển nhà
 
 > 1–8 người, 1 chiếc xe tải, 10 phút. Đồ đạc có vật lý "ngu": tủ lạnh trượt, gương dễ vỡ, mèo chạy lung tung. Chủ nhà là NPC chuyên chê bai. Có những món đồ **phải đủ người mới khiêng nổi**.
 
@@ -17,6 +17,7 @@
 | **Chơi online** | Tối đa **8 người** qua mạng, kết nối **P2P bằng WebRTC**; trình duyệt của chủ phòng (host) chạy vật lý |
 | **Kết hợp** | Một máy trong phòng online có thể có 1–4 người chơi chung, miễn tổng ≤ 8 |
 | **Triển khai** | Build ra file tĩnh, host trên GitHub Pages / Netlify / Vercel / itch.io |
+| **Ngôn ngữ** | **Tiếng Anh và tiếng Việt**. Chọn trong menu (phím L), lưu lại cho lần sau; lần đầu tự nhận theo ngôn ngữ trình duyệt; `?lang=en` / `?lang=vi` trên URL. Mọi chữ trong game lấy từ file JSON, không ghi cứng trong code |
 | **Ngoài phạm vi** | Tài khoản, bảng xếp hạng online, matchmaking ghép người lạ, voice chat, chuyển host khi host thoát, mua bán trong game |
 
 ### Lưu ý về online khi "không có server"
@@ -165,15 +166,18 @@ Sau khi kết nối xong, toàn bộ dữ liệu game đi **trực tiếp giữa
 - **Thanh "Hài lòng"** (0–100), bắt đầu ở 50.
 - **Sự kiện kích hoạt câu thoại:** `itemBroken`, `itemDropped`, `wallHit`, `itemLoaded`, `catEscaped`, `timeLow`, `levelStart`, `levelEnd`, `bigLiftStart` (khi đủ người nhấc một món đồ cần nhiều người), `bigLiftFail` (khi buông giữa chừng).
 - **Hành vi:** đi lại, thỉnh thoảng đứng chắn đường; đổi yêu cầu giữa chừng; hiếm khi khen một câu.
-- **Online:** chủ nhà chạy trên máy host; câu thoại gửi tới mọi máy dưới dạng sự kiện để ai cũng thấy cùng một câu.
+- **Online:** chủ nhà chạy trên máy host; host gửi **mã câu thoại** (không gửi chữ) tới mọi máy, mỗi máy hiện câu đó bằng ngôn ngữ của mình.
+- **Song ngữ:** mỗi câu thoại có bản tiếng Anh và tiếng Việt cùng mã, viết lại cho hài theo từng ngôn ngữ chứ không dịch máy.
 - **Chống lặp:** cooldown theo loại sự kiện, ưu tiên câu chưa nói gần đây.
 - **Các kiểu chủ nhà:** bà cụ khó tính, anh startup cuồng minimalism, chị chủ 6 con mèo, ông chú nghiện đồ cổ, ngôi sao nổi tiếng.
 
 Ví dụ câu thoại:
-- "Cái sofa đó của bà nội tôi đấy!"
-- "Tôi thuê 8 người hay 8 con gấu vậy?"
-- "Tám người mà không nhấc nổi một cái đàn à?"
-- "Ờ… giỏi. Giỏi lắm." (khi làm vỡ gương)
+| Tiếng Việt | English |
+|---|---|
+| "Cái sofa đó của bà nội tôi đấy!" | "That sofa belonged to my grandmother!" |
+| "Tôi thuê 8 người hay 8 con gấu vậy?" | "Did I hire eight movers or eight bears?" |
+| "Tám người mà không nhấc nổi một cái đàn à?" | "Eight of you and you can't lift ONE piano?" |
+| "Ờ… giỏi. Giỏi lắm." (khi làm vỡ gương) | "Oh… great. Just great." (mirror broken) |
 
 ---
 
@@ -260,8 +264,12 @@ Ví dụ câu thoại:
 │   │   ├── items.json
 │   │   ├── levels.json
 │   │   ├── landlords.json
+│   │   ├── lines.en.json
 │   │   ├── lines.vi.json
-│   │   └── config.json
+│   │   ├── config.json
+│   │   └── i18n/
+│   │       ├── en.json   (chữ giao diện tiếng Anh)
+│   │       └── vi.json   (chữ giao diện tiếng Việt)
 │   └── assets/ (sprites, audio, fonts)
 └── src/
     ├── main.ts
@@ -269,7 +277,7 @@ Ví dụ câu thoại:
     ├── entities/      (Player, Item, Cat, Landlord, Truck)
     ├── systems/       (Grab, Lift, Damage, Scoring, Dialogue, Timer, Input, Scaling)
     ├── net/           (Transport, Room, HostLoop, ClientLoop, Protocol, Interpolation)
-    ├── data/          (types.ts, loader.ts, validate.ts)
+    ├── data/          (types.ts, loader.ts, validate.ts, i18n.ts, settings.ts)
     └── ui/            (HUD, bubble, menus, ping wheel)
 ```
 
@@ -287,7 +295,7 @@ Ví dụ câu thoại:
 [
   {
     "id": "fridge",
-    "name": "Tủ lạnh",
+    "name": { "en": "Fridge", "vi": "Tủ lạnh" },
     "sprite": "items/fridge.png",
     "size": { "w": 60, "h": 80 },
     "mass": 120,
@@ -304,7 +312,7 @@ Ví dụ câu thoại:
   },
   {
     "id": "grand_piano",
-    "name": "Đàn grand piano",
+    "name": { "en": "Grand piano", "vi": "Đàn grand piano" },
     "sprite": "items/grand_piano.png",
     "size": { "w": 160, "h": 110 },
     "mass": 500,
@@ -322,7 +330,7 @@ Ví dụ câu thoại:
   },
   {
     "id": "cat",
-    "name": "Mèo",
+    "name": { "en": "Cat", "vi": "Mèo" },
     "sprite": "items/cat.png",
     "mass": 4,
     "requiredGrabbers": 1,
@@ -340,7 +348,7 @@ Ví dụ câu thoại:
 [
   {
     "id": "lv15_museum",
-    "name": "Bảo tàng tư nhân",
+    "name": { "en": "Private Museum", "vi": "Bảo tàng tư nhân" },
     "tier": "full",
     "minPlayers": 8,
     "maxPlayers": 8,
@@ -362,7 +370,7 @@ Ví dụ câu thoại:
   },
   {
     "id": "lv01_studio",
-    "name": "Căn hộ studio",
+    "name": { "en": "Studio Apartment", "vi": "Căn hộ studio" },
     "tier": "solo",
     "minPlayers": 1,
     "maxPlayers": 8,
@@ -397,7 +405,7 @@ Ví dụ câu thoại:
 [
   {
     "id": "grandma",
-    "name": "Bà Tư",
+    "name": { "en": "Grandma Tu", "vi": "Bà Tư" },
     "sprite": "npc/grandma.png",
     "voicePitch": 1.3,
     "startSatisfaction": 50,
@@ -408,7 +416,13 @@ Ví dụ câu thoại:
 ]
 ```
 
-### `lines.vi.json`
+### Đa ngôn ngữ trong data
+- **Tên** đồ vật, màn chơi, chủ nhà: ghi thẳng cả hai ngôn ngữ trong cùng file, dạng `{ "en": "…", "vi": "…" }`.
+- **Chữ giao diện** (menu, HUD, nút…): `i18n/en.json` và `i18n/vi.json`, khóa phẳng, tham số `{ten}`.
+- **Câu thoại** chủ nhà: `lines.en.json` và `lines.vi.json`, **cùng cấu trúc, cùng số câu** ở mỗi sự kiện; câu thứ *i* ở hai file là cùng một câu (online chỉ gửi mã sự kiện + số thứ tự).
+- Validate (P05) báo lỗi nếu thiếu bản dịch, lệch số câu, lệch khóa hoặc lệch tham số.
+
+### `lines.vi.json` (`lines.en.json` cùng cấu trúc)
 ```json
 {
   "grandma": {
@@ -436,7 +450,7 @@ Ví dụ câu thoại:
   "net": {
     "transport": "trystero",
     "fallbackTransport": "peerjs",
-    "appId": "moving-game-v1",
+    "appId": "beast-movers-v1",
     "iceServers": [
       { "urls": "stun:stun.l.google.com:19302" }
     ],
@@ -449,7 +463,7 @@ Ví dụ câu thoại:
 }
 ```
 
-### Lưu tiến trình (`localStorage`, key `moving-game-save-v1`)
+### Lưu tiến trình (`localStorage`, key `beast-movers-save-v1`)
 ```json
 {
   "version": 1,
@@ -496,6 +510,7 @@ Ví dụ câu thoại:
 ### Yêu cầu giao diện
 - Hỗ trợ toàn màn hình, tự co giãn theo cửa sổ; tối thiểu 1280×720; điện thoại không phải mục tiêu chính.
 - Font hỗ trợ tiếng Việt đầy đủ dấu.
+- **Song ngữ Anh/Việt:** đổi ngôn ngữ ngay trong menu, không cần tải lại trang; bố cục chừa đủ chỗ cho câu dài hơn ở một trong hai ngôn ngữ.
 - 8 màu nhân vật **phân biệt được cả với người mù màu** (mỗi màu kèm một ký hiệu hoặc mũ riêng).
 - Tùy chọn tắt rung màn hình, chỉnh âm lượng.
 
@@ -634,6 +649,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 - [ ] Loader đọc toàn bộ JSON trong `public/data/`
 - [ ] Validate: thiếu trường, sai kiểu, `id` trùng, tham chiếu tới `id` không tồn tại
 - [ ] Kiểm tra màn khả thi: `minPlayers` ≥ `requiredGrabbers` của mọi đồ `strict` **bắt buộc** trong màn
+- [ ] Kiểm tra song ngữ: mọi `name` có đủ `en` + `vi`; `lines.en.json` và `lines.vi.json` cùng khóa, cùng số câu
 - [ ] Tính **hash của data** (dùng ở P20)
 - [ ] Hiện màn hình lỗi dễ đọc khi data sai
 - **✅ Xong khi:** cố ý làm sai một file JSON thì game báo đúng file, đúng trường bị lỗi.
@@ -795,7 +811,8 @@ _(ghi ở đây: có vui không? chỗ nào bực mình?)_
 - [ ] Gửi qua mạng các sự kiện: `dialogue`, `itemBroken`, `itemLoaded`, `ping`, `timeLow`, `levelEnd`
 - [ ] Hiệu ứng, âm thanh, câu thoại phát ở client dựa trên sự kiện
 - [ ] Kết quả màn do host tính rồi gửi tới mọi máy
-- **✅ Xong khi:** mọi máy thấy cùng một câu thoại và cùng bảng kết quả.
+- [ ] Câu thoại gửi bằng mã (sự kiện + số thứ tự), mỗi máy hiện theo ngôn ngữ của mình
+- **✅ Xong khi:** mọi máy thấy cùng một câu thoại (mỗi máy bằng ngôn ngữ đã chọn) và cùng bảng kết quả.
 
 #### P25 · Rớt mạng, lỗi kết nối, dự phòng
 - [ ] Client rớt mạng: nhân vật đứng yên, được vào lại đúng chỗ cũ trong `reconnectGraceSec`
@@ -824,6 +841,7 @@ _(ghi ở đây)_
 - [ ] Cài đặt: âm lượng, rung màn hình, toàn màn hình, đổi phím
 - [ ] Trang hướng dẫn điều khiển (bàn phím và tay cầm)
 - [ ] Font tiếng Việt đầy đủ dấu
+- [x] Chọn ngôn ngữ English / Tiếng Việt, lưu lựa chọn (làm sớm cùng lúc đổi tên game)
 - **✅ Xong khi:** đi hết các menu chỉ bằng tay cầm.
 
 #### P28 · Màn chọn màn (khóa theo người và sao)
@@ -835,7 +853,7 @@ _(ghi ở đây)_
 - **✅ Xong khi:** phòng 4 người thấy màn 🟠🔴 bị khóa đúng lý do; đủ 8 người thì mở ra.
 
 #### P29 · Lưu tiến trình
-- [ ] Lưu và đọc `localStorage` theo schema `moving-game-save-v1`
+- [ ] Lưu và đọc `localStorage` theo schema `beast-movers-save-v1`
 - [ ] Bọc `try/catch`; trình duyệt chặn lưu trữ thì game vẫn chạy
 - [ ] Có số phiên bản để nâng cấp dữ liệu lưu cũ (migration)
 - [ ] Nút xóa tiến trình trong cài đặt
@@ -861,7 +879,7 @@ _(ghi ở đây)_
 - [ ] 🟣 Màn 7 – Tiệm đồ cổ
 - [ ] 🟠 Màn 12 – Quán bi-a
 - [ ] 🔴 Màn 16 – Biệt thự người nổi tiếng
-- [ ] 3 chủ nhà: bà cụ khó tính, ông chú đồ cổ, ngôi sao nổi tiếng; mỗi người ≥ 5 câu cho mỗi sự kiện
+- [ ] 3 chủ nhà: bà cụ khó tính, ông chú đồ cổ, ngôi sao nổi tiếng; mỗi người ≥ 5 câu cho mỗi sự kiện, **cả tiếng Anh và tiếng Việt**
 - [ ] Đặt mốc sao cho cả 5 màn
 - **✅ Xong khi:** đạt toàn bộ checklist mục 15.
 
@@ -898,7 +916,7 @@ _(ghi ở đây)_
 #### P36 · Thêm 2 chủ nhà và bộ thoại
 - [ ] Anh startup cuồng minimalism
 - [ ] Chị chủ 6 con mèo
-- [ ] Rà soát toàn bộ câu thoại (chính tả, độ hài, không lặp)
+- [ ] Rà soát toàn bộ câu thoại cả hai ngôn ngữ (chính tả, độ hài, không lặp)
 - **✅ Xong khi:** mỗi màn trong 16 màn có chủ nhà phù hợp.
 
 **Ghi chú playtest mốc F:**
@@ -973,5 +991,6 @@ _(ghi ở đây)_
 - [ ] Ít nhất 1 màn mỗi cấp (🟢🔵🟣🟠🔴), tức tối thiểu 5 màn; 10 loại đồ; 3 chủ nhà, toàn bộ lấy từ JSON
 - [ ] Tủ lạnh trượt, gương vỡ, mèo chạy trốn, đồ 8 người hoạt động đúng cả khi chơi chung máy lẫn online
 - [ ] Chủ nhà phản ứng bằng thoại theo sự kiện, mọi máy thấy cùng một câu
+- [ ] Toàn bộ giao diện có tiếng Anh và tiếng Việt, đổi được trong menu (hệ thống i18n đã có; mọi màn hình mới phải dùng)
 - [ ] Tính điểm, sao và lưu tiến trình bằng `localStorage`
 - [ ] Không tự vận hành bất kỳ server nào; ngoài file tĩnh chỉ dùng signaling/STUN/TURN công cộng

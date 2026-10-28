@@ -1,0 +1,50 @@
+{
+  "menu.tagline": "1–8 players · 1 truck · 10 minutes · lots of broken stuff",
+  "menu.start": "▶  Start  (Enter)",
+  "menu.inputTest": "🎮  Test controls  (I)",
+  "menu.language": "🌐  Language: English  (L)",
+
+  "inputTest.title": "Test controls",
+  "inputTest.joinHint": "Press Grab to join: Space (WASD) · Enter (arrows) · A button (gamepad)",
+  "inputTest.player": "Player {n}",
+  "inputTest.notJoined": "Not joined",
+  "inputTest.disconnected": "(disconnected!)",
+  "inputTest.freeSources": "Not joined yet: {list}",
+  "inputTest.allJoined": "All devices have joined",
+  "inputTest.footer": "Esc: back to menu  ·  Delete: remove all players",
+
+  "button.grab": "Grab",
+  "button.throw": "Throw",
+  "button.dash": "Dash",
+  "button.ping": "Ping",
+  "button.start": "Start",
+
+  "source.keyboard": "Keyboard ({layout})",
+  "source.gamepad": "Gamepad {n}",
+  "layout.wasd": "WASD",
+  "layout.arrows": "Arrows",
+
+  "color.orange": "Orange",
+  "color.blue": "Blue",
+  "color.purple": "Purple",
+  "color.green": "Green",
+  "color.pink": "Pink",
+  "color.yellow": "Yellow",
+  "color.red": "Red",
+  "color.white": "White",
+
+  "game.hint": "Others press Grab to join (Enter · A)  ·  Q / Right Ctrl / X: dash  ·  Esc: finish  ·  F1: debug",
+  "game.playerJoined": "{color} (P{n}) joined with {source}",
+
+  "player.ouch": "Ouch!",
+  "player.trip": "Whoa!",
+
+  "result.title": "Results",
+  "result.played": "Played {seconds} s ({ticks} logic steps)",
+  "result.back": "Enter: back to menu",
+
+  "debug.fps": "Render FPS",
+  "debug.logic": "Logic/sec",
+  "debug.bodies": "Bodies",
+  "debug.toggle": "[F1] show/hide debug"
+}

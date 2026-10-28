@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { t } from '../data/i18n';
 import { GAME_WIDTH, Theme } from '../ui/theme';
 import type { ResultData } from './GameScene';
 import { SceneKeys } from './keys';
@@ -14,7 +15,7 @@ export class ResultScene extends Phaser.Scene {
     const cx = GAME_WIDTH / 2;
 
     this.add
-      .text(cx, 220, 'Kết quả', {
+      .text(cx, 220, t('result.title'), {
         fontFamily: Theme.font,
         fontSize: '56px',
         fontStyle: 'bold',
@@ -23,15 +24,16 @@ export class ResultScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     this.add
-      .text(cx, 320, `Đã chơi ${data.seconds.toFixed(1)} giây (${data.logicTicks} bước logic)`, {
-        fontFamily: Theme.font,
-        fontSize: '24px',
-        color: Theme.text,
-      })
+      .text(
+        cx,
+        320,
+        t('result.played', { seconds: data.seconds.toFixed(1), ticks: data.logicTicks }),
+        { fontFamily: Theme.font, fontSize: '24px', color: Theme.text },
+      )
       .setOrigin(0.5);
 
     this.add
-      .text(cx, 440, 'Enter: về menu', {
+      .text(cx, 440, t('result.back'), {
         fontFamily: Theme.font,
         fontSize: '24px',
         color: Theme.muted,

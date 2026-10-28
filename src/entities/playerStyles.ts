@@ -4,7 +4,8 @@ export type PlayerSymbol =
   'circle' | 'triangle' | 'square' | 'diamond' | 'star' | 'cross' | 'hexagon' | 'ring';
 
 export interface PlayerStyle {
-  name: string;
+  /** Khóa i18n của tên màu. */
+  nameKey: string;
   color: number;
   symbol: PlayerSymbol;
 }
@@ -14,14 +15,14 @@ export interface PlayerStyle {
  * để người mù màu vẫn phân biệt được.
  */
 export const PLAYER_STYLES: readonly PlayerStyle[] = [
-  { name: 'Cam', color: 0xff9f43, symbol: 'circle' },
-  { name: 'Xanh dương', color: 0x4aa3ff, symbol: 'triangle' },
-  { name: 'Tím', color: 0xa77bff, symbol: 'square' },
-  { name: 'Xanh lá', color: 0x5ccf6b, symbol: 'diamond' },
-  { name: 'Hồng', color: 0xff6fb5, symbol: 'star' },
-  { name: 'Vàng', color: 0xffd93d, symbol: 'cross' },
-  { name: 'Đỏ', color: 0xff5a5a, symbol: 'hexagon' },
-  { name: 'Trắng', color: 0xe8e8f0, symbol: 'ring' },
+  { nameKey: 'color.orange', color: 0xff9f43, symbol: 'circle' },
+  { nameKey: 'color.blue', color: 0x4aa3ff, symbol: 'triangle' },
+  { nameKey: 'color.purple', color: 0xa77bff, symbol: 'square' },
+  { nameKey: 'color.green', color: 0x5ccf6b, symbol: 'diamond' },
+  { nameKey: 'color.pink', color: 0xff6fb5, symbol: 'star' },
+  { nameKey: 'color.yellow', color: 0xffd93d, symbol: 'cross' },
+  { nameKey: 'color.red', color: 0xff5a5a, symbol: 'hexagon' },
+  { nameKey: 'color.white', color: 0xe8e8f0, symbol: 'ring' },
 ];
 
 export const PLAYER_RADIUS = 20;

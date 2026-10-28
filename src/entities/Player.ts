@@ -9,6 +9,7 @@ import {
   stepMotor,
   type Vec,
 } from '../systems/PlayerMotor';
+import { t } from '../data/i18n';
 import { Theme } from '../ui/theme';
 import { PLAYER_RADIUS, PLAYER_STYLES, playerTextureKey } from './playerStyles';
 
@@ -86,7 +87,7 @@ export class Player {
   knockDown(): void {
     if (this.motor.mode === 'fallen') return;
     this.motor = knockDown(this.motor);
-    this.popText('Ui da!');
+    this.popText(t('player.ouch'));
   }
 
   /** Vẽ, gọi mỗi khung hình. `alpha` là vị trí giữa bước logic trước và bước kế tiếp. */
@@ -138,7 +139,7 @@ export class Player {
   }
 
   private onEvent(e: MotorEvent): void {
-    if (e === 'tripped') this.popText('Ối!');
+    if (e === 'tripped') this.popText(t('player.trip'));
   }
 
   private popText(text: string): void {

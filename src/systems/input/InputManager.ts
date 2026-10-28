@@ -1,3 +1,4 @@
+import type { LocalizedText } from '../../data/i18n';
 import { frameFromGamepad } from './gamepad';
 import { EMPTY_FRAME, Btn, type InputFrame, isDown } from './InputFrame';
 import { frameFromKeys, KEYBOARD_LAYOUTS, KeyboardTracker } from './keyboard';
@@ -7,7 +8,7 @@ export type InputSourceKind = 'keyboard' | 'gamepad';
 export interface InputSource {
   readonly id: string;
   readonly kind: InputSourceKind;
-  readonly label: string;
+  readonly label: LocalizedText;
   isConnected(): boolean;
   read(): InputFrame;
 }
@@ -30,7 +31,7 @@ const defaultGetPads: GetPads = () =>
 class KeyboardSource implements InputSource {
   readonly kind = 'keyboard';
   readonly id: string;
-  readonly label: string;
+  readonly label: LocalizedText;
 
   constructor(
     private readonly tracker: KeyboardTracker,
@@ -38,7 +39,7 @@ class KeyboardSource implements InputSource {
   ) {
     const layout = KEYBOARD_LAYOUTS[layoutIndex]!;
     this.id = `kb${layoutIndex}`;
-    this.label = `Bàn phím (${layout.name})`;
+    this.label = { key: 'source.keyboard', params: { layout: { key: layout.nameKey } } };
   }
 
   isConnected(): boolean {
@@ -53,14 +54,14 @@ class KeyboardSource implements InputSource {
 class GamepadSource implements InputSource {
   readonly kind = 'gamepad';
   readonly id: string;
-  readonly label: string;
+  readonly label: LocalizedText;
 
   constructor(
     private readonly padIndex: number,
     private readonly getPads: GetPads,
   ) {
     this.id = `pad${padIndex}`;
-    this.label = `Tay cầm ${padIndex + 1}`;
+    this.label = { key: 'source.gamepad', params: { n: padIndex + 1 } };
   }
 
   private pad(): PadLike | null {

@@ -1,16 +1,17 @@
 import Phaser from 'phaser';
 import { PLAYER_STYLES, playerTextureKey } from '../entities/playerStyles';
+import { t, tText } from '../data/i18n';
 import { Btn, type BtnName, frameAxis, isDown } from '../systems/input/InputFrame';
 import type { InputManager } from '../systems/input/InputManager';
 import { GAME_HEIGHT, GAME_WIDTH, Theme } from '../ui/theme';
 import { RegistryKeys, SceneKeys } from './keys';
 
 const BUTTON_LABELS: [BtnName, string][] = [
-  ['Grab', 'Nắm'],
-  ['Throw', 'Ném'],
-  ['Dash', 'Lao'],
-  ['Ping', 'Ping'],
-  ['Start', 'Start'],
+  ['Grab', 'button.grab'],
+  ['Throw', 'button.throw'],
+  ['Dash', 'button.dash'],
+  ['Ping', 'button.ping'],
+  ['Start', 'button.start'],
 ];
 
 interface Panel {
@@ -37,7 +38,7 @@ export class InputTestScene extends Phaser.Scene {
     this.panels = [];
 
     this.add
-      .text(GAME_WIDTH / 2, 50, 'Thử điều khiển', {
+      .text(GAME_WIDTH / 2, 50, t('inputTest.title'), {
         fontFamily: Theme.font,
         fontSize: '40px',
         fontStyle: 'bold',
@@ -45,12 +46,11 @@ export class InputTestScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
     this.add
-      .text(
-        GAME_WIDTH / 2,
-        100,
-        'Nhấn Nắm để tham gia: Space (WASD) · Enter (mũi tên) · nút A (tay cầm)',
-        { fontFamily: Theme.font, fontSize: '18px', color: Theme.text },
-      )
+      .text(GAME_WIDTH / 2, 100, t('inputTest.joinHint'), {
+        fontFamily: Theme.font,
+        fontSize: '18px',
+        color: Theme.text,
+      })
       .setOrigin(0.5);
 
     const w = 280;
@@ -60,7 +60,7 @@ export class InputTestScene extends Phaser.Scene {
       const x = left + i * (w + gap);
       const y = 140;
       this.add.rectangle(x, y, w, 420, 0x2b2838).setOrigin(0).setStrokeStyle(2, 0x3a3550);
-      const title = this.add.text(x + w / 2, y + 20, `Người chơi ${i + 1}`, {
+      const title = this.add.text(x + w / 2, y + 20, t('inputTest.player', { n: i + 1 }), {
         fontFamily: Theme.font,
         fontSize: '22px',
         fontStyle: 'bold',
@@ -76,8 +76,8 @@ export class InputTestScene extends Phaser.Scene {
         })
         .setOrigin(0.5, 0);
       const stick = this.add.graphics({ x: x + w / 2, y: y + 230 });
-      const buttons = BUTTON_LABELS.map(([, label], b) =>
-        this.add.text(x + 20 + (b % 3) * 82, y + 310 + Math.floor(b / 3) * 44, label, {
+      const buttons = BUTTON_LABELS.map(([, labelKey], b) =>
+        this.add.text(x + 20 + (b % 3) * 82, y + 310 + Math.floor(b / 3) * 44, t(labelKey), {
           fontFamily: Theme.font,
           fontSize: '16px',
           color: Theme.text,
@@ -98,7 +98,7 @@ export class InputTestScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
     this.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT - 35, 'Esc: về menu  ·  Delete: xóa hết người chơi', {
+      .text(GAME_WIDTH / 2, GAME_HEIGHT - 35, t('inputTest.footer'), {
         fontFamily: Theme.font,
         fontSize: '16px',
         color: Theme.muted,
@@ -120,12 +120,15 @@ export class InputTestScene extends Phaser.Scene {
       panel.stick.clear();
       panel.stick.lineStyle(2, 0x5a5470).strokeCircle(0, 0, 50);
       if (!slot) {
-        panel.source.setText('Chưa tham gia').setColor(Theme.muted);
+        panel.source.setText(t('inputTest.notJoined')).setColor(Theme.muted);
         panel.buttons.forEach((b) => b.setAlpha(0.3).setBackgroundColor('#3a3550'));
         return;
       }
       panel.source
-        .setText(`${style.name} · ${slot.source.label}${slot.connected ? '' : ' (mất kết nối!)'}`)
+        .setText(
+          [t(style.nameKey), tText(slot.source.label)].join(' · ') +
+            (slot.connected ? '' : ` ${t('inputTest.disconnected')}`),
+        )
         .setColor(slot.connected ? Theme.text : '#ff6b6b');
       const { x, y } = frameAxis(slot.cur);
       panel.stick.fillStyle(style.color).fillCircle(x * 50, y * 50, 12);
@@ -137,9 +140,11 @@ export class InputTestScene extends Phaser.Scene {
     const free = this.input$
       .allSources()
       .filter((s) => s.isConnected() && !this.input$.slots.some((slot) => slot?.source === s))
-      .map((s) => s.label);
+      .map((s) => tText(s.label));
     this.sourcesText.setText(
-      free.length ? `Chưa tham gia: ${free.join(' · ')}` : 'Mọi thiết bị đã tham gia',
+      free.length
+        ? t('inputTest.freeSources', { list: free.join(' · ') })
+        : t('inputTest.allJoined'),
     );
   }
 }

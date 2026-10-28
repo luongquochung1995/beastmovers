@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { t } from '../data/i18n';
 import { Theme } from './theme';
 
 export interface DebugStats {
@@ -68,11 +69,15 @@ export class DebugOverlay {
       window.__debugStats = this.stats;
     }
     if (this.text.visible) {
+      const rows: [string, number][] = [
+        [t('debug.fps'), this.stats.fps],
+        [t('debug.logic'), this.stats.logicStepsPerSec],
+        [t('debug.bodies'), this.stats.bodies],
+      ];
+      const width = Math.max(...rows.map(([label]) => label.length));
       this.text.setText([
-        `FPS vẽ hình : ${this.stats.fps}`,
-        `Logic/giây  : ${this.stats.logicStepsPerSec}`,
-        `Vật thể     : ${this.stats.bodies}`,
-        `[F1] ẩn/hiện debug`,
+        ...rows.map(([label, value]) => `${label.padEnd(width)} : ${value}`),
+        t('debug.toggle'),
       ]);
     }
   }

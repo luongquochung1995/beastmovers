@@ -8,7 +8,7 @@
   "net": {
     "transport": "trystero",
     "fallbackTransport": "peerjs",
-    "appId": "moving-game-v1",
+    "appId": "beast-movers-v1",
     "iceServers": [{ "urls": "stun:stun.l.google.com:19302" }],
     "inputHz": 30,
     "snapshotHz": 20,

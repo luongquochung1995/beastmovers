@@ -1,7 +1,8 @@
 import { Btn, type InputFrame, quantizeAxis } from './InputFrame';
 
 export interface KeyboardLayout {
-  name: string;
+  /** Khóa i18n của tên bố cục. */
+  nameKey: string;
   up: string[];
   down: string[];
   left: string[];
@@ -15,7 +16,7 @@ export interface KeyboardLayout {
 /** Bố cục phím theo `KeyboardEvent.code` (không phụ thuộc kiểu bàn phím QWERTY/AZERTY). */
 export const KEYBOARD_LAYOUTS: readonly KeyboardLayout[] = [
   {
-    name: 'WASD',
+    nameKey: 'layout.wasd',
     up: ['KeyW'],
     down: ['KeyS'],
     left: ['KeyA'],
@@ -26,7 +27,7 @@ export const KEYBOARD_LAYOUTS: readonly KeyboardLayout[] = [
     ping: ['KeyF'],
   },
   {
-    name: 'Mũi tên',
+    nameKey: 'layout.arrows',
     up: ['ArrowUp'],
     down: ['ArrowDown'],
     left: ['ArrowLeft'],

@@ -1,5 +1,7 @@
 import Phaser from 'phaser';
-import { GAME_HEIGHT, GAME_WIDTH, Theme } from '../ui/theme';
+import { getLocale, nextLocale, setLocale, t } from '../data/i18n';
+import { saveSettings } from '../data/settings';
+import { GAME_HEIGHT, GAME_TITLE, GAME_WIDTH, Theme } from '../ui/theme';
 import { SceneKeys } from './keys';
 
 export class MenuScene extends Phaser.Scene {
@@ -12,49 +14,25 @@ export class MenuScene extends Phaser.Scene {
     const cx = GAME_WIDTH / 2;
 
     this.add
-      .text(cx, 220, 'Dọn Nhà Kiểu Gì Đây?!', {
+      .text(cx, 210, GAME_TITLE, {
         fontFamily: Theme.font,
-        fontSize: '64px',
+        fontSize: '80px',
         fontStyle: 'bold',
         color: Theme.accent,
       })
       .setOrigin(0.5);
 
     this.add
-      .text(cx, 300, 'Xin chào! 1–8 người · 1 xe tải · 10 phút', {
+      .text(cx, 290, t('menu.tagline'), {
         fontFamily: Theme.font,
         fontSize: '24px',
         color: Theme.text,
       })
       .setOrigin(0.5);
 
-    const start = this.add
-      .text(cx, 440, '▶  Bắt đầu  (Enter)', {
-        fontFamily: Theme.font,
-        fontSize: '32px',
-        color: Theme.text,
-        backgroundColor: '#3a3550',
-        padding: { x: 24, y: 12 },
-      })
-      .setOrigin(0.5)
-      .setInteractive({ useHandCursor: true })
-      .on('pointerover', () => start.setColor(Theme.accent))
-      .on('pointerout', () => start.setColor(Theme.text))
-      .on('pointerup', () => this.startGame());
-
-    const inputTest = this.add
-      .text(cx, 520, '🎮  Thử điều khiển  (I)', {
-        fontFamily: Theme.font,
-        fontSize: '24px',
-        color: Theme.text,
-        backgroundColor: '#2e2a40',
-        padding: { x: 18, y: 8 },
-      })
-      .setOrigin(0.5)
-      .setInteractive({ useHandCursor: true })
-      .on('pointerover', () => inputTest.setColor(Theme.accent))
-      .on('pointerout', () => inputTest.setColor(Theme.text))
-      .on('pointerup', () => this.scene.start(SceneKeys.InputTest));
+    this.button(cx, 420, t('menu.start'), '32px', () => this.scene.start(SceneKeys.Game));
+    this.button(cx, 500, t('menu.inputTest'), '24px', () => this.scene.start(SceneKeys.InputTest));
+    this.button(cx, 560, t('menu.language'), '24px', () => this.switchLanguage());
 
     this.add
       .text(cx, GAME_HEIGHT - 30, `v${__APP_VERSION__}`, {
@@ -64,12 +42,34 @@ export class MenuScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
 
-    this.input.keyboard?.once('keydown-ENTER', () => this.startGame());
-    this.input.keyboard?.once('keydown-SPACE', () => this.startGame());
+    this.input.keyboard?.once('keydown-ENTER', () => this.scene.start(SceneKeys.Game));
+    this.input.keyboard?.once('keydown-SPACE', () => this.scene.start(SceneKeys.Game));
     this.input.keyboard?.once('keydown-I', () => this.scene.start(SceneKeys.InputTest));
+    this.input.keyboard?.once('keydown-L', () => this.switchLanguage());
   }
 
-  private startGame(): void {
-    this.scene.start(SceneKeys.Game);
+  private button(x: number, y: number, label: string, fontSize: string, onClick: () => void) {
+    const text = this.add
+      .text(x, y, label, {
+        fontFamily: Theme.font,
+        fontSize,
+        color: Theme.text,
+        backgroundColor: '#3a3550',
+        padding: { x: 22, y: 10 },
+      })
+      .setOrigin(0.5)
+      .setInteractive({ useHandCursor: true })
+      .on('pointerover', () => text.setColor(Theme.accent))
+      .on('pointerout', () => text.setColor(Theme.text))
+      .on('pointerup', onClick);
+    return text;
+  }
+
+  private switchLanguage(): void {
+    const locale = nextLocale(getLocale());
+    setLocale(locale);
+    saveSettings({ language: locale });
+    document.documentElement.lang = locale;
+    this.scene.restart();
   }
 }

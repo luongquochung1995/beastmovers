@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { CONFIG_KEY, type GameConfig } from '../data/config';
+import { t } from '../data/i18n';
 import { Player } from '../entities/Player';
 import { PLAYER_STYLES } from '../entities/playerStyles';
 import { FixedLoop } from '../systems/FixedLoop';
@@ -68,12 +69,11 @@ export class GameScene extends Phaser.Scene {
     this.matter.world.on('collisionstart', this.onCollision, this);
 
     this.add
-      .text(
-        GAME_WIDTH / 2,
-        GAME_HEIGHT - 20,
-        'Người chơi khác nhấn Nắm để vào (Enter · nút A)  ·  Q/Ctrl phải/X: lao  ·  Esc: kết thúc  ·  F1: debug',
-        { fontFamily: Theme.font, fontSize: '15px', color: Theme.muted },
-      )
+      .text(GAME_WIDTH / 2, GAME_HEIGHT - 20, t('game.hint'), {
+        fontFamily: Theme.font,
+        fontSize: '15px',
+        color: Theme.muted,
+      })
       .setOrigin(0.5)
       .setDepth(9_000);
 
@@ -87,8 +87,9 @@ export class GameScene extends Phaser.Scene {
       if (this.debug.visible) this.players.forEach((p) => p.knockDown());
     });
     this.input.keyboard?.once('keydown-ESC', () => this.finish());
+    // Phaser có thể đã hủy world trước khi sự kiện này chạy (world bị hủy thì listener cũng mất theo).
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-      this.matter.world.off('collisionstart', this.onCollision, this);
+      this.matter.world?.off('collisionstart', this.onCollision, this);
     });
   }
 
@@ -129,7 +130,12 @@ export class GameScene extends Phaser.Scene {
     );
     this.players.push(player);
     this.playerByBody.set(player.body, player);
-    console.info(`[game] ${style.name} (P${slot.index + 1}) tham gia bằng ${slot.source.label}`);
+    const text = t('game.playerJoined', {
+      color: { key: style.nameKey },
+      n: slot.index + 1,
+      source: slot.source.label,
+    });
+    console.info(`[game] ${text}`);
   }
 
   /** Người đang lao đâm vào người khác thì người kia ngã. */

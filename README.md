@@ -1,6 +1,10 @@
-# Dọn Nhà Kiểu Gì Đây?!
+# Beast Movers
 
 Game co-op chuyển nhà 1–8 người, chơi ngay trên trình duyệt, không cần cài đặt.
+Hỗ trợ **tiếng Anh** và **tiếng Việt**.
+
+_Co-op moving chaos for 1–8 players, right in your browser. Available in English and Vietnamese._
+
 Kế hoạch và tiến độ từng phase: [docs/PLAN.md](docs/PLAN.md).
 
 ## Yêu cầu
@@ -17,7 +21,10 @@ npm install
 npm run dev
 ```
 
-Mở địa chỉ Vite in ra (mặc định http://localhost:5173). Thêm `?debug=1` vào URL để bật chế độ debug.
+Mở địa chỉ Vite in ra (mặc định http://localhost:5173). Tham số URL hữu ích:
+
+- `?debug=1`: bật chế độ debug
+- `?lang=en` hoặc `?lang=vi`: chọn ngôn ngữ
 
 ## Build bản phát hành
 
@@ -58,21 +65,30 @@ Giữ một hướng khoảng 0,6 giây thì nhân vật chuyển sang chạy (c
 | ------------- | ---------------------------------------------------------- |
 | Enter / Space | Bắt đầu (ở menu)                                           |
 | I             | Màn thử điều khiển (ở menu)                                |
+| L             | Đổi ngôn ngữ English ↔ Tiếng Việt (ở menu)                 |
 | Esc           | Kết thúc màn / quay lại                                    |
 | F1            | Bật/tắt debug (FPS, số bước logic mỗi giây, khung va chạm) |
 | T             | Khi bật debug: cho mọi người vấp ngã                       |
 
+## Thêm hoặc sửa ngôn ngữ
+
+- Mọi chữ hiển thị nằm trong `public/data/i18n/<mã>.json`, dạng khóa phẳng (`"menu.start": "…"`), tham số viết `{ten}`.
+- Thêm ngôn ngữ mới: tạo file JSON cùng bộ khóa với `en.json` và thêm mã vào `LOCALES` trong `src/data/i18n.ts`.
+- `npm test` kiểm tra mọi file ngôn ngữ có đủ khóa, đúng tham số, và mọi khóa dùng trong code đều tồn tại.
+- Ngôn ngữ được chọn theo thứ tự: `?lang=` → lựa chọn đã lưu → ngôn ngữ trình duyệt → tiếng Anh.
+
 ## Cấu trúc
 
 ```
-public/data/   Dữ liệu game (JSON)
-src/scenes/    Boot, Menu, Game, Result
-src/systems/   Logic game (vòng lặp cố định 60 Hz, …)
-src/entities/  Nhân vật, đồ vật, mèo, chủ nhà, xe tải
-src/net/       Chơi online
-src/data/      Kiểu dữ liệu và đọc JSON
-src/ui/        HUD, menu, overlay
-tests/         Unit test
+public/data/        Dữ liệu game (JSON)
+public/data/i18n/   Chữ hiển thị theo ngôn ngữ (en.json, vi.json)
+src/scenes/         Boot, Menu, InputTest, Game, Result
+src/systems/        Logic game (vòng lặp cố định 60 Hz, input, di chuyển…)
+src/entities/       Nhân vật, đồ vật, mèo, chủ nhà, xe tải
+src/net/            Chơi online
+src/data/           Kiểu dữ liệu, đọc JSON, i18n, cài đặt
+src/ui/             HUD, menu, overlay
+tests/              Unit test
 ```
 
 ## Deploy GitHub Pages
