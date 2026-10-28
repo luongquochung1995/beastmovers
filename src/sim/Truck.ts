@@ -3,7 +3,6 @@ import type { MapLayout } from '../data/map';
 import type { LevelDef, TruckFacing } from '../data/types';
 import type { Item } from '../entities/Item';
 import type { Player } from '../entities/Player';
-import { t } from '../data/i18n';
 import { rotate, type Vec } from '../systems/geometry';
 import { type CargoState, emptyCargo, updateCargo } from '../systems/truckCargo';
 import type { Rect, World } from './World';
@@ -237,10 +236,9 @@ export class Truck {
   private toggleHandbrake(p: Player): void {
     this.handbrakeOn = !this.handbrakeOn;
     this.world.bus.emit({ type: 'handbrake', on: this.handbrakeOn, slot: p.slotIndex });
-    this.world.pop(
-      this.leverPos!,
-      t(this.handbrakeOn ? 'truck.handbrakeOn' : 'truck.handbrakeOff'),
-    );
+    this.world.pop(this.leverPos!, {
+      key: this.handbrakeOn ? 'truck.handbrakeOn' : 'truck.handbrakeOff',
+    });
   }
 
   /** Mỗi bước logic, sau bước vật lý. */
@@ -280,7 +278,7 @@ export class Truck {
       const item = byUid(uid);
       if (!item) continue;
       this.world.bus.emit({ type: 'truckFull', item: uid, itemId: item.id });
-      this.world.pop(item.position, t('truck.full'), '#ff8a80');
+      this.world.pop(item.position, { key: 'truck.full' }, '#ff8a80');
       // Đẩy món đồ ra phía cửa thùng.
       const n = this.openingNormal;
       this.world.scene.matter.body.setVelocity(item.body, { x: n.x * 6, y: n.y * 6 });
@@ -318,7 +316,7 @@ export class Truck {
         this.world.scene.matter.body.setVelocity(item.body, { x: n.x * 4, y: n.y * 4 });
         item.setAirborne(400);
         this.world.bus.emit({ type: 'itemUnloaded', item: uid, itemId: item.id });
-        this.world.pop(item.position, t('truck.fellOff'), '#ff8a80');
+        this.world.pop(item.position, { key: 'truck.fellOff' }, '#ff8a80');
       } else {
         item.frozen = true;
         this.world.grab.releaseItem(item);

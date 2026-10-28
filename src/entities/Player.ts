@@ -120,7 +120,7 @@ export class Player {
   knockDown(): void {
     if (this.motor.mode === 'fallen') return;
     this.motor = knockDown(this.motor);
-    this.popText(t('player.ouch'));
+    this.popText({ key: 'player.ouch' });
   }
 
   /** Vẽ, gọi mỗi khung hình. `alpha` là vị trí giữa bước logic trước và bước kế tiếp. */
@@ -172,7 +172,7 @@ export class Player {
   }
 
   private onEvent(e: MotorEvent): void {
-    if (e === 'tripped') this.popText(t('player.trip'));
+    if (e === 'tripped') this.popText({ key: 'player.trip' });
   }
 
   /**
@@ -201,8 +201,15 @@ export class Player {
     this.prevPos = this.position;
   }
 
-  popText(text: string): void {
-    popText(this.scene, this.view.x, this.view.y - PLAYER_RADIUS - 30, text);
+  /** Chữ nổi trên đầu; trong màn chơi đi qua `world.fx` (để máy khách online cũng thấy). */
+  onPop: ((text: string | { key: string }) => void) | null = null;
+
+  popText(text: string | { key: string }): void {
+    if (this.onPop) this.onPop(text);
+    else {
+      const s = typeof text === 'string' ? text : t(text.key);
+      popText(this.scene, this.view.x, this.view.y - PLAYER_RADIUS - 30, s);
+    }
   }
 
   destroy(): void {

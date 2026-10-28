@@ -35,7 +35,9 @@ export type GameEvent =
   | { type: 'timeLow' }
   | { type: 'levelEnd'; passed: boolean }
   | { type: 'zoneSpawned'; kind: ZoneKind; x: number; y: number }
-  | { type: 'playerTripped'; slot: number; cause: string };
+  | { type: 'playerTripped'; slot: number; cause: string }
+  /** Người chơi bấm Ping (gọi đồng đội). */
+  | { type: 'ping'; slot: number };
 
 export type GameEventType = GameEvent['type'];
 type Handler<T extends GameEventType> = (e: Extract<GameEvent, { type: T }>) => void;

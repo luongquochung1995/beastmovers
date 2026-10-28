@@ -43,7 +43,7 @@ export class GameScene extends PlayScene {
     const map = this.gameData.maps[level.map]!;
     const client = !!this.online && !this.online.isHost;
     this.built = buildLevel(this.world, level, map, !client);
-    this.runtime = new LevelRuntime(this.world, this.built, this.gameData);
+    this.runtime = new LevelRuntime(this.world, this.built, this.gameData, client);
     if (client) this.online!.attachMirror(this.world, this.runtime, (s) => this.spawnPointFor(s));
     this.leaving = false;
     this.cameras.main.setBounds(0, 0, map.width, map.height);

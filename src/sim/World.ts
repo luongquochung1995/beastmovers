@@ -13,7 +13,9 @@ import {
   impactSpeed,
   WALL_HIT_SPEED,
 } from '../systems/damage';
+import type { DialogueEvent } from '../data/types';
 import { EventBus, type ZoneKind } from '../systems/EventBus';
+import { Btn, justPressed } from '../systems/input/InputFrame';
 import { dist, type Vec } from '../systems/geometry';
 import type { SimSlot } from './SimSlot';
 import { DEFAULT_MOTOR, type MotorParams } from '../systems/PlayerMotor';
@@ -33,6 +35,24 @@ export interface Interactable {
   radius: number;
   use(p: Player): void;
 }
+
+/** Chữ hiện ra: chữ cố định (emoji) hoặc khóa i18n (mỗi máy dịch theo ngôn ngữ của mình). */
+export type TextSpec = string | { key: string };
+
+/**
+ * Hiệu ứng trình diễn: chữ nổi, rung màn hình, câu thoại của chủ nhà (gửi bằng mã: loại
+ * sự kiện + số thứ tự câu), vùng nước/kính mới sinh, ping. Mô phỏng không vẽ thẳng mà gọi
+ * `world.fx`; host online gửi lại cho máy khách để mọi máy thấy cùng một thứ.
+ */
+export type Fx =
+  | { k: 'pop'; x: number; y: number; text: TextSpec; color?: string }
+  | { k: 'shake'; ms: number; intensity: number }
+  | { k: 'say'; ev: DialogueEvent; index: number; item?: string }
+  | { k: 'zone'; kind: ZoneKind; x: number; y: number; radius: number }
+  | { k: 'ping'; slot: number }
+  | { k: 'playerPop'; slot: number; text: TextSpec };
+
+export const textOf = (spec: TextSpec): string => (typeof spec === 'string' ? spec : t(spec.key));
 
 export interface PlayerLook {
   style: number;
@@ -80,6 +100,16 @@ export class World {
   readonly grab: GrabSystem;
   /** Bật thì vẽ thêm điểm nắm của mọi món đồ. */
   debugDraw = false;
+  /** Host online: ghi lại hiệu ứng để gửi cho máy khách. */
+  recordFx = false;
+  /**
+   * Máy khách online: thế giới chỉ để vẽ theo host, không tự gây ra gì (sự kiện host gửi
+   * lại chỉ để hiển thị).
+   */
+  remote = false;
+  readonly fxOut: { tick: number; fx: Fx }[] = [];
+  /** Người nhận câu thoại (LevelRuntime): hiện bong bóng và đọc. */
+  sayHandler: ((fx: Extract<Fx, { k: 'say' }>) => void) | null = null;
   private readonly overlay: Phaser.GameObjects.Graphics;
   private readonly playerByBody = new Map<MatterJS.BodyType, Player>();
   private readonly itemByBody = new Map<MatterJS.BodyType, Item>();
@@ -155,6 +185,7 @@ export class World {
       () => this.random.next(),
       look?.hat ?? '',
     );
+    player.onPop = (text) => this.fx({ k: 'playerPop', slot: slotIndex, text });
     this.players.push(player);
     this.playerByBody.set(player.body, player);
     return player;
@@ -189,7 +220,9 @@ export class World {
   addZone(kind: ZoneKind, x: number, y: number, radius: number): Zone {
     const zone = new Zone(this.scene, kind, x, y, radius, () => this.random.next());
     this.zones.push(zone);
-    this.bus.emit({ type: 'zoneSpawned', kind, x: Math.round(x), y: Math.round(y) });
+    if (!this.remote)
+      this.bus.emit({ type: 'zoneSpawned', kind, x: Math.round(x), y: Math.round(y) });
+    if (this.recordFx) this.record({ k: 'zone', kind, x, y, radius });
     return zone;
   }
 
@@ -218,18 +251,61 @@ export class World {
 
   /** Rung màn hình (tắt được trong cài đặt). */
   shake(durationMs: number, intensity: number): void {
-    if (this.shakeEnabled) this.scene.cameras.main.shake(durationMs, intensity);
+    this.fx({ k: 'shake', ms: durationMs, intensity });
   }
 
   private readonly shakeEnabled = loadSettings().screenShake !== false;
 
-  /** Chữ nổi ngắn ở vị trí `at`. Nhiều chữ trong cùng một bước thì xếp lệch nhau cho khỏi chồng. */
-  pop(at: Vec, text: string, color?: string): void {
+  /** Chữ nổi ngắn ở vị trí `at`. */
+  pop(at: Vec, text: TextSpec, color?: string): void {
+    this.fx(color ? { k: 'pop', x: at.x, y: at.y, text, color } : { k: 'pop', ...at, text });
+  }
+
+  /** Hiệu ứng: hiện ở máy này, và host online ghi lại để gửi cho máy khách. */
+  fx(f: Fx): void {
+    this.present(f);
+    if (this.recordFx) this.record(f);
+  }
+
+  private record(f: Fx): void {
+    this.fxOut.push({ tick: this.bus.tick, fx: f });
+  }
+
+  /** Hiện một hiệu ứng (máy khách gọi thẳng với hiệu ứng host gửi). */
+  present(f: Fx): void {
+    switch (f.k) {
+      case 'pop':
+        this.popAt(f.x, f.y, textOf(f.text), f.color);
+        break;
+      case 'shake':
+        if (this.shakeEnabled) this.scene.cameras.main.shake(f.ms, f.intensity);
+        break;
+      case 'say':
+        this.sayHandler?.(f);
+        break;
+      case 'zone':
+        // Máy khách: vùng mới sinh ở host (host đã tự tạo khi gọi addZone).
+        if (!this.recordFx) this.addZone(f.kind, f.x, f.y, f.radius);
+        break;
+      case 'ping':
+      case 'playerPop': {
+        const p = this.players.find((pl) => pl.slotIndex === f.slot);
+        if (!p) break;
+        const at = p.viewPosition;
+        const text = f.k === 'ping' ? '❗' : textOf(f.text);
+        this.popAt(at.x, at.y - PLAYER_RADIUS - 6, text, f.k === 'ping' ? Theme.accent : undefined);
+        break;
+      }
+    }
+  }
+
+  /** Nhiều chữ trong cùng một bước thì xếp lệch nhau cho khỏi chồng. */
+  private popAt(x: number, y: number, text: string, color?: string): void {
     if (this.popTick !== this.bus.tick) {
       this.popTick = this.bus.tick;
       this.popsThisTick = 0;
     }
-    popText(this.scene, at.x, at.y - 24 - this.popsThisTick++ * 22, text, color);
+    popText(this.scene, x, y - 24 - this.popsThisTick++ * 22, text, color);
   }
 
   /** Món đồ có nắm được không (mèo đang trong lồng thì không). */
@@ -281,7 +357,7 @@ export class World {
     this.containedIn.set(cat, box);
     box.setIcon('😺');
     this.bus.emit({ type: 'catCaught', item: cat.uid, itemId: cat.id, container: box.uid, slot });
-    this.pop(box.position, t('cat.caught'), '#7CFC8A');
+    this.pop(box.position, { key: 'cat.caught' }, '#7CFC8A');
   }
 
   /** Thả mèo ra khỏi đồ chứa (mèo tự nhảy ra, hoặc đồ chứa bị xóa). */
@@ -300,7 +376,7 @@ export class World {
     cat.setHidden(false);
     if (escaped) {
       this.bus.emit({ type: 'catEscaped', item: cat.uid, itemId: cat.id });
-      this.pop(at, t('cat.escaped'), '#ff8a80');
+      this.pop(at, { key: 'cat.escaped' }, '#ff8a80');
     }
   }
 
@@ -369,6 +445,7 @@ export class World {
   }
 
   private onScrape(uid: number): void {
+    if (this.remote) return;
     const item = this.items.find((i) => i.uid === uid);
     if (!item) return;
     const n = (this.scrapes.get(item) ?? 0) + 1;
@@ -394,6 +471,10 @@ export class World {
       const slot = slots[p.slotIndex];
       if (!slot) continue;
       this.grab.handleButtons(p, slot);
+      if (justPressed(slot.prev, slot.cur, Btn.Ping)) {
+        this.bus.emit({ type: 'ping', slot: p.slotIndex });
+        this.fx({ k: 'ping', slot: p.slotIndex });
+      }
       p.fixedUpdate(slot.prev, slot.cur, dt, this.grab.holds.has(p), this.paramsFor(p));
       this.zoneTrip(p, dt);
     }

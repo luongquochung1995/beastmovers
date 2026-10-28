@@ -121,6 +121,7 @@ export abstract class PlayScene extends Phaser.Scene {
     if (online) {
       this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => online.destroy());
       if (online.isHost) {
+        online.attachHost(this.world);
         this.slotSource = online.slotSource!;
         // Nhân vật của mọi người có ngay từ đầu (máy khách vào chậm vẫn có chỗ).
         for (const slot of online.allSlots()) this.spawnPlayer(slot);

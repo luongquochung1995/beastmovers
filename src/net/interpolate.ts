@@ -92,6 +92,11 @@ export class SnapshotBuffer {
     while (this.items.length > 2 && this.items[1]!.time < time - 1000) this.items.shift();
   }
 
+  /** Thời điểm đang vẽ, theo giờ host (ms); null khi chưa có snapshot. */
+  get playhead(): number | null {
+    return this.renderTime;
+  }
+
   get latest(): Snapshot | null {
     return this.items[this.items.length - 1]?.snap ?? null;
   }

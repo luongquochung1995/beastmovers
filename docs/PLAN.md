@@ -575,7 +575,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P21 | Lobby online | D | ✔ | 3 ngày | ✅ | 2026-10-28 |
 | P22 | Gửi input và snapshot | D | ✔ | 4 ngày | ✅ | 2026-10-28 |
 | P23 | Nội suy và dự đoán | D | ✔ | 4 ngày | ✅ | 2026-10-28 |
-| P24 | Đồng bộ sự kiện | D | ✔ | 2 ngày | ⬜ | |
+| P24 | Đồng bộ sự kiện | D | ✔ | 2 ngày | ✅ | 2026-10-28 |
 | P25 | Rớt mạng, lỗi kết nối, dự phòng | D | ✔ | 4 ngày | ⬜ | |
 | P26 | Test 8 người online | D | ✔ | 3 ngày | ⬜ | |
 | P27 | Menu chính, cài đặt, hướng dẫn | E | ✔ | 3 ngày | ⬜ | |
@@ -594,7 +594,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P40 | Kiểm thử trình duyệt | G | | 2 ngày | ⬜ | |
 | P41 | Phát hành | G | | 2 ngày | ⬜ | |
 
-**Tiến độ:** 21/41 phase · Mốc A 🟨 · B ✅ · C ✅ · D 🟨 · E ⬜ · F ⬜ · G ⬜
+**Tiến độ:** 22/41 phase · Mốc A 🟨 · B ✅ · C ✅ · D 🟨 · E ⬜ · F ⬜ · G ⬜
 
 ---
 
@@ -834,11 +834,12 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 - 📝 *Kiểm tra: (1) **Mô phỏng trọn đường online 60 khung/giây, mạng 150 ms ± 30 mỗi chiều** (unit test, chạy thật bộ gom input, mã hóa snapshot, bộ đệm, dự đoán): bấm phím → nhân vật mình đi ngay trong ≤ 2 bước logic; khi đi: 0 lần giật lùi, 0 lần khựng; dự đoán lệch host tối đa 0,17 px; người khác nhìn thấy: 0 giật lùi, 0 khựng, bộ đệm không thiếu gói. (2) Chromium, 2 trình duyệt riêng qua Trystero, `?lag=150&jitter=30`: bấm → nhân vật mình đi sau 126–196 ms (≈ 1 khung hình ở 9 FPS của container) so với **1055–1182 ms khi tắt dự đoán** (`?predict=0`); khi đi 0 khựng 0 lùi. Cách làm: máy khách gửi input **từng bước logic** kèm số thứ tự; host chạy đúng từng khung (hàng chờ chống dao động, dư lâu thì bỏ bớt, giữ cú bấm) và báo lại bước cuối đã chạy; máy khách chạy lại các bước host chưa chạy bằng cùng logic di chuyển (va tường, xe, đồ nặng), phần lệch kéo về trong ~120 ms. Người/đồ khác vẽ chậm ~100 ms, nội suy giữa 2 snapshot; tốc độ phát tự chỉnh để giữ khoảng đệm (không cần đồng bộ đồng hồ, vẫn đúng khi host chạy chậm). Lỗi tìm thấy và đã sửa: snapshot đầu tiên tới trước khi máy khách vào màn → mất hết gói delta (giờ host chỉ gửi khi máy khách đã xin ô); dự đoán lệch tới 26–41 px vì host chỉ dùng khung cuối của mỗi gói → đổi sang gửi từng khung. ⚠️ Đang khiêng đồ hoặc bị ngã thì không dự đoán (vẽ theo host, chậm ~RTT/2 + 100 ms) nên khiêng đồ qua mạng chậm sẽ có cảm giác "nặng tay" hơn; container chỉ 8–9 FPS nên cảm giác thật cần thử trên máy thật. Thêm `?lag=…&jitter=…` để thử mạng chậm với kênh thật.*
 
 #### P24 · Đồng bộ sự kiện
-- [ ] Gửi qua mạng các sự kiện: `dialogue`, `itemBroken`, `itemLoaded`, `ping`, `timeLow`, `levelEnd`
-- [ ] Hiệu ứng, âm thanh, câu thoại phát ở client dựa trên sự kiện
-- [ ] Kết quả màn do host tính rồi gửi tới mọi máy
-- [ ] Câu thoại gửi bằng mã (sự kiện + số thứ tự), mỗi máy hiện theo ngôn ngữ của mình
+- [x] Gửi qua mạng các sự kiện: `dialogue`, `itemBroken`, `itemLoaded`, `ping`, `timeLow`, `levelEnd`
+- [x] Hiệu ứng, âm thanh, câu thoại phát ở client dựa trên sự kiện
+- [x] Kết quả màn do host tính rồi gửi tới mọi máy
+- [x] Câu thoại gửi bằng mã (sự kiện + số thứ tự), mỗi máy hiện theo ngôn ngữ của mình
 - **✅ Xong khi:** mọi máy thấy cùng một câu thoại (mỗi máy bằng ngôn ngữ đã chọn) và cùng bảng kết quả.
+- 📝 *Kiểm tra (Chromium, 3 máy: host tiếng Việt, khách tiếng Anh, khách tiếng Việt): đầu màn → cả 3 cùng câu `levelStart#4` ("Đồ nào cũng có kỷ niệm hết đó nghe chưa." / "Every single thing here has a memory, you hear?"); gương vỡ → cùng `itemBroken#4`, cả 3 máy có vùng mảnh kính, gương vỡ; thùng lên xe → cùng `itemLoaded#3`; còn 60 giây → cùng `timeLow#2`; máy khách bấm Ping (F) → cả 3 máy nhận sự kiện ping, hiện "❗" trên đầu; host kết thúc → **bảng kết quả giống hệt nhau trên cả 3 máy**. Cách làm: mô phỏng không vẽ hiệu ứng trực tiếp mà gọi `world.fx` (chữ nổi bằng khóa i18n, rung màn hình, câu thoại = loại + số thứ tự, vùng nước/kính mới sinh, ping); host gửi hiệu ứng + sự kiện game kèm số bước, máy khách phát khi hình vẽ (đang chậm ~100 ms) tới đúng bước đó; máy vào màn muộn nhận bù hiệu ứng 5 giây gần nhất (lỗi tìm thấy: câu chào đầu màn bị mất ở máy khách). Thế giới ở máy khách "thụ động": sự kiện host gửi chỉ để hiển thị, không tự gây sát thương/hành vi. Đọc câu thoại (giọng ú ớ) phát ở mọi máy. ⚠️ Ping hiện mới là "❗" trên đầu; vòng ping đầy đủ ở P30. Chưa có âm thanh khác ngoài giọng chủ nhà.*
 
 #### P25 · Rớt mạng, lỗi kết nối, dự phòng
 - [ ] Client rớt mạng: nhân vật đứng yên, được vào lại đúng chỗ cũ trong `reconnectGraceSec`

@@ -2,7 +2,8 @@ import type { GameConfig } from '../data/types';
 import type { LevelResult } from '../sim/LevelRuntime';
 import type { LevelRuntime } from '../sim/LevelRuntime';
 import type { SlotSource } from '../sim/SimSlot';
-import type { PlayerLook, World } from '../sim/World';
+import type { Fx, PlayerLook, World } from '../sim/World';
+import type { GameEvent } from '../systems/EventBus';
 import type { InputManager } from '../systems/input/InputManager';
 import { PLAYER_RADIUS } from '../entities/playerStyles';
 import { DEFAULT_MOTOR } from '../systems/PlayerMotor';
@@ -18,15 +19,24 @@ import type { Payload } from './Transport';
 
 /** Đồ nặng hơn mức này coi như vật cản khi dự đoán (đồ nhẹ thì người chơi đẩy đi được). */
 const HEAVY_KG = 40;
+/** Máy vào màn muộn vẫn nhận hiệu ứng/sự kiện trong khoảng này. */
+const RECENT_MS = 5000;
 /** `?predict=0`: tắt dự đoán (để so sánh khi thử nghiệm). */
 const PREDICT =
   typeof location === 'undefined' || new URLSearchParams(location.search).get('predict') !== '0';
 
-/** Tin điều khiển màn chơi online (ngoài input và snapshot). */
-export type GameMsg = { t: 'end'; result: LevelResult };
+/**
+ * Tin điều khiển màn chơi online (ngoài input và snapshot): hiệu ứng và sự kiện trong game
+ * (kèm bước logic để máy khách phát đúng lúc), kết quả màn.
+ */
+export type GameMsg =
+  | { t: 'end'; result: LevelResult }
+  | { t: 'ev'; fx: { tick: number; fx: Fx }[]; ev: { tick: number; e: GameEvent }[] };
 
-const isGameMsg = (d: Payload): d is GameMsg =>
-  typeof d === 'object' && d !== null && (d as { t?: unknown }).t === 'end';
+const isGameMsg = (d: Payload): d is GameMsg => {
+  const t = typeof d === 'object' && d !== null ? (d as { t?: unknown }).t : undefined;
+  return t === 'end' || t === 'ev';
+};
 
 /** Đo băng thông theo cửa sổ 1 giây. */
 class RateMeter {
@@ -60,6 +70,12 @@ export class OnlineGame {
   /** Ô toàn cục của người chơi trên máy này → bộ dự đoán. */
   private readonly predictors = new Map<number, Predictor>();
   private ended: LevelResult | null = null;
+  /** Host: sự kiện trong game chờ gửi. Máy khách: hiệu ứng/sự kiện chờ tới lúc phát. */
+  private readonly outEvents: { tick: number; e: GameEvent }[] = [];
+  private readonly incoming: ({ tick: number; fx: Fx } | { tick: number; e: GameEvent })[] = [];
+  private readonly tickMs: number;
+  /** Host: hiệu ứng/sự kiện vài giây gần nhất (gửi bù cho máy vào màn muộn). */
+  private readonly recent: ({ tick: number; fx: Fx } | { tick: number; e: GameEvent })[] = [];
   private readonly meter = new RateMeter();
   private nowMs = 0;
 
@@ -69,7 +85,8 @@ export class OnlineGame {
     private readonly inputs: InputManager,
     defIds: readonly string[],
   ) {
-    this.buffer = new SnapshotBuffer(1000 / config.logicHz, config.net.interpolationDelayMs);
+    this.tickMs = 1000 / config.logicHz;
+    this.buffer = new SnapshotBuffer(this.tickMs, config.net.interpolationDelayMs);
     const { session, roster } = ctx;
     const transport = session.transport;
     const selfId = transport.selfId;
@@ -84,8 +101,15 @@ export class OnlineGame {
       this.hub = hub;
       // Chỉ gửi snapshot cho máy đã vào màn (máy đó xin ô); lần đầu gửi gói đầy đủ.
       hub.onJoin((peer) => {
-        if (!this.readyPeers.has(peer)) this.broadcaster?.forget(peer);
+        if (this.readyPeers.has(peer)) return;
+        this.broadcaster?.forget(peer);
         this.readyPeers.add(peer);
+        // Hiệu ứng/sự kiện vừa xảy ra trước khi máy này vào màn (vd. câu chào đầu màn).
+        if (this.recent.length) {
+          const fx = this.recent.flatMap((r) => ('fx' in r ? [r] : []));
+          const ev = this.recent.flatMap((r) => ('e' in r ? [r] : []));
+          transport.send({ t: 'ev', fx, ev } satisfies GameMsg, peer);
+        }
       });
       transport.onPeerLeave((peer) => this.readyPeers.delete(peer));
       this.slotSource = new OnlineHostSlots(inputs, hub, localToGlobal);
@@ -95,7 +119,13 @@ export class OnlineGame {
       this.sender = new ClientInputSender(transport, hostId, inputs, config.net.inputHz);
       this.receiver = new SnapshotReceiver(transport, hostId, defIds);
       transport.onMessage((d, from) => {
-        if (from === hostId && isGameMsg(d)) this.ended = d.result;
+        if (from !== hostId || !isGameMsg(d)) return;
+        if (d.t === 'end') this.ended = d.result;
+        else {
+          for (const f of d.fx) this.incoming.push({ tick: f.tick, fx: f.fx });
+          for (const e of d.ev) this.incoming.push({ tick: e.tick, e: e.e });
+          this.incoming.sort((a, b) => a.tick - b.tick);
+        }
       });
     }
   }
@@ -121,6 +151,14 @@ export class OnlineGame {
     return seat && { style: seat.color, name: seat.name, hat: HATS[seat.hat] ?? '' };
   }
 
+  /** Host: ghi lại hiệu ứng và sự kiện của thế giới để gửi cho máy khách. */
+  attachHost(world: World): void {
+    if (!this.isHost) return;
+    world.recordFx = true;
+    world.bus.onAny((e) => this.outEvents.push({ tick: world.bus.tick, e }));
+    this.world = world;
+  }
+
   /** Máy khách: gắn thế giới để áp snapshot. */
   attachMirror(
     world: World,
@@ -129,6 +167,7 @@ export class OnlineGame {
   ): void {
     if (this.isHost) return;
     this.world = world;
+    world.remote = true;
     this.mirror = new ClientMirror(world, runtime, (s) => this.lookOf(s), spawnAt);
   }
 
@@ -173,6 +212,14 @@ export class OnlineGame {
   hostStep(dtMs: number, take: () => Snapshot): void {
     this.nowMs += dtMs;
     this.broadcaster?.tick(dtMs, [...this.readyPeers], take);
+    const w = this.world;
+    if (w && (w.fxOut.length || this.outEvents.length)) {
+      const msg: GameMsg = { t: 'ev', fx: w.fxOut.splice(0), ev: this.outEvents.splice(0) };
+      for (const peer of this.readyPeers) this.ctx.session.transport.send(msg, peer);
+      this.recent.push(...msg.fx, ...msg.ev);
+      const keepFrom = w.bus.tick - RECENT_MS / this.tickMs;
+      while (this.recent.length && this.recent[0]!.tick < keepFrom) this.recent.shift();
+    }
   }
 
   /** Máy khách: thay cho bước mô phỏng. Gửi input, dự đoán nhân vật của mình, nhận snapshot. */
@@ -210,6 +257,13 @@ export class OnlineGame {
     const s = this.buffer.sample(performance.now());
     if (!s || !this.mirror || !this.world) return;
     this.mirror.apply(s);
+    // Hiệu ứng, câu thoại, sự kiện: phát khi hình vẽ tới đúng bước đó.
+    const head = this.buffer.playhead ?? 0;
+    while (this.incoming.length && this.incoming[0]!.tick * this.tickMs <= head) {
+      const m = this.incoming.shift()!;
+      if ('fx' in m) this.world.present(m.fx);
+      else this.world.bus.emit(m.e);
+    }
     for (const [slot, pred] of this.predictors) {
       const pos = pred.display(frameMs);
       const motor = pred.motor;

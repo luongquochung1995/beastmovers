@@ -73,6 +73,8 @@ export class LevelRuntime {
     private readonly world: World,
     readonly built: BuiltLevel,
     private readonly data: GameData,
+    /** Máy khách online: không tự phản ứng với sự kiện (câu thoại, độ hài lòng do host gửi). */
+    remote = false,
   ) {
     this.clock = createClock(built.level.timeLimitSec);
     const def = data.landlords.find((l) => l.id === built.level.landlord)!;
@@ -96,7 +98,8 @@ export class LevelRuntime {
       ? this.randomChangeMindDelay()
       : null;
     this.stats = new StatsTracker(world);
-    world.bus.onAny((e) => this.onEvent(e));
+    world.sayHandler = (fx) => this.present(fx.ev, fx.index, fx.item);
+    if (!remote) world.bus.onAny((e) => this.onEvent(e));
   }
 
   private randomChangeMindDelay(): number {
@@ -121,16 +124,27 @@ export class LevelRuntime {
     this.speak(ev);
   }
 
-  private speak(ev: DialogueEvent, params: Record<string, string> = {}): void {
+  /** Chọn câu thoại (host); câu được gửi bằng mã để mỗi máy hiện theo ngôn ngữ của mình. */
+  private speak(ev: DialogueEvent, itemId?: string): void {
     const index = this.dialogue.pick(ev, this.elapsedMs);
     if (index === null) return;
+    this.world.fx(itemId ? { k: 'say', ev, index, item: itemId } : { k: 'say', ev, index });
+  }
+
+  /** Câu thoại thứ `index` của loại `ev`, theo ngôn ngữ của máy này. */
+  private present(ev: DialogueEvent, index: number, itemId?: string): void {
     const def = this.landlord.def;
     const template = this.data.lines[getLocale()][def.linesKey]?.[ev]?.[index];
     if (!template) return;
-    const text = format(template, params);
+    const item = itemId ? this.data.itemById.get(itemId)?.name[getLocale()] : undefined;
+    const text = format(template, item ? { item } : {});
+    this.lastLine = { ev, index, text };
     this.landlord.say(text);
     speakGibberish(text, def.voicePitch);
   }
+
+  /** Câu thoại vừa nói (cho kiểm thử). */
+  lastLine: { ev: DialogueEvent; index: number; text: string } | null = null;
 
   /** Modifier `landlordChangesMind`: bắt mang thêm một món chưa bắt buộc. */
   private changeMind(): void {
@@ -147,7 +161,7 @@ export class LevelRuntime {
     const item = candidates[Math.floor(this.world.random.next() * candidates.length)]!;
     this.built.required.add(item.uid);
     this.world.bus.emit({ type: 'requiredChanged', item: item.uid, itemId: item.id });
-    this.speak('changeMind', { item: item.def.name[getLocale()] });
+    this.speak('changeMind', item.id);
   }
 
   render(alpha: number): void {

@@ -1,4 +1,3 @@
-import { t } from '../data/i18n';
 import type { BehaviorRef } from '../data/types';
 import type { Item } from '../entities/Item';
 import type { Player } from '../entities/Player';
@@ -80,7 +79,7 @@ function makeTrigger(world: World, params: BehaviorParams) {
 
 function announce(world: World, item: Item, name: string, popKey: unknown) {
   world.bus.emit({ type: 'behavior', item: item.uid, itemId: item.id, name });
-  if (typeof popKey === 'string') world.pop(item.position, t(popKey));
+  if (typeof popKey === 'string') world.pop(item.position, { key: popKey });
 }
 
 // ---------- Hành vi chung, có tham số ----------
@@ -372,7 +371,7 @@ const scratchDrop: BehaviorFactory = ({ world, item, params }) => {
       const holders = [...world.grab.holds].filter(([, h]) => h.item === item).map(([p]) => p);
       for (const p of holders) world.grab.release(p, 'scratched');
       world.bus.emit({ type: 'catEscaped', item: item.uid, itemId: item.id });
-      world.pop(item.position, t('cat.meow'), '#ff8a80');
+      world.pop(item.position, { key: 'cat.meow' }, '#ff8a80');
       const from = holders[0]?.position ?? item.position;
       const away = sub(item.position, from);
       const len = Math.hypot(away.x, away.y) || 1;
