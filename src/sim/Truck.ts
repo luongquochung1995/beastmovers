@@ -64,7 +64,8 @@ export class Truck {
   bed: Rect;
   /** Hình bao toàn bộ xe (thùng, vách, cabin) để chặn xe trôi ra ngoài bản đồ. */
   private extent: Rect;
-  private readonly openingNormal: Vec;
+  /** Hướng từ thùng xe ra phía cửa thùng (đơn vị). */
+  readonly openingNormal: Vec;
   private readonly rollDir: Vec;
   private readonly bodies: MatterJS.BodyType[] = [];
   private readonly view: Phaser.GameObjects.Container;
@@ -249,7 +250,8 @@ export class Truck {
     const res = updateCargo(
       this.cargo,
       this.world.items
-        .filter((i) => !i.hidden)
+        // Thứ không nắm được (paparazzi) không phải hàng hóa.
+        .filter((i) => !i.hidden && i.def.grabbable !== false)
         .map((i) => {
           const v = i.body.velocity;
           return {

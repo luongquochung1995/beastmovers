@@ -12,6 +12,7 @@ import {
   pointInConvexPolygon,
   rotate,
   sub,
+  type Vec,
 } from '../systems/geometry';
 import type { World } from './World';
 
@@ -383,6 +384,117 @@ const scratchDrop: BehaviorFactory = ({ world, item, params }) => {
   };
 };
 
+// ---------- Paparazzi ----------
+
+/** Paparazzi đứng chắn cách món đồ đang khiêng bấy nhiêu px, về phía xe tải. */
+const PAP_BLOCK_DIST = 95;
+/** Món đồ đang khiêng tới gần hơn mức này thì paparazzi né sang bên. */
+const PAP_DODGE_DIST = 200;
+/** Không lại gần thùng xe hơn mức này (đứng trong thùng sẽ chiếm chỗ xếp đồ). */
+const PAP_TRUCK_MARGIN = 40;
+
+/** Điểm `p` nếu nằm ngoài hình chữ nhật `r` nới rộng `m`; nếu nằm trong thì đẩy ra mép gần nhất. */
+function outsideRect(p: Vec, r: { x: number; y: number; w: number; h: number }, m: number): Vec {
+  const x0 = r.x - m;
+  const x1 = r.x + r.w + m;
+  const y0 = r.y - m;
+  const y1 = r.y + r.h + m;
+  if (p.x < x0 || p.x > x1 || p.y < y0 || p.y > y1) return p;
+  const opts = [
+    { d: p.x - x0, q: { x: x0 - 1, y: p.y } },
+    { d: x1 - p.x, q: { x: x1 + 1, y: p.y } },
+    { d: p.y - y0, q: { x: p.x, y: y0 - 1 } },
+    { d: y1 - p.y, q: { x: p.x, y: y1 + 1 } },
+  ];
+  return opts.reduce((a, b) => (b.d < a.d ? b : a)).q;
+}
+
+/**
+ * Paparazzi: chạy ra chắn giữa món đồ đang khiêng (không có thì người gần nhất) và xe tải,
+ * thỉnh thoảng chụp ảnh (chớp đèn). Bị lao trúng thì choáng một lúc.
+ * Tham số: speed (mặc định `ai.speed`), flashEveryMs, stunMs.
+ */
+const paparazziAI: BehaviorFactory = ({ world, item, params }) => {
+  const speed = num(params.speed, item.def.ai?.speed ?? 2);
+  const flashEvery = num(params.flashEveryMs, 3500);
+  const stunMs = num(params.stunMs, 2500);
+  let stunned = 0;
+  let sinceFlash = world.random.next() * flashEvery;
+  return {
+    name: 'paparazziAI',
+    onStep(dt) {
+      const body = item.body;
+      world.scene.matter.body.setAngularVelocity(body, 0);
+      if (stunned > 0) {
+        stunned -= dt;
+        item.status = 'stunned';
+        return;
+      }
+      const lifted = world.items.filter((i) => i.carriers.size > 0 && i !== item);
+      const targets = lifted.length
+        ? lifted.map((i) => i.position)
+        : world.players.map((p) => p.position);
+      if (!targets.length) return;
+      const pos = item.position;
+      let target = targets[0]!;
+      for (const t of targets)
+        if (Math.hypot(t.x - pos.x, t.y - pos.y) < Math.hypot(target.x - pos.x, target.y - pos.y))
+          target = t;
+      const bed = world.truck?.bed;
+      let goal = target;
+      let dodging = false;
+      if (bed) {
+        const truck = { x: bed.x + bed.w / 2, y: bed.y + bed.h / 2 };
+        const d = sub(truck, target);
+        const len = Math.hypot(d.x, d.y) || 1;
+        goal = {
+          x: target.x + (d.x / len) * PAP_BLOCK_DIST,
+          y: target.y + (d.y / len) * PAP_BLOCK_DIST,
+        };
+        // Không bước vào thùng xe: đích trong (hay sát) thùng thì đứng chắn ở cửa thùng;
+        // lỡ ở trong thì cũng đi ra cửa.
+        const door = Math.max(bed.w, bed.h) / 2 + PAP_TRUCK_MARGIN + 20;
+        const n = world.truck!.openingNormal;
+        if (outsideRect(goal, bed, PAP_TRUCK_MARGIN) !== goal || outsideRect(pos, bed, 0) !== pos) {
+          goal = { x: truck.x + n.x * door, y: truck.y + n.y * door };
+        } // Món đồ đang khiêng tới sát: né sang bên (không để bị cả đội ủi vào thùng xe).
+        const gap = Math.hypot(target.x - pos.x, target.y - pos.y);
+        dodging = lifted.length > 0 && gap < PAP_DODGE_DIST;
+        if (dodging) {
+          const side = { x: -d.y / len, y: d.x / len };
+          const s = (pos.x - target.x) * side.x + (pos.y - target.y) * side.y >= 0 ? 1 : -1;
+          goal = { x: target.x + side.x * s * 170, y: target.y + side.y * s * 170 };
+        }
+      }
+      const to = sub(goal, pos);
+      const dist = Math.hypot(to.x, to.y);
+      // Né thì chạy nhanh hơn và đổi hướng ngay.
+      const sp = dodging ? speed * 2 : speed;
+      const v = dist > 8 ? { x: (to.x / dist) * sp, y: (to.y / dist) * sp } : { x: 0, y: 0 };
+      const cur = body.velocity;
+      const k = dodging ? 0.6 : 0.2;
+      world.scene.matter.body.setVelocity(body, {
+        x: cur.x + (v.x - cur.x) * k,
+        y: cur.y + (v.y - cur.y) * k,
+      });
+      item.status = 'blocking';
+      sinceFlash += dt;
+      const near = Math.hypot(target.x - pos.x, target.y - pos.y) < 260;
+      if (near && sinceFlash >= flashEvery) {
+        sinceFlash = 0;
+        world.pop(pos, '📸 ✨');
+        world.shake(120, 0.002);
+      }
+    },
+    onTouched(p) {
+      if (p.motor.mode === 'dashing' && stunned <= 0) {
+        stunned = stunMs;
+        world.pop(item.position, '😵');
+      }
+    },
+  };
+};
+
 /** Đánh dấu mèo biết nhảy ra khỏi đồ chứa (xác suất do đồ chứa quyết định, xem World). */
 const escapeBox: BehaviorFactory = () => ({ name: 'escapeBox' });
 
@@ -471,6 +583,7 @@ export const BEHAVIORS: Partial<Record<BehaviorName, BehaviorFactory>> = {
   fleeAI,
   scratchDrop,
   escapeBox,
+  paparazziAI,
 };
 
 /** Tạo các hành vi của một món đồ từ data. */

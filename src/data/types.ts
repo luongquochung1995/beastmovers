@@ -150,6 +150,8 @@ export const itemSchema = obj({
   behaviors: optional(arr(behaviorRef())),
   truckSlots: int({ min: 1 }),
   throwable: optional(bool()),
+  /** false: không ai nắm được (vd. paparazzi). */
+  grabbable: optional(bool()),
   ai: optional(
     obj({
       speed: num({ min: 0 }),

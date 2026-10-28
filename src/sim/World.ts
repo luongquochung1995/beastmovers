@@ -357,7 +357,7 @@ export class World {
 
   /** Món đồ có nắm được không (mèo đang trong lồng thì không). */
   isGrabbable(item: Item): boolean {
-    return !item.hidden;
+    return !item.hidden && item.def.grabbable !== false;
   }
 
   // ---------- Đồ chứa (lồng, thùng) ----------

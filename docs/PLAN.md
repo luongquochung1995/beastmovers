@@ -585,7 +585,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P31 | 5 màn MVP (1 màn mỗi cấp) và 3 chủ nhà | F | ✔ | 5 ngày | 🟨 | |
 | P32 | Màn Solo và Đôi còn lại | F | | 5 ngày | 🟨 | |
 | P33 | Màn Đội còn lại | F | | 5 ngày | 🟨 | |
-| P34 | Màn Đại đội và Full nhà còn lại | F | | 5 ngày | ⬜ | |
+| P34 | Màn Đại đội và Full nhà còn lại | F | | 5 ngày | 🟨 | |
 | P35 | Co giãn theo số người (scaling) | F | | 3 ngày | ⬜ | |
 | P36 | Thêm 2 chủ nhà và bộ thoại | F | | 3 ngày | ⬜ | |
 | P37 | Âm thanh và hiệu ứng | G | | 4 ngày | ⬜ | |
@@ -953,12 +953,13 @@ Chưa làm: playtest người thật; 2 máy ở 2 mạng khác nhau qua relay c
 - 📝 *Kiểm tra (Chromium, bot 4 tay cầm giả lập như P31): **màn 8** — 6 phòng có cửa cánh (mèo đẩy cửa chạy qua), 6 con mèo (3 bắt buộc), 4 lồng ở sân; 4 người khiêng két sắt qua lối 170 px ra xe 19,5 giây. **Màn 9** — xe tải trên dốc mới vào đã nhả phanh: trôi 101 px trong 3 giây; kéo phanh tay → dừng; 4 người khiêng piano đứng xuống sân ra xe 21 giây. **Màn 10** — căn hộ trên lầu, 2 đoạn cầu thang (rộng 170 và 200 px) có góc rẽ 90°; 4 người khiêng két sắt xuống cầu thang ra xe 47,5 giây (gần 25 giây trên cầu thang). Modifier **`stairs`**: lớp `stairs` trong bản đồ Tiled (hình chữ nhật), trên cầu thang đi bằng 55% tốc độ đi bộ và không chạy được; vẽ thành bậc sọc. Dự đoán phía máy khách giờ lấy thông số di chuyển theo vị trí như host (cầu thang, vũng nước) nên không bị kéo giật khi đi qua. Mèo mở cửa: mèo vốn đã đẩy được cửa có bản lề nên không thêm cơ chế mới. Sao mở khóa: 7 / 8 / 9. ⚠️ Chưa đạt "Xong khi": bot mới thử phần khiêng đồ to (dư nhiều thời gian: 20–48 giây trên 360–420 giây), chưa thử bắt đủ 3 con mèo ở màn 8; cần nhóm 4 người thật.*
 
 #### P34 · Màn Đại đội và Full nhà còn lại
-- [ ] 🟠 Màn 11 – Phòng gym
-- [ ] 🟠 Màn 13 – Thủy cung tại gia
-- [ ] 🟠 Màn 14 – Căn hộ minimalist (modifier `landlordChangesMind`)
-- [ ] 🔴 Màn 15 – Bảo tàng tư nhân
-- [ ] Modifier `paparazzi` cho màn 16
+- [x] 🟠 Màn 11 – Phòng gym
+- [x] 🟠 Màn 13 – Thủy cung tại gia
+- [x] 🟠 Màn 14 – Căn hộ minimalist (modifier `landlordChangesMind`)
+- [x] 🔴 Màn 15 – Bảo tàng tư nhân
+- [x] Modifier `paparazzi` cho màn 16
 - **✅ Xong khi:** test với 6 và 8 người thật.
+- 📝 *Kiểm tra (Chromium, bot 6–8 tay cầm giả lập như P31): **màn 11** — 6 người khiêng giàn tạ qua lối 280 px ra xe 13 giây; **màn 13** — 6 người khiêng bể cá khổng lồ đi thẳng ra xe 17 giây, không nghiêng nên không tràn nước, không vỡ (nghiêng/xoay nhanh thì tràn nước — hành vi có từ P10); **màn 14** — không gian mở gần như trống + chủ nhà đổi ý giữa chừng, 6 người khiêng bàn bi-a ra xe 16 giây; **màn 15** — 8 người khiêng tượng đá từ phòng trưng bày, vòng qua bệ trưng bày ra xe 20 giây. **Paparazzi** (màn 16): món đồ mới `paparazzi` (`grabbable: false` — không ai nắm được, không tính là hàng trên xe) với hành vi `paparazziAI`: chạy ra chắn giữa món đồ đang khiêng và xe tải, chụp ảnh ("📸 ✨" + rung nhẹ) mỗi ~3,5 giây khi ở gần, bị lao trúng thì choáng 2,5 giây; không bước vào thùng xe (đứng chắn ở cửa thùng); món đồ đang khiêng tới gần 200 px thì né sang bên. Modifier `paparazzi` tự thả 3 người ở góc sân ngoài trời. Lỗi tìm thấy khi thử: (1) đồ `strict` bị "đóng đinh" khi không ai khiêng nên paparazzi đứng im → dùng `free`; (2) paparazzi đi vào thùng xe chiếm chỗ (xe 12/40 thay vì 10/40) → loại khỏi việc tính hàng, cấm vào thùng; (3) đứng chắn ở cửa thùng thì bị cả đội 8 người ủi vào thùng rồi kẹt sau grand piano → né sang bên khi đồ to tới gần. Mỗi màn chỉ một món khổng lồ (giới hạn thùng xe, xem P31). Sao mở khóa: 11 / 12 / 13 / 15 / 18 / 20 (màn 11–16). Chủ nhà tạm: màn 13, 14 dùng Diva Lan Na, màn 11, 15 dùng Chú Bảy (P36 thêm anh startup cho màn 14). ⚠️ Chưa đạt "Xong khi": cần nhóm 6 và 8 người thật; paparazzi chưa làm chậm bot rõ rệt (bot đi thẳng), cần chỉnh độ khó ở P39.*
 
 #### P35 · Co giãn theo số người (scaling)
 - [ ] Thêm đồ theo `extraSpawnsPerPlayer`

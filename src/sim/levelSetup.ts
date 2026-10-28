@@ -43,7 +43,25 @@ export function buildLevel(
     if (s.required) required.add(item.uid);
     return item;
   });
+  if (spawnItems && level.modifiers.includes('paparazzi')) {
+    for (const p of paparazziSpawns(map)) items.push(world.spawnItem('paparazzi', p.x, p.y, 0));
+  }
   return { level, map, required, items };
+}
+
+/** Modifier `paparazzi`: 3 tay săn ảnh đứng ở góc xa của các sân ngoài trời. */
+const PAPARAZZI = 3;
+
+function paparazziSpawns(map: MapLayout): Vec[] {
+  const out: Vec[] = [];
+  const yards = map.floors.filter((f) => f.outdoor);
+  for (let i = 0; out.length < PAPARAZZI && yards.length; i++) {
+    const { x, y, w, h } = yards[i % yards.length]!.rect;
+    const corner = Math.floor(i / yards.length) % 4;
+    const m = 50;
+    out.push({ x: corner % 2 ? x + w - m : x + w / 2, y: corner < 2 ? y + m : y + h - m });
+  }
+  return out;
 }
 
 /** Điểm xuất hiện của người chơi ô `slotIndex` (vòng lại nếu nhiều người hơn số điểm). */

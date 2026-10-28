@@ -24,6 +24,8 @@ export const BEHAVIOR_NAMES = [
   'fleeAI',
   'scratchDrop',
   'escapeBox',
+  // Paparazzi (modifier `paparazzi`, P34)
+  'paparazziAI',
 ] as const;
 
 export type BehaviorName = (typeof BEHAVIOR_NAMES)[number];

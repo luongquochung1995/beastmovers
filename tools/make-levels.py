@@ -44,6 +44,69 @@ def stars(level):
 
 LEVELS = [
     {
+        "id": "lv11_gym",
+        "name": {"en": "The Gym", "vi": "Phòng gym"},
+        "tier": "squad", "minPlayers": 6, "maxPlayers": 8, "recommendedPlayers": 6,
+        "unlockStars": 11, "timeLimitSec": 420, "map": "maps/gym.json",
+        "landlord": "collector",
+        "truck": {"x": 1500, "y": 390, "slots": 32, "hasHandbrake": False, "facing": "left"},
+        "spawns": spawns(
+            [("weight_rack", 500, 400), ("mirror", 600, 50), ("box", 100, 800), ("box", 160, 800)],
+            [("treadmill", 300, 150), ("treadmill", 800, 150), ("dumbbell", 900, 500),
+             ("dumbbell", 940, 500), ("dumbbell", 980, 500), ("dumbbell", 1020, 500),
+             ("box", 220, 800), ("plant", 1120, 650), ("plant", 60, 650)],
+        ),
+        "playerSpawns": yard(1290, 600, 880),
+        "modifiers": [], "satisfactionMultiplier": 10, "scaling": None,
+    },
+    {
+        "id": "lv13_home_aquarium",
+        "name": {"en": "Home Aquarium", "vi": "Thủy cung tại gia"},
+        "tier": "squad", "minPlayers": 6, "maxPlayers": 8, "recommendedPlayers": 6,
+        "unlockStars": 13, "timeLimitSec": 420, "map": "maps/home_aquarium.json",
+        "landlord": "celebrity",
+        "truck": {"x": 1500, "y": 380, "slots": 32, "hasHandbrake": False, "facing": "left"},
+        "spawns": spawns(
+            [("giant_aquarium", 500, 380), ("fish_tank", 200, 150), ("teddy", 900, 950)],
+            [("fish_tank", 800, 150), ("fish_tank", 1000, 600), ("plant", 60, 650),
+             ("plant", 1120, 650), ("mirror", 1000, 1040), ("box", 100, 800), ("box", 160, 800),
+             ("sofa", 700, 950)],
+        ),
+        "playerSpawns": yard(1290, 600, 880),
+        "modifiers": [], "satisfactionMultiplier": 10, "scaling": None,
+    },
+    {
+        "id": "lv14_minimalist",
+        "name": {"en": "Minimalist Apartment", "vi": "Căn hộ minimalist"},
+        "tier": "squad", "minPlayers": 6, "maxPlayers": 8, "recommendedPlayers": 6,
+        "unlockStars": 15, "timeLimitSec": 420, "map": "maps/minimalist.json",
+        "landlord": "celebrity",
+        "truck": {"x": 1500, "y": 470, "slots": 32, "hasHandbrake": False, "facing": "left"},
+        "spawns": spawns(
+            [("pool_table", 400, 400), ("plant", 100, 100), ("mirror", 800, 50)],
+            [("box", 900, 900), ("box", 960, 900), ("box", 1020, 900), ("teddy", 300, 1000),
+             ("plant", 1100, 100), ("sofa", 850, 600), ("fish_tank", 200, 900)],
+        ),
+        "playerSpawns": yard(1290, 700, 920),
+        "modifiers": ["landlordChangesMind"], "satisfactionMultiplier": 10, "scaling": None,
+    },
+    {
+        "id": "lv15_museum",
+        "name": {"en": "Private Museum", "vi": "Bảo tàng tư nhân"},
+        "tier": "full", "minPlayers": 8, "maxPlayers": 8, "recommendedPlayers": 8,
+        "unlockStars": 18, "timeLimitSec": 480, "map": "maps/museum.json",
+        "landlord": "collector",
+        "truck": {"x": 1500, "y": 320, "slots": 36, "hasHandbrake": False, "facing": "left"},
+        "spawns": spawns(
+            [("statue", 500, 900), ("mirror", 280, 120), ("mirror", 880, 120)],
+            [("mirror", 600, 600), ("mirror", 1000, 1040), ("plant", 60, 650),
+             ("plant", 1120, 650), ("teddy", 1100, 900), ("fish_tank", 200, 900),
+             ("box", 600, 400), ("box", 660, 400)],
+        ),
+        "playerSpawns": yard(1290, 560, 880),
+        "modifiers": [], "satisfactionMultiplier": 12, "scaling": None,
+    },
+    {
         "id": "lv08_six_cats",
         "name": {"en": "House of Six Cats", "vi": "Nhà 6 con mèo"},
         "tier": "team", "minPlayers": 4, "maxPlayers": 8, "recommendedPlayers": 4,
@@ -191,7 +254,7 @@ LEVELS = [
         "id": "lv12_billiard_hall",
         "name": {"en": "Billiard Hall", "vi": "Quán bi-a"},
         "tier": "squad", "minPlayers": 6, "maxPlayers": 8, "recommendedPlayers": 6,
-        "unlockStars": 10, "timeLimitSec": 420, "map": "maps/billiard_hall.json",
+        "unlockStars": 12, "timeLimitSec": 420, "map": "maps/billiard_hall.json",
         "landlord": "collector",
         "truck": {"x": 1500, "y": 470, "slots": 36, "hasHandbrake": False, "facing": "left"},
         "spawns": spawns(
@@ -207,7 +270,7 @@ LEVELS = [
         "id": "lv16_celebrity_villa",
         "name": {"en": "Celebrity Villa", "vi": "Biệt thự người nổi tiếng"},
         "tier": "full", "minPlayers": 8, "maxPlayers": 8, "recommendedPlayers": 8,
-        "unlockStars": 14, "timeLimitSec": 480, "map": "maps/villa.json",
+        "unlockStars": 20, "timeLimitSec": 480, "map": "maps/villa.json",
         "landlord": "celebrity",
         "truck": {"x": 1650, "y": 430, "slots": 40, "hasHandbrake": False, "facing": "left"},
         "spawns": spawns(
@@ -217,7 +280,7 @@ LEVELS = [
              ("mirror", 200, 1140), ("box", 1000, 900), ("box", 1060, 900)],
         ),
         "playerSpawns": yard(1400, 200, 620),
-        "modifiers": [], "satisfactionMultiplier": 12, "scaling": None,
+        "modifiers": ["paparazzi"], "satisfactionMultiplier": 12, "scaling": None,
     },
 ]
 

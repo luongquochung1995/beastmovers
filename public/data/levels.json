@@ -1173,6 +1173,122 @@
     "scaling": null
   },
   {
+    "id": "lv11_gym",
+    "name": {
+      "en": "The Gym",
+      "vi": "Phòng gym"
+    },
+    "tier": "squad",
+    "minPlayers": 6,
+    "maxPlayers": 8,
+    "recommendedPlayers": 6,
+    "unlockStars": 11,
+    "timeLimitSec": 420,
+    "map": "maps/gym.json",
+    "landlord": "collector",
+    "truck": {
+      "x": 1500,
+      "y": 390,
+      "slots": 32,
+      "hasHandbrake": false,
+      "facing": "left"
+    },
+    "spawns": [
+      {
+        "item": "weight_rack",
+        "x": 500,
+        "y": 400,
+        "required": true
+      },
+      {
+        "item": "mirror",
+        "x": 600,
+        "y": 50,
+        "required": true
+      },
+      {
+        "item": "box",
+        "x": 100,
+        "y": 800,
+        "required": true
+      },
+      {
+        "item": "box",
+        "x": 160,
+        "y": 800,
+        "required": true
+      },
+      {
+        "item": "treadmill",
+        "x": 300,
+        "y": 150,
+        "required": false
+      },
+      {
+        "item": "treadmill",
+        "x": 800,
+        "y": 150,
+        "required": false
+      },
+      {
+        "item": "dumbbell",
+        "x": 900,
+        "y": 500,
+        "required": false
+      },
+      {
+        "item": "dumbbell",
+        "x": 940,
+        "y": 500,
+        "required": false
+      },
+      {
+        "item": "dumbbell",
+        "x": 980,
+        "y": 500,
+        "required": false
+      },
+      {
+        "item": "dumbbell",
+        "x": 1020,
+        "y": 500,
+        "required": false
+      },
+      {
+        "item": "box",
+        "x": 220,
+        "y": 800,
+        "required": false
+      },
+      {
+        "item": "plant",
+        "x": 1120,
+        "y": 650,
+        "required": false
+      },
+      {
+        "item": "plant",
+        "x": 60,
+        "y": 650,
+        "required": false
+      }
+    ],
+    "playerSpawns": [
+      [1290, 600],
+      [1340, 600],
+      [1290, 650],
+      [1340, 650],
+      [1290, 880],
+      [1340, 880],
+      [1290, 930],
+      [1340, 930]
+    ],
+    "modifiers": [],
+    "stars": [1450, 1850, 2250],
+    "satisfactionMultiplier": 10,
+    "scaling": null
+  },
+  {
     "id": "lv12_billiard_hall",
     "name": {
       "en": "Billiard Hall",
@@ -1182,7 +1298,7 @@
     "minPlayers": 6,
     "maxPlayers": 8,
     "recommendedPlayers": 6,
-    "unlockStars": 10,
+    "unlockStars": 12,
     "timeLimitSec": 420,
     "map": "maps/billiard_hall.json",
     "landlord": "collector",
@@ -1277,6 +1393,312 @@
     "scaling": null
   },
   {
+    "id": "lv13_home_aquarium",
+    "name": {
+      "en": "Home Aquarium",
+      "vi": "Thủy cung tại gia"
+    },
+    "tier": "squad",
+    "minPlayers": 6,
+    "maxPlayers": 8,
+    "recommendedPlayers": 6,
+    "unlockStars": 13,
+    "timeLimitSec": 420,
+    "map": "maps/home_aquarium.json",
+    "landlord": "celebrity",
+    "truck": {
+      "x": 1500,
+      "y": 380,
+      "slots": 32,
+      "hasHandbrake": false,
+      "facing": "left"
+    },
+    "spawns": [
+      {
+        "item": "giant_aquarium",
+        "x": 500,
+        "y": 380,
+        "required": true
+      },
+      {
+        "item": "fish_tank",
+        "x": 200,
+        "y": 150,
+        "required": true
+      },
+      {
+        "item": "teddy",
+        "x": 900,
+        "y": 950,
+        "required": true
+      },
+      {
+        "item": "fish_tank",
+        "x": 800,
+        "y": 150,
+        "required": false
+      },
+      {
+        "item": "fish_tank",
+        "x": 1000,
+        "y": 600,
+        "required": false
+      },
+      {
+        "item": "plant",
+        "x": 60,
+        "y": 650,
+        "required": false
+      },
+      {
+        "item": "plant",
+        "x": 1120,
+        "y": 650,
+        "required": false
+      },
+      {
+        "item": "mirror",
+        "x": 1000,
+        "y": 1040,
+        "required": false
+      },
+      {
+        "item": "box",
+        "x": 100,
+        "y": 800,
+        "required": false
+      },
+      {
+        "item": "box",
+        "x": 160,
+        "y": 800,
+        "required": false
+      },
+      {
+        "item": "sofa",
+        "x": 700,
+        "y": 950,
+        "required": false
+      }
+    ],
+    "playerSpawns": [
+      [1290, 600],
+      [1340, 600],
+      [1290, 650],
+      [1340, 650],
+      [1290, 880],
+      [1340, 880],
+      [1290, 930],
+      [1340, 930]
+    ],
+    "modifiers": [],
+    "stars": [2750, 3150, 3550],
+    "satisfactionMultiplier": 10,
+    "scaling": null
+  },
+  {
+    "id": "lv14_minimalist",
+    "name": {
+      "en": "Minimalist Apartment",
+      "vi": "Căn hộ minimalist"
+    },
+    "tier": "squad",
+    "minPlayers": 6,
+    "maxPlayers": 8,
+    "recommendedPlayers": 6,
+    "unlockStars": 15,
+    "timeLimitSec": 420,
+    "map": "maps/minimalist.json",
+    "landlord": "celebrity",
+    "truck": {
+      "x": 1500,
+      "y": 470,
+      "slots": 32,
+      "hasHandbrake": false,
+      "facing": "left"
+    },
+    "spawns": [
+      {
+        "item": "pool_table",
+        "x": 400,
+        "y": 400,
+        "required": true
+      },
+      {
+        "item": "plant",
+        "x": 100,
+        "y": 100,
+        "required": true
+      },
+      {
+        "item": "mirror",
+        "x": 800,
+        "y": 50,
+        "required": true
+      },
+      {
+        "item": "box",
+        "x": 900,
+        "y": 900,
+        "required": false
+      },
+      {
+        "item": "box",
+        "x": 960,
+        "y": 900,
+        "required": false
+      },
+      {
+        "item": "box",
+        "x": 1020,
+        "y": 900,
+        "required": false
+      },
+      {
+        "item": "teddy",
+        "x": 300,
+        "y": 1000,
+        "required": false
+      },
+      {
+        "item": "plant",
+        "x": 1100,
+        "y": 100,
+        "required": false
+      },
+      {
+        "item": "sofa",
+        "x": 850,
+        "y": 600,
+        "required": false
+      },
+      {
+        "item": "fish_tank",
+        "x": 200,
+        "y": 900,
+        "required": false
+      }
+    ],
+    "playerSpawns": [
+      [1290, 700],
+      [1340, 700],
+      [1290, 750],
+      [1340, 750],
+      [1290, 920],
+      [1340, 920],
+      [1290, 970],
+      [1340, 970]
+    ],
+    "modifiers": ["landlordChangesMind"],
+    "stars": [2350, 2600, 2900],
+    "satisfactionMultiplier": 10,
+    "scaling": null
+  },
+  {
+    "id": "lv15_museum",
+    "name": {
+      "en": "Private Museum",
+      "vi": "Bảo tàng tư nhân"
+    },
+    "tier": "full",
+    "minPlayers": 8,
+    "maxPlayers": 8,
+    "recommendedPlayers": 8,
+    "unlockStars": 18,
+    "timeLimitSec": 480,
+    "map": "maps/museum.json",
+    "landlord": "collector",
+    "truck": {
+      "x": 1500,
+      "y": 320,
+      "slots": 36,
+      "hasHandbrake": false,
+      "facing": "left"
+    },
+    "spawns": [
+      {
+        "item": "statue",
+        "x": 500,
+        "y": 900,
+        "required": true
+      },
+      {
+        "item": "mirror",
+        "x": 280,
+        "y": 120,
+        "required": true
+      },
+      {
+        "item": "mirror",
+        "x": 880,
+        "y": 120,
+        "required": true
+      },
+      {
+        "item": "mirror",
+        "x": 600,
+        "y": 600,
+        "required": false
+      },
+      {
+        "item": "mirror",
+        "x": 1000,
+        "y": 1040,
+        "required": false
+      },
+      {
+        "item": "plant",
+        "x": 60,
+        "y": 650,
+        "required": false
+      },
+      {
+        "item": "plant",
+        "x": 1120,
+        "y": 650,
+        "required": false
+      },
+      {
+        "item": "teddy",
+        "x": 1100,
+        "y": 900,
+        "required": false
+      },
+      {
+        "item": "fish_tank",
+        "x": 200,
+        "y": 900,
+        "required": false
+      },
+      {
+        "item": "box",
+        "x": 600,
+        "y": 400,
+        "required": false
+      },
+      {
+        "item": "box",
+        "x": 660,
+        "y": 400,
+        "required": false
+      }
+    ],
+    "playerSpawns": [
+      [1290, 560],
+      [1340, 560],
+      [1290, 610],
+      [1340, 610],
+      [1290, 880],
+      [1340, 880],
+      [1290, 930],
+      [1340, 930]
+    ],
+    "modifiers": [],
+    "stars": [6100, 6450, 6800],
+    "satisfactionMultiplier": 12,
+    "scaling": null
+  },
+  {
     "id": "lv16_celebrity_villa",
     "name": {
       "en": "Celebrity Villa",
@@ -1286,7 +1708,7 @@
     "minPlayers": 8,
     "maxPlayers": 8,
     "recommendedPlayers": 8,
-    "unlockStars": 14,
+    "unlockStars": 20,
     "timeLimitSec": 480,
     "map": "maps/villa.json",
     "landlord": "celebrity",
@@ -1381,7 +1803,7 @@
       [1400, 670],
       [1450, 670]
     ],
-    "modifiers": [],
+    "modifiers": ["paparazzi"],
     "stars": [3900, 4350, 4850],
     "satisfactionMultiplier": 12,
     "scaling": null

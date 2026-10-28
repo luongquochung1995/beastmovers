@@ -531,5 +531,34 @@
     "durability": 3,
     "repairCost": 0,
     "truckSlots": 1
+  },
+  {
+    "id": "paparazzi",
+    "name": {
+      "en": "Paparazzo",
+      "vi": "Paparazzi"
+    },
+    "icon": "📸",
+    "color": "#90a4ae",
+    "shape": "circle",
+    "size": {
+      "w": 36,
+      "h": 36
+    },
+    "mass": 80,
+    "friction": 0.3,
+    "requiredGrabbers": 1,
+    "liftRule": "free",
+    "value": 0,
+    "durability": 99,
+    "repairCost": 0,
+    "truckSlots": 1,
+    "throwable": false,
+    "grabbable": false,
+    "behaviors": ["paparazziAI"],
+    "ai": {
+      "speed": 2.0,
+      "fleeRadius": 0
+    }
   }
 ]

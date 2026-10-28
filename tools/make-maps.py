@@ -358,6 +358,68 @@ def walkup():
     m.save("walkup.json")
 
 
+def two_room(name_top, color_top, name_bottom, color_bottom, inner_gap, front_gap, file, extra=None):
+    """Nhà 2 phòng (trên/dưới) bên trái, sân bên phải; lối giữa 2 phòng và lối ra sân không cửa."""
+    m = Map(1800, 1100)
+    m.floor(name_top, 24, 24, 1156, 676, color_top)
+    m.floor(name_bottom, 24, 716, 1156, 360, color_bottom)
+    m.yard(1204, 24, 572, 1052)
+    m.floor("Lối", inner_gap[0], 700, inner_gap[1] - inner_gap[0], 16, color_top)
+    m.floor("Cửa", 1180, front_gap[0], 24, front_gap[1] - front_gap[0], color_top)
+    m.hwall(700, 24, 1180, gaps=[inner_gap])
+    m.vwall(1180, 24, 1076, gaps=[front_gap], t=24)
+    if extra:
+        extra(m)
+    m.path((300, 150), (900, 150), (1100, 400), (900, 620), (300, 620), (120, 380))
+    m.save(file)
+    return m
+
+
+def gym():
+    """Màn 11 – Phòng gym: giàn tạ 6 người (150×50), lối ra 280 px; phòng thay đồ phía dưới."""
+    def extra(m):
+        for p in [(60, 60), (1120, 60), (60, 1040), (1120, 1040)]:
+            m.hide(*p)
+    two_room("Phòng tập", "#37404a", "Phòng thay đồ", "#3a3a46", (400, 700), (250, 530),
+             "gym.json", extra)
+
+
+def home_aquarium():
+    """Màn 13 – Thủy cung tại gia: bể cá khổng lồ 6 người, nghiêng là tràn nước; lối ra 300 px."""
+    def extra(m):
+        for p in [(60, 60), (1120, 60), (60, 1040), (1120, 1040)]:
+            m.hide(*p)
+    two_room("Sảnh thủy cung", "#2f4250", "Phòng ngủ", "#33384a", (380, 700), (230, 530),
+             "home_aquarium.json", extra)
+
+
+def minimalist():
+    """Màn 14 – Căn hộ minimalist: một không gian mở gần như trống, bàn bi-a 6 người."""
+    m = Map(1800, 1100)
+    m.floor("Không gian mở", 24, 24, 1156, 1052, "#e0ddd5")
+    m.yard(1204, 24, 572, 1052)
+    m.floor("Cửa", 1180, 300, 24, 340, "#e0ddd5")
+    m.vwall(1180, 24, 1076, gaps=[(300, 640)], t=24)
+    # Một vách ngăn trang trí giữa nhà.
+    m.wall(560, 700, 24, 376)
+    for p in [(300, 300), (900, 900), (300, 900), (900, 300)]:
+        m.hide(*p)
+    m.path((300, 200), (900, 200), (1050, 470), (900, 850), (300, 850), (150, 500))
+    m.save("minimalist.json")
+
+
+def museum():
+    """Màn 15 – Bảo tàng tư nhân: tượng đá 8 người ở phòng trưng bày dưới, lối 300 px."""
+    def extra(m):
+        # Bệ trưng bày (tường thấp) trong sảnh.
+        m.wall(250, 250, 60, 60)
+        m.wall(850, 250, 60, 60)
+        for p in [(60, 60), (1120, 60), (60, 1040), (1120, 1040)]:
+            m.hide(*p)
+    two_room("Sảnh bảo tàng", "#4a4258", "Phòng trưng bày", "#3d4052", (400, 700), (200, 440),
+             "museum.json", extra)
+
+
 if __name__ == "__main__":
     townhouse()
     antique_shop()
@@ -370,3 +432,7 @@ if __name__ == "__main__":
     six_cats()
     slope_house()
     walkup()
+    gym()
+    home_aquarium()
+    minimalist()
+    museum()
