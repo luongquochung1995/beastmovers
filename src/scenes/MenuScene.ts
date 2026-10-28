@@ -42,6 +42,20 @@ export class MenuScene extends Phaser.Scene {
       .on('pointerout', () => start.setColor(Theme.text))
       .on('pointerup', () => this.startGame());
 
+    const inputTest = this.add
+      .text(cx, 520, '🎮  Thử điều khiển  (I)', {
+        fontFamily: Theme.font,
+        fontSize: '24px',
+        color: Theme.text,
+        backgroundColor: '#2e2a40',
+        padding: { x: 18, y: 8 },
+      })
+      .setOrigin(0.5)
+      .setInteractive({ useHandCursor: true })
+      .on('pointerover', () => inputTest.setColor(Theme.accent))
+      .on('pointerout', () => inputTest.setColor(Theme.text))
+      .on('pointerup', () => this.scene.start(SceneKeys.InputTest));
+
     this.add
       .text(cx, GAME_HEIGHT - 30, `v${__APP_VERSION__}`, {
         fontFamily: Theme.font,
@@ -52,6 +66,7 @@ export class MenuScene extends Phaser.Scene {
 
     this.input.keyboard?.once('keydown-ENTER', () => this.startGame());
     this.input.keyboard?.once('keydown-SPACE', () => this.startGame());
+    this.input.keyboard?.once('keydown-I', () => this.scene.start(SceneKeys.InputTest));
   }
 
   private startGame(): void {

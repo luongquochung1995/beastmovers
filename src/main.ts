@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { BootScene } from './scenes/BootScene';
 import { GameScene } from './scenes/GameScene';
+import { InputTestScene } from './scenes/InputTestScene';
 import { MenuScene } from './scenes/MenuScene';
 import { ResultScene } from './scenes/ResultScene';
 import { GAME_HEIGHT, GAME_WIDTH, Theme } from './ui/theme';
@@ -23,9 +24,10 @@ const game = new Phaser.Game({
       debug: true, // tạo sẵn lớp vẽ debug, bật/tắt bằng F1
     },
   },
-  scene: [BootScene, MenuScene, GameScene, ResultScene],
+  scene: [BootScene, MenuScene, InputTestScene, GameScene, ResultScene],
 });
 
-if (import.meta.env.DEV) {
+// Cho kiểm thử tự động truy cập game khi chạy dev hoặc có `?debug` trên URL.
+if (import.meta.env.DEV || new URLSearchParams(window.location.search).has('debug')) {
   (window as unknown as { __game: Phaser.Game }).__game = game;
 }

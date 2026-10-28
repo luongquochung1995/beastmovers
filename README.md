@@ -42,11 +42,25 @@ npm run preview
 
 ## Điều khiển hiện tại
 
-| Phím          | Việc                                                                 |
-| ------------- | -------------------------------------------------------------------- |
-| Enter / Space | Bắt đầu (ở menu)                                                     |
-| Esc           | Kết thúc màn                                                         |
-| F1            | Bật/tắt thông tin debug (FPS, số bước logic mỗi giây, khung va chạm) |
+Tối đa 4 người trên một máy: 2 người chung bàn phím + tay cầm (Gamepad API). Ai chưa vào thì nhấn **Nắm** để tham gia, kể cả giữa màn.
+
+| Hành động      | Người WASD | Người mũi tên         | Tay cầm          |
+| -------------- | ---------- | --------------------- | ---------------- |
+| Di chuyển      | W A S D    | Mũi tên               | Cần trái / D-pad |
+| Nắm / tham gia | Space      | Enter / Numpad 0      | A                |
+| Ném            | E          | Shift phải / Numpad 1 | B                |
+| Lao            | Q          | Ctrl phải / Numpad 2  | X                |
+| Ping           | F          | Numpad 3              | Y                |
+
+Giữ một hướng khoảng 0,6 giây thì nhân vật chuyển sang chạy (chạy có thể vấp ngã). Lao vào người khác làm họ ngã.
+
+| Phím chung    | Việc                                                       |
+| ------------- | ---------------------------------------------------------- |
+| Enter / Space | Bắt đầu (ở menu)                                           |
+| I             | Màn thử điều khiển (ở menu)                                |
+| Esc           | Kết thúc màn / quay lại                                    |
+| F1            | Bật/tắt debug (FPS, số bước logic mỗi giây, khung va chạm) |
+| T             | Khi bật debug: cho mọi người vấp ngã                       |
 
 ## Cấu trúc
 

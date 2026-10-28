@@ -538,8 +538,8 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 |---|---|---|---|---|---|---|
 | P01 | Khởi tạo dự án | A | ✔ | 1–2 ngày | 🟨 | |
 | P02 | Scene và vòng lặp game | A | ✔ | 2 ngày | ✅ | 2026-10-28 |
-| P03 | Input chung máy | A | ✔ | 3 ngày | ⬜ | |
-| P04 | Nhân vật | A | ✔ | 3–4 ngày | ⬜ | |
+| P03 | Input chung máy | A | ✔ | 3 ngày | ✅ | 2026-10-28 |
+| P04 | Nhân vật | A | ✔ | 3–4 ngày | ✅ | 2026-10-28 |
 | P05 | Data loader và validate | B | ✔ | 2–3 ngày | ⬜ | |
 | P06 | Đồ vật dựng từ data | B | ✔ | 2 ngày | ⬜ | |
 | P07 | Nắm, thả, ném (1 người) | B | ✔ | 3 ngày | ⬜ | |
@@ -578,7 +578,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P40 | Kiểm thử trình duyệt | G | | 2 ngày | ⬜ | |
 | P41 | Phát hành | G | | 2 ngày | ⬜ | |
 
-**Tiến độ:** 1/41 phase · Mốc A 🟨 · B ⬜ · C ⬜ · D ⬜ · E ⬜ · F ⬜ · G ⬜
+**Tiến độ:** 3/41 phase · Mốc A 🟨 · B ⬜ · C ⬜ · D ⬜ · E ⬜ · F ⬜ · G ⬜
 
 ---
 
@@ -603,23 +603,27 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 - 📝 *Kiểm tra: Chromium chạy 2 vòng chuyển scene, 0 lỗi console; FPS vẽ 37 mà logic vẫn 61 bước/giây; unit test 30/60/75/120/144/240 Hz đều ra 60 bước/giây.*
 
 #### P03 · Input chung máy
-- [ ] Định nghĩa `InputFrame` chuẩn: trục X/Y (int8) + bitmask nút (nắm, ném, lao, ping)
-- [ ] Bố cục bàn phím Người 1 và Người 2
-- [ ] Hỗ trợ Gamepad API: nhận, ngắt, cắm lại tay cầm
-- [ ] `InputManager` gán tối đa 4 người chơi trên một máy, mỗi người một nguồn input
-- [ ] Màn test input hiện trạng thái từng người
+- [x] Định nghĩa `InputFrame` chuẩn: trục X/Y (int8) + bitmask nút (nắm, ném, lao, ping)
+- [x] Bố cục bàn phím Người 1 và Người 2
+- [x] Hỗ trợ Gamepad API: nhận, ngắt, cắm lại tay cầm
+- [x] `InputManager` gán tối đa 4 người chơi trên một máy, mỗi người một nguồn input
+- [x] Màn test input hiện trạng thái từng người
 - **✅ Xong khi:** 2 người bàn phím + 2 tay cầm điều khiển cùng lúc, logic game chỉ đọc `InputFrame` (không đọc phím trực tiếp).
+- 📝 *Kiểm tra: 15 unit test input; Chromium với 2 tay cầm giả lập + 2 bố cục bàn phím, 4 người tham gia và điều khiển độc lập cùng lúc (màn "Thử điều khiển", phím I); rút/cắm lại tay cầm không lỗi. Chưa thử tay cầm thật và hiện tượng bàn phím kẹt phím (ghosting) trên máy thật.*
 
 #### P04 · Nhân vật
-- [ ] Nhân vật là thân Matter.js hình tròn, đi và chạy
-- [ ] Chạy có xác suất vấp (`runTripChance`), ngã thì nằm 1 giây
-- [ ] Lao/chụp có thời gian hồi chiêu (cooldown)
-- [ ] 8 màu + ký hiệu riêng cho từng người, nhãn tên trên đầu
-- [ ] Hoạt ảnh tạm: đứng, đi, ngã
+- [x] Nhân vật là thân Matter.js hình tròn, đi và chạy
+- [x] Chạy có xác suất vấp (`runTripChance`), ngã thì nằm 1 giây
+- [x] Lao/chụp có thời gian hồi chiêu (cooldown)
+- [x] 8 màu + ký hiệu riêng cho từng người, nhãn tên trên đầu
+- [x] Hoạt ảnh tạm: đứng, đi, ngã
 - **✅ Xong khi:** 4 người chạy, lao, vấp ngã, va vào nhau có vật lý trên một bản đồ trống.
+- 📝 *Kiểm tra: 10 unit test di chuyển (đi, chạy, lao, hồi chiêu, vấp, đứng dậy); Chromium 4 người cùng chạy 4 hướng, P1 lao vào P2 làm P2 ngã, phím T cho cả 4 ngã; logic giữ 60 bước/giây khi FPS vẽ chỉ 25. Thêm: chạy giữ hướng 0,6 giây, nhân vật vào giữa màn được.*
 
 **Ghi chú playtest mốc A:**
-_(ghi ở đây)_
+- Nhãn tên bị cắt khi nhân vật đứng sát mép trên bản đồ → xử lý ở P18 (camera, giới hạn khung).
+- `runTripChance` = 0,03 nghĩa là trung bình chạy liên tục khoảng 33 giây mới vấp một lần; cần chỉnh lại khi playtest thật (P39).
+- Còn chờ: playtest với người thật, tay cầm thật.
 
 ---
 
