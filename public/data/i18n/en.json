@@ -273,5 +273,12 @@
   "source.touch": "Touch screen",
   "settings.music": "Music: {v}",
   "settings.playtestLog": "📋  Export playtest log ({n} runs)",
-  "settings.playtestSaved": "Saved {n} runs to a JSON file (in your Downloads)."
+  "settings.playtestSaved": "Saved {n} runs to a JSON file (in your Downloads).",
+  "tutorial.move.touch": "Walk: put a finger on the left half of the screen and slide it",
+  "tutorial.grab.touch": "Walk up to a cardboard box and tap Grab (right side) to pick it up",
+  "tutorial.load.touch": "Carry it out to the truck in the yard and tap Grab again to drop it in the cargo bed",
+  "tutorial.throw.touch": "Tip: holding something light? Tap Throw. Throwing it into the truck counts too!",
+  "tutorial.ping.touch": "Big items need several people. Tap Ping to call for help; hold Ping and slide for the ping wheel",
+  "game.hintTouch": "Left half: move  ·  Grab / Throw / Dash / Ping on the right  ·  ⏸ top right: pause",
+  "levels.hintTouch": "Tap a level to play  ·  tap the tabs to filter  ·  ◀ Back top left"
 }

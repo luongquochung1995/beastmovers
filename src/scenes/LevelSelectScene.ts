@@ -7,6 +7,7 @@ import type { GameData } from '../data/validate';
 import { playerTextureKey } from '../entities/playerStyles';
 import { Btn, frameAxis, isDown, justPressed } from '../systems/input/InputFrame';
 import type { InputManager } from '../systems/input/InputManager';
+import { inTouchMode } from '../systems/input/touch';
 import { isOpen, type LevelLock, levelLock, TIER_ICONS } from '../systems/levelLock';
 import { type NavAction, NavRepeat } from '../ui/menuNav';
 import { GAME_HEIGHT, GAME_WIDTH, Theme } from '../ui/theme';
@@ -230,7 +231,13 @@ export class LevelSelectScene extends Phaser.Scene {
       this.text(cx, GRID_TOP + 60, t('levels.none'), 20, Theme.muted).setOrigin(0.5);
 
     if (this.message) this.text(cx, GAME_HEIGHT - 58, this.message, 20, BAD).setOrigin(0.5);
-    this.text(cx, GAME_HEIGHT - 24, t('levels.hint'), 15, Theme.muted).setOrigin(0.5);
+    this.text(
+      cx,
+      GAME_HEIGHT - 24,
+      t(inTouchMode() ? 'levels.hintTouch' : 'levels.hint'),
+      15,
+      Theme.muted,
+    ).setOrigin(0.5);
     // Quay lại bằng chuột / chạm.
     this.text(40, 100, t('settings.back'), 18, Theme.text)
       .setOrigin(0, 0.5)

@@ -11,6 +11,7 @@ import { SLOW_PING_MS } from '../net/OnlineGame';
 import { type PingHold, stepPing, WHEEL_HOLD_MS } from '../systems/ping';
 import { GameHud, HUD_TOP } from '../ui/GameHud';
 import { PingWheelView } from '../ui/PingWheelView';
+import { inTouchMode } from '../systems/input/touch';
 import { scaleLevel } from '../systems/scaling';
 import { RainView } from '../ui/RainView';
 import { touchControls } from '../ui/TouchControls';
@@ -95,13 +96,18 @@ export class GameScene extends PlayScene {
       : null;
     this.hud = new GameHud(hud, this.runtime, this.world, this.cameras.main);
     hud.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT - 14, t(this.online ? 'game.hintOnline' : 'game.hint'), {
-        fontFamily: Theme.font,
-        fontSize: '14px',
-        color: Theme.muted,
-        backgroundColor: '#00000088',
-        padding: { x: 8, y: 3 },
-      })
+      .text(
+        GAME_WIDTH / 2,
+        GAME_HEIGHT - 14,
+        t(inTouchMode() ? 'game.hintTouch' : this.online ? 'game.hintOnline' : 'game.hint'),
+        {
+          fontFamily: Theme.font,
+          fontSize: '14px',
+          color: Theme.muted,
+          backgroundColor: '#00000088',
+          padding: { x: 8, y: 3 },
+        },
+      )
       .setOrigin(0.5, 1);
     if (this.online) {
       const style = {

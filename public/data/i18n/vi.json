@@ -273,5 +273,12 @@
   "source.touch": "Màn hình cảm ứng",
   "settings.music": "Nhạc nền: {v}",
   "settings.playtestLog": "📋  Xuất nhật ký chơi thử ({n} lần)",
-  "settings.playtestSaved": "Đã lưu {n} lần chơi ra file JSON (thư mục Tải về)."
+  "settings.playtestSaved": "Đã lưu {n} lần chơi ra file JSON (thư mục Tải về).",
+  "tutorial.move.touch": "Đi lại: đặt ngón tay ở nửa trái màn hình rồi kéo",
+  "tutorial.grab.touch": "Đến gần thùng carton, chạm nút Nắm (bên phải) để nhặt lên",
+  "tutorial.load.touch": "Mang ra xe tải ngoài sân, chạm Nắm lần nữa để thả vào thùng xe",
+  "tutorial.throw.touch": "Mẹo: đang cầm đồ nhẹ thì chạm Ném. Ném trúng thùng xe cũng tính!",
+  "tutorial.ping.touch": "Đồ to cần nhiều người. Chạm Ping để gọi đồng đội; giữ Ping và kéo cần ảo để mở vòng ping",
+  "game.hintTouch": "Nửa trái: di chuyển  ·  Nắm / Ném / Lao / Ping bên phải  ·  ⏸ góc trên: tạm dừng",
+  "levels.hintTouch": "Chạm vào màn để chơi  ·  chạm hàng trên để lọc theo cấp  ·  ◀ Quay lại góc trên"
 }

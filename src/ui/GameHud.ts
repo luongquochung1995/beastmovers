@@ -8,6 +8,7 @@ import type { World } from '../sim/World';
 import { moodFace } from '../systems/dialogue';
 import { formatClock, TIME_LOW_MS } from '../systems/levelClock';
 import type { Vec } from '../systems/geometry';
+import { inTouchMode } from '../systems/input/touch';
 import { Tutorial } from '../systems/tutorial';
 import { GAME_HEIGHT, GAME_WIDTH, Theme } from './theme';
 
@@ -137,7 +138,10 @@ export class GameHud {
 ${t('hud.objective')}`);
       return;
     }
-    this.setBanner(`${tut.index + 1}/${tut.steps.length} · ${t(step.text)}`);
+    // Đang chơi bằng cảm ứng: dùng chữ hướng dẫn cho màn hình cảm ứng nếu có (`<khóa>.touch`).
+    const touchKey = `${step.text}.touch`;
+    const key = inTouchMode() && t(touchKey) !== touchKey ? touchKey : step.text;
+    this.setBanner(`${tut.index + 1}/${tut.steps.length} · ${t(key)}`);
     this.scene.tweens.add({ targets: this.objective, scale: { from: 1.12, to: 1 }, duration: 220 });
   }
 
