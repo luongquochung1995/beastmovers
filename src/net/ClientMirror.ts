@@ -36,6 +36,7 @@ export class ClientMirror {
         p = w.addPlayer(ps.s, at.x, at.y, this.lookOf(ps.s));
       }
       p.applyRemote(ps);
+      p.remoteHold = ps.hold;
       if (ps.hold >= 0) this.holds.set(ps.s, ps.hold);
       else this.holds.delete(ps.s);
     }

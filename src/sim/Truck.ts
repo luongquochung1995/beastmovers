@@ -121,23 +121,8 @@ export class Truck {
       w: Math.max(...xe) - Math.min(...xs),
       h: Math.max(...ye) - Math.min(...ys),
     };
-    const g = scene.add.graphics();
-    const bedW = this.bed;
-    // Lòng thùng + nan sàn
-    g.fillStyle(0x37474f, 1).fillRect(bedW.x, bedW.y, bedW.w, bedW.h);
-    g.lineStyle(2, 0x455a64, 1);
-    for (let k = 1; k < 8; k++) {
-      const f = k / 8;
-      if (bedW.w >= bedW.h)
-        g.lineBetween(bedW.x, bedW.y + bedW.h * f, bedW.x + bedW.w, bedW.y + bedW.h * f);
-      else g.lineBetween(bedW.x + bedW.w * f, bedW.y, bedW.x + bedW.w * f, bedW.y + bedW.h);
-    }
-    // Dải cửa thùng (ván dốc)
-    const ramp = toWorld(c, angle, { x: -L / 2 - 18, y: -S / 2, w: 18, h: S });
-    g.fillStyle(0x78909c, 0.6).fillRect(ramp.x, ramp.y, ramp.w, ramp.h);
     for (const part of local) {
       const r = toWorld(c, angle, part.r);
-      g.fillStyle(part.color, 1).fillRect(r.x, r.y, r.w, r.h);
       if (part.body) {
         this.bodies.push(
           scene.matter.add.rectangle(r.x + r.w / 2, r.y + r.h / 2, r.w, r.h, {
@@ -147,16 +132,9 @@ export class Truck {
         );
       }
     }
-    // Kính cabin
-    const glass = toWorld(c, angle, {
-      x: L / 2 + WALL_T + CAB_LEN - 28,
-      y: -S / 2 + 26,
-      w: 18,
-      h: S - 52,
-    });
-    g.fillStyle(0x90caf9, 1).fillRect(glass.x, glass.y, glass.w, glass.h);
-    g.setDepth(-450);
-
+    // Hình xe vẽ trong khung của xe (cửa thùng phía -x, cabin phía +x) rồi xoay theo hướng xe.
+    const g = scene.add.graphics({ x: c.x, y: c.y }).setRotation(angle).setDepth(-450);
+    drawTruck(g, L, S);
     const cabCenter = toWorld(c, angle, {
       x: L / 2 + WALL_T,
       y: -S / 2 + 10,
@@ -408,5 +386,80 @@ export class Truck {
       this.lever.setPosition(this.leverPos.x, this.leverPos.y);
       this.lever.setAngle(this.handbrakeOn ? 0 : 180);
     }
+  }
+}
+
+const OUT = 0x2a2320;
+
+/**
+ * Xe tải kiểu hoạt hình (cùng phong cách nhân vật): sàn gỗ, thành thùng đỏ viền đậm, ván dốc
+ * sọc vàng đen ở cửa thùng, cabin bo tròn, kính chắn gió có đôi mắt, đèn pha, bánh xe.
+ */
+function drawTruck(g: Phaser.GameObjects.Graphics, L: number, S: number): void {
+  const red = 0xe74c3c;
+  const redDark = 0xc0392b;
+  const x0 = -L / 2;
+  const y0 = -S / 2;
+  // Bánh xe (thò ra hai bên)
+  for (const wx of [x0 + 40, L / 2 - 30, L / 2 + WALL_T + CAB_LEN - 34]) {
+    for (const sy of [-1, 1]) {
+      const wy = sy * (S / 2 + WALL_T - 2);
+      g.fillStyle(0x263238, 1).fillRoundedRect(wx - 18, wy - 9, 36, 18, 7);
+      g.lineStyle(3, OUT, 1).strokeRoundedRect(wx - 18, wy - 9, 36, 18, 7);
+      g.fillStyle(0x90a4ae, 1).fillRoundedRect(wx - 8, wy - 4, 16, 8, 3);
+    }
+  }
+  // Sàn thùng bằng ván gỗ
+  g.fillStyle(0xa1785a, 1).fillRect(x0, y0, L, S);
+  g.lineStyle(2, 0x7d5a40, 1);
+  for (let k = 1; k < 8; k++) g.lineBetween(x0, y0 + (S * k) / 8, x0 + L, y0 + (S * k) / 8);
+  g.fillStyle(0xffffff, 0.08).fillRect(x0, y0, L, S / 8);
+  // Ván dốc sọc vàng đen ở cửa thùng
+  const rx = x0 - 18;
+  g.fillStyle(0xffca28, 1).fillRect(rx, y0, 18, S);
+  g.fillStyle(0x263238, 1);
+  for (let yy = y0; yy < y0 + S; yy += 24) g.fillTriangle(rx, yy, rx + 18, yy + 12, rx, yy + 18);
+  g.lineStyle(2.5, OUT, 1).strokeRect(rx, y0, 18, S);
+  // Thành thùng
+  const wall = (x: number, y: number, w: number, h: number) => {
+    g.fillStyle(red, 1).fillRoundedRect(x, y, w, h, 4);
+    g.fillStyle(0xffffff, 0.25).fillRoundedRect(x + 3, y + 2, w - 6, Math.min(4, h / 3), 2);
+    g.lineStyle(3, OUT, 1).strokeRoundedRect(x, y, w, h, 4);
+  };
+  wall(x0, y0 - WALL_T, L + WALL_T, WALL_T);
+  wall(x0, S / 2, L + WALL_T, WALL_T);
+  wall(L / 2, y0, WALL_T, S);
+  // Cabin
+  const cx0 = L / 2 + WALL_T;
+  const cy0 = y0 + 10;
+  const ch = S - 20;
+  g.fillStyle(redDark, 1).fillRoundedRect(cx0 - 2, cy0, CAB_LEN + 2, ch, {
+    tl: 4,
+    bl: 4,
+    tr: 22,
+    br: 22,
+  });
+  g.fillStyle(red, 1).fillRoundedRect(cx0 + 6, cy0 + 8, CAB_LEN - 34, ch - 16, 8);
+  g.lineStyle(3, OUT, 1).strokeRoundedRect(cx0 - 2, cy0, CAB_LEN + 2, ch, {
+    tl: 4,
+    bl: 4,
+    tr: 22,
+    br: 22,
+  });
+  // Kính chắn gió có đôi mắt dễ thương
+  const gx = cx0 + CAB_LEN - 30;
+  g.fillStyle(0x90caf9, 1).fillRoundedRect(gx, cy0 + 14, 18, ch - 28, 6);
+  g.lineStyle(2.5, OUT, 1).strokeRoundedRect(gx, cy0 + 14, 18, ch - 28, 6);
+  for (const sy of [-1, 1]) {
+    const ey = sy * 22;
+    g.fillStyle(0xffffff, 1).fillEllipse(gx + 9, ey, 12, 16);
+    g.lineStyle(2, OUT, 1).strokeEllipse(gx + 9, ey, 12, 16);
+    g.fillStyle(OUT, 1).fillCircle(gx + 11, ey, 3.5);
+    g.fillStyle(0xffffff, 1).fillCircle(gx + 12, ey - 1.5, 1.2);
+  }
+  // Đèn pha + cản trước
+  for (const sy of [-1, 1]) {
+    g.fillStyle(0xfff59d, 1).fillCircle(cx0 + CAB_LEN - 4, sy * (ch / 2 - 12), 6);
+    g.lineStyle(2, OUT, 1).strokeCircle(cx0 + CAB_LEN - 4, sy * (ch / 2 - 12), 6);
   }
 }

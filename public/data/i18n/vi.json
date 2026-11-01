@@ -282,5 +282,7 @@
   "game.hintTouch": "Nửa trái: di chuyển  ·  Nắm / Ném / Lao / Ping bên phải  ·  ⏸ góc trên: tạm dừng",
   "levels.hintTouch": "Chạm vào màn để chơi  ·  chạm hàng trên để lọc theo cấp  ·  ◀ Quay lại góc trên",
   "hud.finish": "🚚 Đủ đồ rồi — cho xe chạy!  (hoặc Esc → Kết thúc màn)",
-  "hud.finishWait": "✓ Đủ đồ bắt buộc — chờ host cho xe chạy"
+  "hud.finishWait": "✓ Đủ đồ bắt buộc — chờ host cho xe chạy",
+  "levels.renameHint": "Chạm vào người chơi (hoặc N) để đổi tên",
+  "pause.rename": "✏️  Đổi tên P{n}: {name}"
 }

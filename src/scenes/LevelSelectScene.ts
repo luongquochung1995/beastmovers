@@ -1,7 +1,9 @@
 import Phaser from 'phaser';
 import { music } from '../audio/music';
 import { getLocale, t } from '../data/i18n';
-import { loadSave, totalStars } from '../data/settings';
+import { loadSave, localPlayerName, saveLocalPlayerName, totalStars } from '../data/settings';
+import { cleanName, NAME_MAX } from '../net/lobby';
+import { promptText, type TextPrompt } from '../ui/textPrompt';
 import { TIERS, type LevelDef } from '../data/types';
 import type { GameData } from '../data/validate';
 import { playerTextureKey } from '../entities/playerStyles';
@@ -69,7 +71,16 @@ export class LevelSelectScene extends Phaser.Scene {
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       remembered = { filter: this.filter, levelId: this.visible()[this.focus]?.id ?? null };
     });
-    this.input.keyboard?.on('keydown-ESC', () => this.scene.start(SceneKeys.Menu));
+    this.input.keyboard?.on('keydown-ESC', () => {
+      if (!this.renaming) this.scene.start(SceneKeys.Menu);
+    });
+    // N: đặt tên cho người chơi 1.
+    this.input.keyboard?.on('keydown-N', () => {
+      const first = this.inputs.slots.find((s) => s !== null);
+      if (first && !this.renaming) this.rename(first.index);
+    });
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.renaming?.prompt.close(true));
+    this.renaming = null;
     this.redraw();
   }
 
@@ -154,6 +165,31 @@ export class LevelSelectScene extends Phaser.Scene {
     else if (a === 'confirm') this.choose(this.visible()[this.focus]);
   }
 
+  /** Đang đặt tên cho người chơi ô `slot` (chữ đang gõ). */
+  private renaming: { slot: number; text: string; prompt: TextPrompt } | null = null;
+
+  /** Đặt tên cho người chơi ô `slot` (ô nhập ẩn: gõ được tiếng Việt, bàn phím điện thoại). */
+  private rename(slot: number): void {
+    this.renaming?.prompt.close(true);
+    const initial = localPlayerName(slot);
+    const prompt = promptText({
+      initial,
+      maxLength: NAME_MAX,
+      label: t('lobby.nameLabel'),
+      onChange: (text) => {
+        if (this.renaming) this.renaming.text = text;
+        this.redraw();
+      },
+      onDone: (text) => {
+        if (text) saveLocalPlayerName(slot, cleanName(text));
+        this.renaming = null;
+        if (this.sys.isActive()) this.redraw();
+      },
+    });
+    this.renaming = { slot, text: initial, prompt };
+    this.redraw();
+  }
+
   private setFilter(dir: -1 | 1): void {
     const i = FILTERS.indexOf(this.filter);
     this.filter = FILTERS[(i + dir + FILTERS.length) % FILTERS.length]!;
@@ -184,20 +220,22 @@ export class LevelSelectScene extends Phaser.Scene {
     this.text(cx, 44, t('levels.title'), 44, Theme.accent).setOrigin(0.5).setFontStyle('bold');
     this.text(40, 32, `⭐ ${this.stars}`, 26, STAR_ON).setOrigin(0, 0.5);
 
-    // Người chơi trên máy (bấm Nắm để vào).
+    // Người chơi trên máy (bấm Nắm để vào); chạm / bấm vào người chơi để đặt tên.
     const slots = this.inputs.slots.filter((s) => s !== null);
     slots.forEach((s, i) => {
-      const img = this.add.image(GAME_WIDTH - 40 - i * 46, 34, playerTextureKey(s.index));
-      img.setScale(0.9);
+      const x = GAME_WIDTH - 60 - (slots.length - 1 - i) * 92;
+      const img = this.add.image(x, 30, playerTextureKey(s.index)).setScale(0.7);
       this.ui.add(img);
+      const editing = this.renaming?.slot === s.index;
+      const label = editing ? `${this.renaming!.text}▏` : localPlayerName(s.index);
+      const name = this.text(x, 66, label, 14, editing ? Theme.accent : Theme.text)
+        .setOrigin(0.5)
+        .setPadding(4, 1, 4, 1)
+        .setBackgroundColor('#3a3550');
+      for (const o of [img, name])
+        o.setInteractive({ useHandCursor: true }).on('pointerup', () => this.rename(s.index));
     });
-    this.text(
-      GAME_WIDTH - 40,
-      66,
-      t('levels.players', { n: slots.length }),
-      16,
-      Theme.muted,
-    ).setOrigin(1, 0.5);
+    this.text(GAME_WIDTH - 40, 90, t('levels.renameHint'), 13, Theme.muted).setOrigin(1, 0.5);
 
     // Bộ lọc theo cấp.
     const tabW = 150;

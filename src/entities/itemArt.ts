@@ -71,12 +71,16 @@ const ART: Record<string, Draw> = {
     );
     face(g, cx, cy + 5, 0.8);
   },
-  mirror(g, cx, cy, w, h) {
-    box(g, cx - w / 2, cy - h / 2, w, h, 0xa47148, 3);
-    g.fillStyle(0xcfeefc, 1).fillRect(cx - w / 2 + 4, cy - h / 2 + 3, w - 8, h - 6);
-    g.lineStyle(2, 0xffffff, 0.9);
-    g.lineBetween(cx - w / 4, cy + h / 2 - 3, cx - w / 4 + 5, cy - h / 2 + 3);
-    g.lineBetween(cx - w / 4 + 6, cy + h / 2 - 3, cx - w / 4 + 9, cy - h / 2 + 3);
+  mirror(g, cx, cy, w) {
+    // Gương cầm tay: mặt gương tròn khung gỗ + cán cầm.
+    const r = 11;
+    const mx = cx - w / 2 + r + 1;
+    box(g, mx + r - 2, cy - 3, w - 2 * r - 1, 6, 0xa47148, 3, 2);
+    g.fillStyle(0x8a5a35, 1).fillCircle(cx + w / 2 - 3, cy, 3.2);
+    circle(g, mx, cy, r, 0xa47148, 2.5);
+    circle(g, mx, cy, r - 3, 0xcfeefc, 1.5);
+    g.lineStyle(2, 0xffffff, 0.95).lineBetween(mx - 4, cy + 3, mx + 1, cy - 4);
+    g.lineStyle(1.5, 0xffffff, 0.8).lineBetween(mx - 1, cy + 5, mx + 4, cy - 2);
   },
   plant(g, cx, cy, w) {
     const r = w / 2;
@@ -134,58 +138,84 @@ const ART: Record<string, Draw> = {
     g.lineStyle(2, OUT, 1).strokeRoundedRect(x + 24, y + h * 0.42, 16, 14, 4);
   },
   cat(g, cx, cy, w) {
-    const r = w / 2 - 1;
-    g.fillStyle(0xf4a261, 1);
+    const r = w / 2;
+    const orange = 0xf4a261;
+    // Đuôi cong bên phải
+    g.lineStyle(5, OUT, 1).beginPath();
+    g.arc(cx + r * 0.9, cy + r * 0.35, r * 0.55, Math.PI * 0.6, Math.PI * 1.7, false);
+    g.strokePath();
+    g.lineStyle(3, orange, 1).beginPath();
+    g.arc(cx + r * 0.9, cy + r * 0.35, r * 0.55, Math.PI * 0.6, Math.PI * 1.7, false);
+    g.strokePath();
+    // Bốn chân (bàn chân trắng)
+    for (const [px, py] of [
+      [-0.55, 0.95],
+      [-0.15, 1.05],
+      [0.25, 1.05],
+      [0.62, 0.92],
+    ] as const) {
+      g.fillStyle(orange, 1).fillRoundedRect(cx + px * r - 2.5, cy + py * r - 5, 5, 7, 2);
+      g.lineStyle(1.5, OUT, 1).strokeRoundedRect(cx + px * r - 2.5, cy + py * r - 5, 5, 7, 2);
+      g.fillStyle(0xfff3e0, 1).fillEllipse(cx + px * r, cy + py * r + 1.5, 5, 2.6);
+    }
+    // Thân
+    g.fillStyle(orange, 1).fillEllipse(cx + r * 0.05, cy + r * 0.45, r * 1.75, r * 1.05);
+    g.lineStyle(2, OUT, 1).strokeEllipse(cx + r * 0.05, cy + r * 0.45, r * 1.75, r * 1.05);
+    g.lineStyle(1.5, 0xd9773a, 1).lineBetween(cx - 2, cy + r * 0.2, cx - 2, cy + r * 0.6);
+    g.lineBetween(cx + 3, cy + r * 0.2, cx + 3, cy + r * 0.6);
+    // Đầu + tai
+    const hy = cy - r * 0.35;
+    const hr = r * 0.62;
+    g.fillStyle(orange, 1);
     g.fillTriangle(
-      cx - r * 0.85,
-      cy - r * 0.2,
-      cx - r * 0.75,
-      cy - r * 1.05,
-      cx - r * 0.2,
-      cy - r * 0.7,
+      cx - hr * 0.95,
+      hy - hr * 0.1,
+      cx - hr * 0.8,
+      hy - hr * 1.2,
+      cx - hr * 0.2,
+      hy - hr * 0.8,
     );
     g.fillTriangle(
-      cx + r * 0.85,
-      cy - r * 0.2,
-      cx + r * 0.75,
-      cy - r * 1.05,
-      cx + r * 0.2,
-      cy - r * 0.7,
+      cx + hr * 0.95,
+      hy - hr * 0.1,
+      cx + hr * 0.8,
+      hy - hr * 1.2,
+      cx + hr * 0.2,
+      hy - hr * 0.8,
     );
-    g.lineStyle(2, OUT, 1);
+    g.lineStyle(1.8, OUT, 1);
     g.strokeTriangle(
-      cx - r * 0.85,
-      cy - r * 0.2,
-      cx - r * 0.75,
-      cy - r * 1.05,
-      cx - r * 0.2,
-      cy - r * 0.7,
+      cx - hr * 0.95,
+      hy - hr * 0.1,
+      cx - hr * 0.8,
+      hy - hr * 1.2,
+      cx - hr * 0.2,
+      hy - hr * 0.8,
     );
     g.strokeTriangle(
-      cx + r * 0.85,
-      cy - r * 0.2,
-      cx + r * 0.75,
-      cy - r * 1.05,
-      cx + r * 0.2,
-      cy - r * 0.7,
+      cx + hr * 0.95,
+      hy - hr * 0.1,
+      cx + hr * 0.8,
+      hy - hr * 1.2,
+      cx + hr * 0.2,
+      hy - hr * 0.8,
     );
-    circle(g, cx, cy + 1, r * 0.85, 0xf4a261, 2.2);
-    g.fillStyle(0xd9773a, 1).fillRect(cx - 1, cy - r * 0.7, 2, r * 0.45);
+    circle(g, cx, hy, hr, orange, 2);
     g.fillStyle(OUT, 1)
-      .fillEllipse(cx - r * 0.35, cy, 2.2, 3.4)
-      .fillEllipse(cx + r * 0.35, cy, 2.2, 3.4);
+      .fillEllipse(cx - hr * 0.38, hy, 2, 3)
+      .fillEllipse(cx + hr * 0.38, hy, 2, 3);
     g.fillStyle(0xff8a80, 1).fillTriangle(
-      cx - 1.5,
-      cy + r * 0.25,
-      cx + 1.5,
-      cy + r * 0.25,
+      cx - 1.3,
+      hy + hr * 0.3,
+      cx + 1.3,
+      hy + hr * 0.3,
       cx,
-      cy + r * 0.4,
+      hy + hr * 0.45,
     );
-    g.lineStyle(1, OUT, 0.8);
-    for (const s of [-1, 1]) {
-      g.lineBetween(cx + s * r * 0.3, cy + r * 0.35, cx + s * r * 1.05, cy + r * 0.2);
-      g.lineBetween(cx + s * r * 0.3, cy + r * 0.45, cx + s * r * 1.05, cy + r * 0.55);
+    g.lineStyle(0.9, OUT, 0.8);
+    for (const sd of [-1, 1]) {
+      g.lineBetween(cx + sd * hr * 0.3, hy + hr * 0.4, cx + sd * hr * 1.2, hy + hr * 0.25);
+      g.lineBetween(cx + sd * hr * 0.3, hy + hr * 0.5, cx + sd * hr * 1.2, hy + hr * 0.65);
     }
   },
   cat_carrier(g, cx, cy, w, h) {

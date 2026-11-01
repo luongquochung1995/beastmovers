@@ -282,5 +282,7 @@
   "game.hintTouch": "Left half: move  ·  Grab / Throw / Dash / Ping on the right  ·  ⏸ top right: pause",
   "levels.hintTouch": "Tap a level to play  ·  tap the tabs to filter  ·  ◀ Back top left",
   "hud.finish": "🚚 All set — send the truck!  (or Esc → End level)",
-  "hud.finishWait": "✓ All required items loaded — waiting for the host to send the truck"
+  "hud.finishWait": "✓ All required items loaded — waiting for the host to send the truck",
+  "levels.renameHint": "Tap a player (or N) to change their name",
+  "pause.rename": "✏️  Rename P{n}: {name}"
 }

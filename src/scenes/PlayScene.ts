@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { GameAudio } from '../audio/GameAudio';
 import { music } from '../audio/music';
 import { CONFIG_KEY } from '../data/config';
+import { localPlayerName } from '../data/settings';
 import type { GameConfig } from '../data/types';
 import type { GameData } from '../data/validate';
 import { World } from '../sim/World';
@@ -251,7 +252,11 @@ export abstract class PlayScene extends Phaser.Scene {
   private spawnPlayer(index: number): void {
     if (this.world.players.some((p) => p.slotIndex === index)) return;
     const p = this.spawnPointFor(index);
-    this.world.addPlayer(index, p.x, p.y, this.online?.lookOf(index));
+    // Chơi chung máy: tên người chơi đã đặt (người 1 dùng chung tên online).
+    const look = this.online
+      ? this.online.lookOf(index)
+      : { style: index, name: localPlayerName(index), hat: '' };
+    this.world.addPlayer(index, p.x, p.y, look);
   }
 
   /** Màn chơi đang chạy (null ở sandbox). */

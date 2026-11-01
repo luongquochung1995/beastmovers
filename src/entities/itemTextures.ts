@@ -2,7 +2,8 @@ import Phaser from 'phaser';
 import type { ItemDef } from '../data/types';
 import { drawItemArt } from './itemArt';
 
-const PAD = 4;
+/** Lề quanh hình (hình vẽ được thò ra ngoài khung va chạm một chút: chân mèo, khung gương…). */
+const PAD = 8;
 
 export const itemTextureKey = (id: string) => `item-${id}`;
 

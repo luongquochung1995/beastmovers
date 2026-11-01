@@ -29,6 +29,8 @@ export interface Profile {
   color?: number;
   /** Mũ (chỉ số trong HATS). */
   hat?: number;
+  /** Tên người chơi 2, 3, 4 khi chơi chung máy (phần tử 0 bỏ trống: người 1 dùng `name`). */
+  localNames?: string[];
 }
 
 export interface LevelProgress {
@@ -90,6 +92,8 @@ export function migrate(raw: unknown): SaveData {
   if (color !== undefined) out.profile.color = color;
   const hat = intIn(profile.hat, 0, 99);
   if (hat !== undefined) out.profile.hat = hat;
+  if (Array.isArray(profile.localNames))
+    out.profile.localNames = profile.localNames.map((n) => (typeof n === 'string' ? n : ''));
 
   if (isObj(raw.levels)) {
     for (const [id, lv] of Object.entries(raw.levels)) {
@@ -160,6 +164,29 @@ export function saveProfile(patch: Profile, storage: MaybeStorage = defaultStora
 
 export function volumeOf(settings: Settings): number {
   return settings.volume ?? DEFAULT_VOLUME;
+}
+
+/** Tên người chơi ô `slot` khi chơi chung máy (chưa đặt thì "P1", "P2"…). */
+export function localPlayerName(slot: number, profile: Profile = loadProfile()): string {
+  const name = slot === 0 ? profile.name : profile.localNames?.[slot];
+  return name?.trim() ? name : `P${slot + 1}`;
+}
+
+/** Lưu tên người chơi ô `slot` (người 1 cũng là tên dùng khi chơi online). */
+export function saveLocalPlayerName(
+  slot: number,
+  name: string,
+  storage: MaybeStorage = defaultStorage(),
+): void {
+  update((d) => {
+    if (slot === 0) d.profile.name = name;
+    else {
+      const list = [...(d.profile.localNames ?? [])];
+      while (list.length <= slot) list.push('');
+      list[slot] = name;
+      d.profile.localNames = list;
+    }
+  }, storage);
 }
 
 /** Ghi kết quả một màn: giữ số sao và điểm cao nhất. */

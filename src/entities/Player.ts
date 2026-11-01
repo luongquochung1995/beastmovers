@@ -36,6 +36,11 @@ export class Player {
   /** Hướng nhìn ngang gần nhất (1 phải, -1 trái) để vẽ mặt nghiêng khi đi lên/xuống. */
   private side = 1;
   private readonly label: Phaser.GameObjects.Text;
+  private readonly labelY: number;
+  /** Chiều cao món đồ đang đỡ trên đầu (0: không đỡ gì) — tên nâng lên trên món đồ. */
+  carryLift = 0;
+  /** Máy khách online: uid món đang nắm theo host (-1: không). */
+  remoteHold = -1;
   /** Thanh mana dưới chân (ẩn khi đầy). */
   private readonly manaBar: Phaser.GameObjects.Graphics;
   /** Còn bao lâu thanh mana nháy đỏ (vừa bấm Lao mà không đủ mana). */
@@ -70,8 +75,9 @@ export class Player {
       .image(0, 0, playerBodyTextureKey(styleIndex))
       .setOrigin(PLAYER_ORIGIN.x, PLAYER_ORIGIN.y);
     this.eyes = scene.add.graphics();
+    this.labelY = HEAD_OFFSET_Y - HEAD_R - (hat ? 26 : 12);
     this.label = scene.add
-      .text(0, HEAD_OFFSET_Y - HEAD_R - (hat ? 26 : 12), name, {
+      .text(0, this.labelY, name, {
         fontFamily: Theme.font,
         fontSize: '15px',
         fontStyle: 'bold',
@@ -155,6 +161,7 @@ export class Player {
     const y = Phaser.Math.Linear(this.prevPos.y, p.y, alpha);
     this.view.setPosition(x, y).setDepth(y);
 
+    this.label.setY(this.labelY - this.carryLift);
     const m = this.motor;
     this.drawManaBar(dtMs);
     this.eyes.clear();
@@ -266,6 +273,11 @@ export class Player {
       facing: { x: s.fx, y: s.fy },
       mana: s.mana,
     };
+  }
+
+  /** Đổi tên hiện trên đầu (người chơi tự đặt tên khi đang chơi). */
+  setName(name: string): void {
+    this.label.setText(name);
   }
 
   /** Máy khách: đứng yên ở vị trí hiện tại (không nội suy tiếp). */

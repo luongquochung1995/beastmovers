@@ -6,7 +6,7 @@ import type { NetContext } from '../net/netContext';
 import type { LevelResult } from '../sim/LevelRuntime';
 import { moodFace } from '../systems/dialogue';
 import { appendPlaytest } from '../data/playtestLog';
-import { loadSave, recordLevelResult } from '../data/settings';
+import { loadSave, localPlayerName, recordLevelResult } from '../data/settings';
 import type { InputManager } from '../systems/input/InputManager';
 import { MenuInput } from '../ui/menuInput';
 import { GAME_HEIGHT, GAME_WIDTH, Theme } from '../ui/theme';
@@ -145,7 +145,7 @@ export class ResultScene extends Phaser.Scene {
       const seat = net?.roster.seats[p.slot];
       const styleIndex = seat?.color ?? p.slot;
       const style = PLAYER_STYLES[styleIndex]!;
-      const name = seat?.name ?? `P${p.slot + 1}`;
+      const name = seat?.name ?? localPlayerName(p.slot);
       this.add.image(px + 24, py + 24, playerTextureKey(styleIndex)).setScale(gap < 70 ? 0.8 : 1);
       text(px + 60, py, `${name} · ${t(`title.${p.title}`)}`, {
         fontSize: '19px',

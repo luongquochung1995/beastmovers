@@ -620,7 +620,14 @@ export class World {
     this.truck?.render();
     for (const d of this.doors) d.render();
     for (const item of this.items) item.render(alpha);
-    for (const p of this.players) p.render(alpha, frameMs);
+    for (const p of this.players) {
+      // Đang đỡ đồ trên đầu: tên nhân vật nâng lên trên món đồ (không bị che).
+      const held =
+        this.grab.holding(p) ??
+        (p.remoteHold >= 0 ? this.items.find((i) => i.uid === p.remoteHold) : undefined);
+      p.carryLift = held && held.def.requiredGrabbers === 1 ? held.def.size.h + 6 : 0;
+      p.render(alpha, frameMs);
+    }
     this.grab.render(this.overlay, this.debugDraw);
     // Ping lên món đồ thì đi theo món đồ.
     this.pingLayer.render((m) => {
