@@ -1,0 +1,934 @@
+{
+  "type": "map",
+  "version": "1.10",
+  "tiledversion": "1.10.2",
+  "orientation": "orthogonal",
+  "renderorder": "right-down",
+  "infinite": false,
+  "compressionlevel": -1,
+  "width": 56,
+  "height": 34,
+  "tilewidth": 32,
+  "tileheight": 32,
+  "nextlayerid": 7,
+  "nextobjectid": 58,
+  "tilesets": [],
+  "layers": [
+    {
+      "id": 1,
+      "name": "floors",
+      "type": "objectgroup",
+      "draworder": "topdown",
+      "opacity": 1,
+      "visible": true,
+      "x": 0,
+      "y": 0,
+      "objects": [
+        {
+          "id": 5,
+          "name": "Phòng khách",
+          "type": "floor",
+          "x": 24,
+          "y": 24,
+          "width": 376,
+          "height": 516,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "color",
+              "type": "string",
+              "value": "#3b3346"
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "name": "Phòng mèo",
+          "type": "floor",
+          "x": 424,
+          "y": 24,
+          "width": 376,
+          "height": 516,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "color",
+              "type": "string",
+              "value": "#4a3a46"
+            }
+          ]
+        },
+        {
+          "id": 7,
+          "name": "Phòng ngủ",
+          "type": "floor",
+          "x": 824,
+          "y": 24,
+          "width": 376,
+          "height": 516,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "color",
+              "type": "string",
+              "value": "#33384a"
+            }
+          ]
+        },
+        {
+          "id": 8,
+          "name": "Phòng đọc",
+          "type": "floor",
+          "x": 24,
+          "y": 556,
+          "width": 376,
+          "height": 520,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "color",
+              "type": "string",
+              "value": "#3a3a46"
+            }
+          ]
+        },
+        {
+          "id": 9,
+          "name": "Bếp",
+          "type": "floor",
+          "x": 424,
+          "y": 556,
+          "width": 376,
+          "height": 520,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "color",
+              "type": "string",
+              "value": "#463f2e"
+            }
+          ]
+        },
+        {
+          "id": 10,
+          "name": "Kho",
+          "type": "floor",
+          "x": 824,
+          "y": 556,
+          "width": 376,
+          "height": 520,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "color",
+              "type": "string",
+              "value": "#3a3530"
+            }
+          ]
+        },
+        {
+          "id": 11,
+          "name": "Sân",
+          "type": "floor",
+          "x": 1224,
+          "y": 24,
+          "width": 552,
+          "height": 1052,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "color",
+              "type": "string",
+              "value": "#2c3330"
+            },
+            {
+              "name": "outdoor",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 25,
+          "name": "Lối",
+          "type": "floor",
+          "x": 150,
+          "y": 540,
+          "width": 110,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "color",
+              "type": "string",
+              "value": "#3b3346"
+            }
+          ]
+        },
+        {
+          "id": 26,
+          "name": "Lối",
+          "type": "floor",
+          "x": 550,
+          "y": 540,
+          "width": 110,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "color",
+              "type": "string",
+              "value": "#3b3346"
+            }
+          ]
+        },
+        {
+          "id": 27,
+          "name": "Lối",
+          "type": "floor",
+          "x": 950,
+          "y": 540,
+          "width": 110,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "color",
+              "type": "string",
+              "value": "#3b3346"
+            }
+          ]
+        },
+        {
+          "id": 28,
+          "name": "Lối",
+          "type": "floor",
+          "x": 400,
+          "y": 200,
+          "width": 16,
+          "height": 170,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "color",
+              "type": "string",
+              "value": "#3b3346"
+            }
+          ]
+        },
+        {
+          "id": 29,
+          "name": "Lối",
+          "type": "floor",
+          "x": 400,
+          "y": 760,
+          "width": 16,
+          "height": 110,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "color",
+              "type": "string",
+              "value": "#3b3346"
+            }
+          ]
+        },
+        {
+          "id": 30,
+          "name": "Lối",
+          "type": "floor",
+          "x": 800,
+          "y": 200,
+          "width": 16,
+          "height": 170,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "color",
+              "type": "string",
+              "value": "#3b3346"
+            }
+          ]
+        },
+        {
+          "id": 31,
+          "name": "Lối",
+          "type": "floor",
+          "x": 800,
+          "y": 760,
+          "width": 16,
+          "height": 110,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "color",
+              "type": "string",
+              "value": "#3b3346"
+            }
+          ]
+        },
+        {
+          "id": 32,
+          "name": "Cửa chính",
+          "type": "floor",
+          "x": 1200,
+          "y": 250,
+          "width": 24,
+          "height": 180,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "color",
+              "type": "string",
+              "value": "#3b3346"
+            }
+          ]
+        },
+        {
+          "id": 33,
+          "name": "Cửa sau",
+          "type": "floor",
+          "x": 1200,
+          "y": 760,
+          "width": 24,
+          "height": 110,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "color",
+              "type": "string",
+              "value": "#3b3346"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "walls",
+      "type": "objectgroup",
+      "draworder": "topdown",
+      "opacity": 1,
+      "visible": true,
+      "x": 0,
+      "y": 0,
+      "objects": [
+        {
+          "id": 1,
+          "name": "",
+          "type": "wall",
+          "x": 0,
+          "y": 0,
+          "width": 1800,
+          "height": 24,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 2,
+          "name": "",
+          "type": "wall",
+          "x": 0,
+          "y": 1076,
+          "width": 1800,
+          "height": 24,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 3,
+          "name": "",
+          "type": "wall",
+          "x": 0,
+          "y": 24,
+          "width": 24,
+          "height": 1052,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 4,
+          "name": "",
+          "type": "wall",
+          "x": 1776,
+          "y": 24,
+          "width": 24,
+          "height": 1052,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 12,
+          "name": "",
+          "type": "wall",
+          "x": 400,
+          "y": 24,
+          "width": 16,
+          "height": 176,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 13,
+          "name": "",
+          "type": "wall",
+          "x": 400,
+          "y": 370,
+          "width": 16,
+          "height": 390,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 14,
+          "name": "",
+          "type": "wall",
+          "x": 400,
+          "y": 870,
+          "width": 16,
+          "height": 206,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 15,
+          "name": "",
+          "type": "wall",
+          "x": 800,
+          "y": 24,
+          "width": 16,
+          "height": 176,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 16,
+          "name": "",
+          "type": "wall",
+          "x": 800,
+          "y": 370,
+          "width": 16,
+          "height": 390,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 17,
+          "name": "",
+          "type": "wall",
+          "x": 800,
+          "y": 870,
+          "width": 16,
+          "height": 206,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 18,
+          "name": "",
+          "type": "wall",
+          "x": 24,
+          "y": 540,
+          "width": 126,
+          "height": 16,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 19,
+          "name": "",
+          "type": "wall",
+          "x": 260,
+          "y": 540,
+          "width": 290,
+          "height": 16,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 20,
+          "name": "",
+          "type": "wall",
+          "x": 660,
+          "y": 540,
+          "width": 290,
+          "height": 16,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 21,
+          "name": "",
+          "type": "wall",
+          "x": 1060,
+          "y": 540,
+          "width": 140,
+          "height": 16,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 22,
+          "name": "",
+          "type": "wall",
+          "x": 1200,
+          "y": 24,
+          "width": 24,
+          "height": 226,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 23,
+          "name": "",
+          "type": "wall",
+          "x": 1200,
+          "y": 430,
+          "width": 24,
+          "height": 330,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 24,
+          "name": "",
+          "type": "wall",
+          "x": 1200,
+          "y": 870,
+          "width": 24,
+          "height": 206,
+          "rotation": 0,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "doors",
+      "type": "objectgroup",
+      "draworder": "topdown",
+      "opacity": 1,
+      "visible": true,
+      "x": 0,
+      "y": 0,
+      "objects": [
+        {
+          "id": 34,
+          "name": "Cửa P1–P4",
+          "type": "door",
+          "x": 152,
+          "y": 542,
+          "width": 106,
+          "height": 12,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "hinge",
+              "type": "string",
+              "value": "start"
+            }
+          ]
+        },
+        {
+          "id": 35,
+          "name": "Cửa P2–P5",
+          "type": "door",
+          "x": 552,
+          "y": 542,
+          "width": 106,
+          "height": 12,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "hinge",
+              "type": "string",
+              "value": "end"
+            }
+          ]
+        },
+        {
+          "id": 36,
+          "name": "Cửa P3–P6",
+          "type": "door",
+          "x": 952,
+          "y": 542,
+          "width": 106,
+          "height": 12,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "hinge",
+              "type": "string",
+              "value": "start"
+            }
+          ]
+        },
+        {
+          "id": 37,
+          "name": "Cửa P4–P5",
+          "type": "door",
+          "x": 402,
+          "y": 762,
+          "width": 12,
+          "height": 106,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "hinge",
+              "type": "string",
+              "value": "start"
+            }
+          ]
+        },
+        {
+          "id": 38,
+          "name": "Cửa P5–P6",
+          "type": "door",
+          "x": 802,
+          "y": 762,
+          "width": 12,
+          "height": 106,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "hinge",
+              "type": "string",
+              "value": "end"
+            }
+          ]
+        },
+        {
+          "id": 39,
+          "name": "Cửa sau",
+          "type": "door",
+          "x": 1204,
+          "y": 762,
+          "width": 16,
+          "height": 106,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "hinge",
+              "type": "string",
+              "value": "start"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "markers",
+      "type": "objectgroup",
+      "draworder": "topdown",
+      "opacity": 1,
+      "visible": true,
+      "x": 0,
+      "y": 0,
+      "objects": [
+        {
+          "id": 40,
+          "name": "",
+          "type": "hideSpot",
+          "x": 200,
+          "y": 120,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 41,
+          "name": "",
+          "type": "hideSpot",
+          "x": 330,
+          "y": 450,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 42,
+          "name": "",
+          "type": "hideSpot",
+          "x": 600,
+          "y": 100,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 43,
+          "name": "",
+          "type": "hideSpot",
+          "x": 520,
+          "y": 440,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 44,
+          "name": "",
+          "type": "hideSpot",
+          "x": 1000,
+          "y": 120,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 45,
+          "name": "",
+          "type": "hideSpot",
+          "x": 1120,
+          "y": 460,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 46,
+          "name": "",
+          "type": "hideSpot",
+          "x": 120,
+          "y": 700,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 47,
+          "name": "",
+          "type": "hideSpot",
+          "x": 300,
+          "y": 1000,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 48,
+          "name": "",
+          "type": "hideSpot",
+          "x": 620,
+          "y": 650,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 49,
+          "name": "",
+          "type": "hideSpot",
+          "x": 700,
+          "y": 1000,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 50,
+          "name": "",
+          "type": "hideSpot",
+          "x": 1000,
+          "y": 700,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 51,
+          "name": "",
+          "type": "hideSpot",
+          "x": 1120,
+          "y": 1000,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 52,
+          "name": "",
+          "type": "landlordPath",
+          "x": 200,
+          "y": 300,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true,
+          "properties": [
+            {
+              "name": "order",
+              "type": "int",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "id": 53,
+          "name": "",
+          "type": "landlordPath",
+          "x": 600,
+          "y": 300,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true,
+          "properties": [
+            {
+              "name": "order",
+              "type": "int",
+              "value": 2
+            }
+          ]
+        },
+        {
+          "id": 54,
+          "name": "",
+          "type": "landlordPath",
+          "x": 1000,
+          "y": 300,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true,
+          "properties": [
+            {
+              "name": "order",
+              "type": "int",
+              "value": 3
+            }
+          ]
+        },
+        {
+          "id": 55,
+          "name": "",
+          "type": "landlordPath",
+          "x": 1000,
+          "y": 820,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true,
+          "properties": [
+            {
+              "name": "order",
+              "type": "int",
+              "value": 4
+            }
+          ]
+        },
+        {
+          "id": 56,
+          "name": "",
+          "type": "landlordPath",
+          "x": 600,
+          "y": 820,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true,
+          "properties": [
+            {
+              "name": "order",
+              "type": "int",
+              "value": 5
+            }
+          ]
+        },
+        {
+          "id": 57,
+          "name": "",
+          "type": "landlordPath",
+          "x": 200,
+          "y": 820,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true,
+          "properties": [
+            {
+              "name": "order",
+              "type": "int",
+              "value": 6
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "zones",
+      "type": "objectgroup",
+      "draworder": "topdown",
+      "opacity": 1,
+      "visible": true,
+      "x": 0,
+      "y": 0,
+      "objects": []
+    },
+    {
+      "id": 6,
+      "name": "stairs",
+      "type": "objectgroup",
+      "draworder": "topdown",
+      "opacity": 1,
+      "visible": true,
+      "x": 0,
+      "y": 0,
+      "objects": []
+    }
+  ]
+}

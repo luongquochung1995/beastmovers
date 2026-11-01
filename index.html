@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>Beast Movers</title>
+    <meta name="description" content="Co-op moving chaos for 1–8 players, right in your browser." />
+    <!-- Ảnh + mô tả khi chia sẻ link (Messenger, Discord, Zalo…). -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Beast Movers — co-op moving chaos" />
+    <meta
+      property="og:description"
+      content="1–8 players, 1 truck, a fragile mirror and a cat. Play free in your browser — on one PC or online with an invite link."
+    />
+    <meta property="og:image" content="https://luongquochung1995.github.io/beastmovers/og.png" />
+    <meta property="og:url" content="https://luongquochung1995.github.io/beastmovers/" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #1d1b26;
+        overflow: hidden;
+      }
+      #game {
+        width: 100%;
+        height: 100%;
+        /* Không cuộn / phóng to trang bằng cử chỉ khi chơi trên điện thoại. */
+        touch-action: none;
+      }
+      #rotate {
+        display: none;
+      }
+      /* Điện thoại cầm dọc: nhắc xoay ngang (game vẽ 16:9). */
+      @media (orientation: portrait) and (pointer: coarse) {
+        #rotate {
+          display: flex;
+          position: fixed;
+          inset: 0;
+          z-index: 20;
+          align-items: center;
+          justify-content: center;
+          flex-direction: column;
+          gap: 12px;
+          background: #1d1b26;
+          color: #f4efe6;
+          font-family: Nunito, 'Segoe UI', Roboto, Arial, sans-serif;
+          font-size: 20px;
+          text-align: center;
+          padding: 24px;
+        }
+        #rotate .icon {
+          font-size: 64px;
+        }
+        #rotate button {
+          margin-top: 16px;
+          padding: 10px 18px;
+          font: inherit;
+          font-size: 16px;
+          color: #f4efe6;
+          background: #3a3550;
+          border: 2px solid #ffffff55;
+          border-radius: 10px;
+        }
+      }
+      /* Người chơi chọn chơi luôn màn hình dọc (vd. điện thoại khóa xoay). */
+      body.allow-portrait #rotate {
+        display: none;
+      }
+    </style>
+    <script type="module" crossorigin src="./assets/index-BSoHlolC.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/phaser-CBdwEDE8.js">
+    <link rel="stylesheet" crossorigin href="./assets/index-C7sCp4UN.css">
+  </head>
+  <body>
+    <div id="game"></div>
+    <div id="rotate">
+      <div class="icon">📱↻</div>
+      <div>Xoay ngang điện thoại để chơi</div>
+      <div>Turn your phone sideways to play</div>
+      <button type="button" onclick="document.body.classList.add('allow-portrait')">
+        Chơi luôn màn hình dọc · Play in portrait
+      </button>
+    </div>
+  </body>
+</html>

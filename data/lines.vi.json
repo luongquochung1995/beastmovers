@@ -1,0 +1,397 @@
+{
+  "grandma": {
+    "levelStart": [
+      "Nhẹ tay nhé mấy đứa, đồ của bà quý lắm.",
+      "Coi chừng cái tường, bà mới sơn đó.",
+      "Bà đứng đây coi, đừng có làm bể gì nha.",
+      "Xe không chờ hoài đâu, lẹ lên!",
+      "Đồ nào cũng có kỷ niệm hết đó nghe chưa."
+    ],
+    "itemBroken": [
+      "Trời đất ơi!",
+      "Ờ… giỏi. Giỏi lắm.",
+      "Cái đó bà giữ từ hồi còn con gái!",
+      "Thôi xong, bể thật rồi.",
+      "Bà trừ lương nghe chưa!"
+    ],
+    "itemDropped": [
+      "Tay chân để đâu vậy con?",
+      "Tay ngủ gật hả?",
+      "Rớt rồi kìa, rớt rồi kìa!",
+      "Bà nhìn thấy hết đó nha.",
+      "Cầm cho chắc vào!"
+    ],
+    "wallHit": [
+      "Tường mới sơn đó!",
+      "Cái tường nó làm gì con đâu!",
+      "Ê ê, trầy hết tường bà rồi!",
+      "Từ từ thôi, nhà chứ đâu phải sân banh!",
+      "Lại thêm một vết nữa…"
+    ],
+    "itemLoaded": [
+      "Ừ, được.",
+      "Cũng tạm.",
+      "Xếp cho ngay ngắn vào.",
+      "Được đó, làm tiếp đi.",
+      "Ờ, khá hơn rồi đó."
+    ],
+    "catEscaped": [
+      "Mimi! Về với bà nè!",
+      "Con mèo nó sợ mấy đứa đó!",
+      "Bắt nhẹ thôi, nó cào đó!",
+      "Mimi ơi, ra đây bà thương!",
+      "Mèo của bà mà xổng là bà khóc đó!"
+    ],
+    "timeLow": [
+      "Nhanh lên, xe sắp chạy rồi!",
+      "Còn một phút thôi đó!",
+      "Lẹ lên mấy đứa ơi!",
+      "Tài xế bấm còi rồi kìa!",
+      "Sắp hết giờ rồi, đừng có đứng đó!"
+    ],
+    "levelEnd": [
+      "Thôi được, lần sau bà gọi người khác.",
+      "Cũng được, bà cho năm sao… chắc vậy.",
+      "Ờ, xong rồi đó hả?",
+      "Lần sau nhớ nhẹ tay hơn nha.",
+      "Cảm ơn mấy đứa… bà nghĩ vậy."
+    ],
+    "bigLiftStart": [
+      "Cẩn thận! CẨN THẬN!",
+      "Từ từ, đừng có làm rớt!",
+      "Một, hai, ba… nhấc!",
+      "Coi chừng góc tường đó!",
+      "Bà không dám nhìn luôn…"
+    ],
+    "bigLiftFail": [
+      "Đông người vậy mà không nhấc nổi à?",
+      "Ai buông tay đó?!",
+      "Trời ơi, cái sàn nhà của bà!",
+      "Mấy đứa có ăn sáng chưa vậy?",
+      "Bà khiêng còn khỏe hơn!"
+    ],
+    "changeMind": [
+      "À mà mang luôn cái {item} nhé!",
+      "Bà đổi ý rồi, lấy cả {item} đi.",
+      "Khoan, {item} cũng phải mang theo!",
+      "Ủa quên, {item} nữa con ơi.",
+      "Thôi mang {item} luôn cho bà."
+    ]
+  },
+  "collector": {
+    "levelStart": [
+      "Món nào ở đây cũng già hơn ông bà mấy cậu. Liệu mà cư xử.",
+      "Nhìn bằng mắt trước. Rồi miễn cưỡng lắm mới được dùng tay.",
+      "Cái gương đó sống sót qua hai cuộc chiến. Để xem có sống nổi qua mấy cậu không.",
+      "Tôi ghi sổ hết rồi đấy. Mất cái gì là tôi biết.",
+      "Từ từ thôi. Đồ cổ nó ngửi thấy sự sợ hãi đấy."
+    ],
+    "itemBroken": [
+      "Đồ thế kỷ mười tám đấy!",
+      "Vô giá. Đã từng vô giá.",
+      "Cho tôi ngồi xuống cái đã.",
+      "Mấy cậu vừa làm nên lịch sử. Theo nghĩa xấu.",
+      "Cái đó tôi ghi vào hóa đơn. In đậm."
+    ],
+    "itemDropped": [
+      "Trọng lực không phải đồng nghiệp của cậu đâu!",
+      "Nó có nảy không? Nói là không nảy đi.",
+      "Hai tay. HAI tay! Cậu có mà!",
+      "Tim tôi cũng vừa rơi y như thế.",
+      "Cẩn thận, đó là lớp men thời gian chứ không phải bụi!"
+    ],
+    "wallHit": [
+      "Bức tường đó là di sản đấy!",
+      "Coi chừng lớp vữa, vữa nguyên bản đó.",
+      "Cậu đang khiêng đồ hay đang chơi bowling?",
+      "Thêm một vết lõm. Tuyệt. Rất cổ kính.",
+      "Góc nhà, các cậu ơi. Nhà có góc đấy."
+    ],
+    "itemLoaded": [
+      "Ừm. Tạm được.",
+      "Chằng lại. Rồi chằng thêm lần nữa.",
+      "Đặt vào xe nhẹ thôi. Như đắp chăn cho em bé.",
+      "Thêm một cổ vật được cứu.",
+      "Được. Đừng để nó nhìn ra cửa sổ."
+    ],
+    "catEscaped": [
+      "Ai cho mèo vào tiệm đồ cổ vậy?!",
+      "Đừng lại gần đồ sứ! ĐỪNG lại gần đồ sứ!",
+      "Con mèo đó trẻ hơn mọi thứ ở đây và còn dễ vỡ gấp đôi.",
+      "Bắt nó lại trước khi nó 'thẩm định' món gì đó.",
+      "Xùy! Xùy, cái đồ phá hoại có lông!"
+    ],
+    "timeLow": [
+      "Xe không đợi đâu. Luật sư của tôi cũng vậy.",
+      "Nhanh lên — mà đừng nhanh QUÁ!",
+      "Còn một phút. Ưu tiên đồ cổ. Mà đồ nào cũng cổ.",
+      "Tích tắc, như cái đồng hồ quả lắc của tôi. Đừng có làm vỡ nó.",
+      "Nhanh mà nhẹ. Nhẹ mà nhanh!"
+    ],
+    "levelEnd": [
+      "Tôi sẽ soi từng món bằng kính lúp.",
+      "Tạm chấp nhận. Tôi từng thấy tệ hơn. Một lần. Năm 1974.",
+      "Để lại tên đi. Cho công ty bảo hiểm.",
+      "Thôi. Ít ra tiệm cũng trống rồi.",
+      "Lần sau tôi thuê nhân viên bảo tàng."
+    ],
+    "bigLiftStart": [
+      "Cùng nhấc nào — đều như dàn tứ tấu!",
+      "Cây đàn đó từng có thời huy hoàng. Đừng cho nó thấy thời tàn.",
+      "Nhấc bằng chân, đừng nhấc bằng tiền của tôi.",
+      "Vững... vững... Tôi nín thở tới khi nó nằm yên.",
+      "Bốn đôi tay, một nhịp!"
+    ],
+    "bigLiftFail": [
+      "Ai buông tay?! Tôi đòi biết tên!",
+      "Hợp âm đó tôi không bao giờ muốn nghe lại.",
+      "Làm việc nhóm! Tra từ điển đi!",
+      "Mấy cậu vừa đánh rơi một thế kỷ xuống sàn nhà tôi.",
+      "Lại lần nữa. Lần này đủ mặt mọi người."
+    ],
+    "changeMind": [
+      "À mà mang cả {item} nữa. Nó... có giá trị tình cảm.",
+      "Nghĩ lại thì tôi không sống thiếu {item} được.",
+      "Thêm {item} vào danh sách. Đừng hỏi tại sao.",
+      "Cái {item}! Sao tôi lại quên cái {item} được!",
+      "Tôi vừa nhớ ra {item} đáng giá cả gia tài."
+    ]
+  },
+  "celebrity": {
+    "levelStart": [
+      "Các cưng! Làm nhanh nhé, chị có buổi chụp hình.",
+      "Đừng đụng vào món nào từng lên bìa tạp chí nha.",
+      "Món nào ở đây cũng có fan club riêng đó.",
+      "Cây đàn được bảo hiểm cao hơn cả đám cưng cộng lại.",
+      "Cười lên! Biết đâu có người đang quay."
+    ],
+    "itemBroken": [
+      "Quà của FAN tặng đó!",
+      "Ai gọi quản lý giùm chị.",
+      "Chị không dám nhìn. Xong rồi thì báo chị.",
+      "Chuyện này chị sẽ kể lên podcast.",
+      "Thôi xong, thôi xong, thôi XONG rồi cưng ơi!"
+    ],
+    "itemDropped": [
+      "Tay lóng ngóng không hợp hình ảnh đâu nha!",
+      "Nhặt lên như thể máy quay đang chạy đi!",
+      "Ơ. Rơi xuống sàn.",
+      "Nhà này không làm việc kiểu đó đâu cưng.",
+      "Drama là việc của chị, không phải của cưng."
+    ],
+    "wallHit": [
+      "Bức tường đó có trong MV của chị đó!",
+      "Coi chừng lớp mạ vàng nha cưng!",
+      "Đụng tường thêm cái nữa là ra tòa đó.",
+      "Nhẹ thôi! Căn nhà cũng có cảm xúc mà.",
+      "Ui da. Chị đau tận tâm can."
+    ],
+    "itemLoaded": [
+      "Tuyệt vời. Món tiếp theo!",
+      "Món đó đặt ở nhà mới chắc đẹp xỉu.",
+      "Làm tốt lắm cưng. Chưa xuất sắc. Tốt.",
+      "Quay logo ra ngoài giùm chị nha.",
+      "Chụt! Chị mê luôn."
+    ],
+    "catEscaped": [
+      "Công chúa! Công chúa nhỏ của mẹ, về đây!",
+      "Con mèo đó nhiều người theo dõi hơn cưng đó!",
+      "Bắt lại! Mà đừng làm rối lông bé nha!",
+      "Bé mà chạy ra ngoài là bị paparazzi chụp đó!",
+      "Ai mang cái lồng mèo đính kim cương ra đây!"
+    ],
+    "timeLow": [
+      "Còn một phút! Xe chị tới rồi!",
+      "Nhanh lên các cưng! Nhanh như bản remix!",
+      "Chị mà trễ hẹn là tại các cưng đó.",
+      "Paparazzi đứng chờ ngoài cổng rồi! Lẹ lên!",
+      "Tích tắc, các siêu sao ơi!"
+    ],
+    "levelEnd": [
+      "Cảm ơn, cảm ơn, không ký tặng đâu nha!",
+      "Chị sẽ chấm điểm trên mạng xã hội. Có thể.",
+      "Chà, đúng là một màn trình diễn.",
+      "Hôn gió nè! Đừng gọi chị, chị sẽ gọi.",
+      "Đóng máy rồi các cưng ơi!"
+    ],
+    "bigLiftStart": [
+      "Đủ tám người! Như một nhóm nhạc nam!",
+      "Đếm tới ba rồi nhấc. Một, hai, TUYỆT VỜI!",
+      "Cây đàn đoạt giải của chị nằm trong tay các cưng. Theo nghĩa đen.",
+      "Vũ đạo nào mọi người! Đều nhịp!",
+      "Cẩn thận, món đó còn đi tour đó!"
+    ],
+    "bigLiftFail": [
+      "Ai làm rơi đàn của chị?! AI?!",
+      "Tám người mà không có nổi một bộ óc?",
+      "Nốt đó phô rồi. Giờ cây đàn cũng méo luôn.",
+      "Chị sắp khóc và lớp trang điểm sẽ trôi hết.",
+      "Làm lại! Từ đầu! Có cảm xúc vào!"
+    ],
+    "changeMind": [
+      "À! Mang cả {item} nữa. Nó hợp năng lượng của chị.",
+      "Stylist của chị nói {item} phải theo chị.",
+      "Không bỏ {item} được, nó có trong MV mới nhất!",
+      "Thêm {item} đi cưng. Đừng cãi ngôi sao.",
+      "Khoan khoan khoan — cái {item}! Chị cần cái {item}!"
+    ]
+  },
+  "startup": {
+    "levelStart": [
+      "Anh em, đây là đợt chuyển nhà không rác. Ship gọn nhẹ nhé.",
+      "Coi mỗi món đồ như một tính năng. Phần lớn sẽ bị khai tử.",
+      "Anh có đúng một cái của mỗi thứ. Đừng biến nó thành không cái.",
+      "Làm nhanh nhưng KHÔNG làm vỡ gì nhé.",
+      "Họp nhanh: nhấc, khiêng, chất lên xe. Có câu hỏi không? Không? Tốt."
+    ],
+    "itemBroken": [
+      "Cái đó… pivot hơi gắt rồi đấy.",
+      "Ok, giờ mình chính thức chưa có doanh thu.",
+      "Hít thở. Hít thở. Nó chỉ là vật chất thôi mà.",
+      "Coi như đó là một bài học kinh nghiệm.",
+      "Ít đồ đi. Chắc cũng đúng chất thương hiệu."
+    ],
+    "itemDropped": [
+      "Trọng lực không phải chiến lược tăng trưởng!",
+      "Cú rơi đó không có trong lộ trình.",
+      "Nhặt lên. Làm lại vòng mới.",
+      "Báo lỗi: đồ rơi. Mức độ: anh đang khóc.",
+      "Tay là API. Gọi cho đúng cách đi."
+    ],
+    "wallHit": [
+      "Tường đó sơn trắng mờ đấy. TRẮNG. MỜ.",
+      "Nhà tối giản thì vết trầy nào cũng lộ hết!",
+      "Khoảng trống là nghệ thuật. Tôn trọng nó đi.",
+      "Anh thuê cả chuyên gia tư vấn để chọn bức tường đó.",
+      "Đụng tường lần nữa là anh viết báo cáo sự cố đấy."
+    ],
+    "itemLoaded": [
+      "Đã ship.",
+      "Gọn. Hiệu quả. Anh thích.",
+      "Bớt được một thứ. Theo nghĩa đen.",
+      "Thực thi tốt lắm, team.",
+      "Kéo thẻ đó sang cột Xong!"
+    ],
+    "catEscaped": [
+      "Mèo của ai vậy? Anh đâu có nuôi mèo. Hay là có?",
+      "Con mèo không nằm trong bản MVP!",
+      "Nhốt con mèo lại. Nó là phát sinh ngoài phạm vi có râu.",
+      "Nó đang thêm hỗn loạn. Mình đã nói không hỗn loạn.",
+      "Bắt nó trước khi nó phá vỡ cả thị trường."
+    ],
+    "timeLow": [
+      "Còn sáu mươi giây là launch!",
+      "Một phút nữa là ship, xong hay chưa cũng ship.",
+      "Nước rút rồi! Nhưng là nước rút có chánh niệm.",
+      "Sprint cuối cùng, mọi người ơi!",
+      "Hạn chót không phải là lời gợi ý."
+    ],
+    "levelEnd": [
+      "Mình họp rút kinh nghiệm nhanh nhé. À thôi, khỏi.",
+      "Năm sao. Hoặc bốn. Anh sẽ gửi khảo sát.",
+      "Nhà mới của anh còn ít đồ hơn nữa. Nhờ mấy em đấy.",
+      "Sprint tốt. Hẹn gặp quý sau.",
+      "Anh thấy nhẹ người rồi. Cả tâm hồn lẫn ví tiền."
+    ],
+    "bigLiftStart": [
+      "Sáu người, một cái bàn. Đó mới là cộng hưởng.",
+      "Thống nhất tầm nhìn đã. Rồi nhấc.",
+      "Khiêng đồ liên phòng ban! Anh mê.",
+      "Đây là món to duy nhất anh có. Làm ơn.",
+      "Tay vững thì tăng trưởng vững."
+    ],
+    "bigLiftFail": [
+      "Ai làm hỏng việc? Và làm rơi cả cái bàn?",
+      "Đó là một vấn đề chặn. Một vấn đề to và nặng.",
+      "Giao tiếp đi team! Dùng ping đi!",
+      "Mình cần đồng bộ tốt hơn. Về mặt thể chất.",
+      "Quay lại bản cũ! Quay lại!"
+    ],
+    "changeMind": [
+      "Khoan, cái {item} làm anh hạnh phúc. Mang theo.",
+      "Yêu cầu mới: {item} giờ nằm trong phạm vi.",
+      "Anh pivot rồi. {item} đi theo anh.",
+      "Nghĩ lại thì {item} là cốt lõi con người anh.",
+      "Đổi kế hoạch chút: thêm {item}. Xin lỗi. Mà cũng không xin lỗi."
+    ]
+  },
+  "catlady": {
+    "levelStart": [
+      "Coi chừng mấy bé nha! Cả sáu đứa đó!",
+      "Làm ơn đừng giẫm lên đuôi đứa nào.",
+      "Mèo trước. Rồi tới đồ. Rồi mới tới mấy em.",
+      "Nghe tiếng khè là bình thường. Nghe tiếng khóc là chị đó.",
+      "Bé nào cũng phải vào lồng. Không ngoại lệ. Chúc may mắn."
+    ],
+    "itemBroken": [
+      "Trời ơi! Có trúng bé nào không?!",
+      "Vỡ hả? Thôi được. Miễn mấy bé không sao.",
+      "Bé Mochi sẽ không bao giờ tha thứ cho em.",
+      "Đó là cái gương tụi nhỏ thích cào nhất!",
+      "Mảnh kính đầy sàn! Đứng im hết, giơ chân lên!"
+    ],
+    "itemDropped": [
+      "Tiếng động mạnh làm mấy bé sợ đó!",
+      "Suỵt! Nhẹ thôi! Tai mèo thính lắm!",
+      "Giờ tụi nó chui hết xuống gầm giường rồi. Cảm ơn nha.",
+      "Em làm bé Bánh Bao giật mình rồi.",
+      "Nhặt lên nhẹ nhàng. Như mèo vậy."
+    ],
+    "wallHit": [
+      "Cẩn thận, tường đó có kệ leo của tụi nhỏ!",
+      "Cốp. Y như bé Sushi nhảy hụt.",
+      "Nhẹ với tường thôi, tường chống mèo cào chứ không chống mấy em.",
+      "Mỗi cú va là có một bé thức giấc.",
+      "Coi chừng góc tường, có khi có cái đuôi ở đó!"
+    ],
+    "itemLoaded": [
+      "Tốt! Hoàn hảo meo!",
+      "Để đồ mềm gần mấy cái lồng giùm chị nha.",
+      "Được. Tụi mèo duyệt rồi. Chị biết mà.",
+      "Thêm một bước tới nhà mới rồi!",
+      "Cảm ơn em nha."
+    ],
+    "catEscaped": [
+      "MOCHI! Về với mẹ nè!",
+      "Lại nữa! Ai mở cửa vậy?!",
+      "Lắc túi bánh thưởng đi! Lắc lên!",
+      "Bé chạy nhanh lắm nhưng lúc nào cũng chui gầm giường.",
+      "Đừng đuổi! Làm sao cho bé tưởng là bé tự muốn vào!"
+    ],
+    "timeLow": [
+      "Còn một phút! Mấy bé vào lồng hết chưa?!",
+      "Đếm mèo đi! Đếm lại lần nữa!",
+      "Xe không được chạy khi chưa có con chị!",
+      "Nhanh lên, mà đừng làm tụi nó sợ!",
+      "Nhanh nhanh! Mochi còn ở ngoài kia!"
+    ],
+    "levelEnd": [
+      "Cả nhà chào tạm biệt nhà cũ nào!",
+      "Cảm ơn nha! Tụi mèo sẽ chịu đựng mấy em mãi mãi.",
+      "Chị đếm lại lần nữa. Cho chắc.",
+      "Giờ mấy em có mùi mèo rồi. Chào mừng vào gia đình.",
+      "Lần sau nhớ mang bánh thưởng nha."
+    ],
+    "bigLiftStart": [
+      "Cẩn thận, bé Sushi hay ngủ trên đó!",
+      "Kiểm tra có mèo nằm bên dưới không đã!",
+      "Từ từ, từ từ, không có cái đuôi nào bên dưới chứ?",
+      "Cùng nhấc, nhẹ thôi, như bế một bé mèo đang ngủ.",
+      "Nhấc nào! Nhẹ nhàng!"
+    ],
+    "bigLiftFail": [
+      "Cú rầm đó làm ba bé leo tót lên rèm rồi.",
+      "Ai buông tay?! Mấy bé hoảng hết rồi!",
+      "Đến mèo còn phối hợp giỏi hơn.",
+      "Làm lại đi, lần này đếm 'một, hai, meo'.",
+      "Chị nghe rung tới tận râu."
+    ],
+    "changeMind": [
+      "À, cái {item}! Tụi nhỏ thích ngủ trên {item} lắm!",
+      "Mang cả {item} nữa, nó có mùi nhà với tụi nhỏ.",
+      "Mochi vừa ngồi lên {item}. Vậy là phải mang theo.",
+      "Không bỏ {item} được, tụi mèo sẽ nổi loạn.",
+      "Thêm {item} giùm chị. Lệnh của mèo."
+    ]
+  }
+}
