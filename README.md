@@ -60,16 +60,20 @@ Tối đa 4 người trên một máy: 2 người chung bàn phím + tay cầm (
 | Ping           | F          | Numpad 3              | Y                |
 
 Giữ một hướng khoảng 0,6 giây thì nhân vật chuyển sang chạy (chạy có thể vấp ngã). Lao vào người khác làm họ ngã.
+Giữ **Ping** + một hướng để mở vòng ping.
 
-| Phím chung    | Việc                                                       |
-| ------------- | ---------------------------------------------------------- |
-| Enter / Space | Bắt đầu (ở menu)                                           |
-| I             | Màn thử điều khiển (ở menu)                                |
-| L             | Đổi ngôn ngữ English ↔ Tiếng Việt (ở menu)                 |
-| S             | Sandbox: thả thử đồ vật (ở menu)                           |
-| Esc           | Kết thúc màn / quay lại                                    |
-| F1            | Bật/tắt debug (FPS, số bước logic mỗi giây, khung va chạm) |
-| T             | Khi bật debug: cho mọi người vấp ngã                       |
+**Điện thoại / máy tính bảng** (cầm ngang): đặt ngón tay ở nửa trái màn hình là có cần ảo; nút
+**Nắm / Ném / Lao / Ping** bên phải, nút ⏸ góc trên. Mỗi điện thoại một người — rủ bạn chơi online
+bằng link mời. Menu, chọn màn, lobby, kết quả đều bấm được bằng tay; chạm vào ô mã phòng để gõ mã.
+
+| Phím chung  | Việc                                                       |
+| ----------- | ---------------------------------------------------------- |
+| ↑ ↓ Enter   | Chọn trong menu (tay cầm: D-pad + A, B quay lại)           |
+| I           | Màn thử điều khiển (ở menu)                                |
+| L           | Đổi ngôn ngữ English ↔ Tiếng Việt (ở menu)                 |
+| Esc / Start | Tạm dừng trong màn / quay lại                              |
+| F1          | Bật/tắt debug (FPS, số bước logic mỗi giây, khung va chạm) |
+| T           | Khi bật debug: cho mọi người vấp ngã                       |
 
 ## Sandbox
 

@@ -16,7 +16,10 @@ import { PauseScene } from './scenes/PauseScene';
 import { ResultScene } from './scenes/ResultScene';
 import { SandboxScene } from './scenes/SandboxScene';
 import { SettingsScene } from './scenes/SettingsScene';
+import { detectTouch } from './systems/input/touch';
 import { GAME_HEIGHT, GAME_WIDTH, Theme } from './ui/theme';
+
+detectTouch();
 
 /**
  * `?renderer=none`: chạy game nhưng không vẽ (kiểm thử nhiều máy online trên một máy yếu):

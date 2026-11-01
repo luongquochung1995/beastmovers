@@ -2,8 +2,9 @@ import type { LocalizedText } from '../../data/i18n';
 import { frameFromGamepad } from './gamepad';
 import { EMPTY_FRAME, Btn, type InputFrame, isDown } from './InputFrame';
 import { frameFromKeys, KEYBOARD_LAYOUTS, KeyboardTracker } from './keyboard';
+import { frameFromTouch, inTouchMode, onTouchMode, type TouchState, touchState } from './touch';
 
-export type InputSourceKind = 'keyboard' | 'gamepad';
+export type InputSourceKind = 'keyboard' | 'gamepad' | 'touch';
 
 export interface InputSource {
   readonly id: string;
@@ -79,6 +80,23 @@ class GamepadSource implements InputSource {
   }
 }
 
+/** Màn hình cảm ứng (cần ảo + nút trên màn hình). Chỉ có khi đang ở chế độ cảm ứng. */
+class TouchSource implements InputSource {
+  readonly kind = 'touch';
+  readonly id = 'touch0';
+  readonly label: LocalizedText = { key: 'source.touch' };
+
+  constructor(private readonly state: TouchState) {}
+
+  isConnected(): boolean {
+    return inTouchMode();
+  }
+
+  read(): InputFrame {
+    return frameFromTouch(this.state);
+  }
+}
+
 /** Nút dùng để "tham gia" một ô người chơi. */
 const JOIN_BUTTONS = Btn.Grab | Btn.Start;
 
@@ -95,7 +113,7 @@ export class InputManager {
 
   constructor(
     maxSlots: number,
-    options: { tracker?: KeyboardTracker | null; getPads?: GetPads } = {},
+    options: { tracker?: KeyboardTracker | null; getPads?: GetPads; touch?: boolean } = {},
   ) {
     this.slots = Array.from({ length: maxSlots }, () => null);
     this.tracker = options.tracker === undefined ? new KeyboardTracker() : options.tracker;
@@ -103,6 +121,28 @@ export class InputManager {
     if (this.tracker) {
       KEYBOARD_LAYOUTS.forEach((_, i) => this.addSource(new KeyboardSource(this.tracker!, i)));
     }
+    if (options.touch !== false) {
+      this.addSource(new TouchSource(touchState));
+      // Vừa chuyển sang cảm ứng (chạm màn hình lần đầu): người 1 đang dùng WASD thì đổi sang
+      // màn hình cảm ứng, để mở link mời trên điện thoại vẫn điều khiển được ngay.
+      onTouchMode(() => {
+        if (inTouchMode()) this.swapSource('kb0', 'touch0');
+      });
+    }
+  }
+
+  /** Nguồn mặc định cho người chơi đầu tiên: cảm ứng trên điện thoại, WASD trên máy tính. */
+  primarySourceId(): string {
+    return inTouchMode() ? 'touch0' : 'kb0';
+  }
+
+  /** Cho ô đang dùng nguồn `from` chuyển sang nguồn `to` (nếu `to` chưa ai dùng). */
+  swapSource(from: string, to: string): void {
+    const target = this.sources.get(to);
+    const i = this.slots.findIndex((s) => s?.source.id === from);
+    if (!target || i < 0 || this.isAssigned(target)) return;
+    const frame = target.read();
+    this.slots[i] = { index: i, source: target, prev: frame, cur: frame, connected: true };
   }
 
   private addSource(source: InputSource): void {
@@ -169,6 +209,7 @@ export class InputManager {
       }
     }
     this.tracker?.endPoll();
+    touchState.tapped = 0;
     return joined;
   }
 

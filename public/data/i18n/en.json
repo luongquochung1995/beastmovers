@@ -133,7 +133,7 @@
   "online.title": "Play online",
   "online.create": "Create room",
   "online.enterCode": "…or type a room code to join",
-  "online.codeHint": "Type or paste the 6-letter code (or the invite link)",
+  "online.codeHint": "Type or paste the 6-letter code (or invite link) · on a phone, tap the code",
   "online.backHint": "Esc / B: back  ·  A: create room",
   "online.room": "Room",
   "online.copyLink": "Copy invite link",
@@ -269,5 +269,6 @@
   "tutorial.load": "Carry it out to the truck in the yard and press Grab again to drop it in the cargo bed",
   "tutorial.throw": "Tip: holding something light? Press Throw (E · Right Shift · B). Throwing it into the truck counts too!",
   "tutorial.ping": "Big items need several people. Tap Ping (F · Y) to call for help; hold Ping for the ping wheel",
-  "tutorial.done": "Tutorial done — you're a mover now!"
+  "tutorial.done": "Tutorial done — you're a mover now!",
+  "source.touch": "Touch screen"
 }

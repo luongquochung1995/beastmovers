@@ -13,6 +13,7 @@ import { GameHud, HUD_TOP } from '../ui/GameHud';
 import { PingWheelView } from '../ui/PingWheelView';
 import { scaleLevel } from '../systems/scaling';
 import { RainView } from '../ui/RainView';
+import { touchControls } from '../ui/TouchControls';
 import { GAME_HEIGHT, GAME_WIDTH, Theme } from '../ui/theme';
 import type { HudScene } from './HudScene';
 import { RegistryKeys, SceneKeys } from './keys';
@@ -244,6 +245,11 @@ export class GameScene extends PlayScene {
     super.update();
   }
 
+  protected override touchPause(): void {
+    if (this.online?.status().kind === 'hostGone') this.leaveOnline();
+    else this.openPause();
+  }
+
   /** null: chơi chung máy. */
   onlineRole(): 'host' | 'client' | null {
     if (!this.online) return null;
@@ -259,11 +265,13 @@ export class GameScene extends PlayScene {
     }
     this.scene.launch(SceneKeys.Pause);
     this.scene.bringToTop(SceneKeys.Pause);
+    touchControls().hide();
   }
 
   closePause(): void {
     this.scene.stop(SceneKeys.Pause);
     this.pauseClosedAt = performance.now();
+    this.syncTouchControls();
     if (!this.online) {
       this.scene.resume(SceneKeys.Hud);
       this.scene.resume();

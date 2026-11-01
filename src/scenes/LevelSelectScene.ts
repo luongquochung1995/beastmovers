@@ -58,7 +58,7 @@ export class LevelSelectScene extends Phaser.Scene {
     this.joinArmed = false;
     this.message = '';
     this.ui = this.add.container(0, 0);
-    if (this.inputs.slots.every((s) => s === null)) this.inputs.join('kb0');
+    if (this.inputs.slots.every((s) => s === null)) this.inputs.join(this.inputs.primarySourceId());
 
     this.filter = remembered.filter;
     const i = this.visible().findIndex((l) => l.id === remembered.levelId);
@@ -229,6 +229,13 @@ export class LevelSelectScene extends Phaser.Scene {
 
     if (this.message) this.text(cx, GAME_HEIGHT - 58, this.message, 20, BAD).setOrigin(0.5);
     this.text(cx, GAME_HEIGHT - 24, t('levels.hint'), 15, Theme.muted).setOrigin(0.5);
+    // Quay lại bằng chuột / chạm.
+    this.text(40, 100, t('settings.back'), 18, Theme.text)
+      .setOrigin(0, 0.5)
+      .setPadding(12, 6, 12, 6)
+      .setBackgroundColor('#3a3550')
+      .setInteractive({ useHandCursor: true })
+      .on('pointerup', () => this.scene.start(SceneKeys.Menu));
   }
 
   private drawCard(level: LevelDef, x: number, y: number, focused: boolean, index: number): void {

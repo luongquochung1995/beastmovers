@@ -166,10 +166,20 @@ export class ResultScene extends Phaser.Scene {
       py += gap;
     }
 
-    text(cx, GAME_HEIGHT - 28, t(net ? 'result.footerOnline' : 'result.footer'), {
-      fontSize: '18px',
+    text(cx, GAME_HEIGHT - 22, t(net ? 'result.footerOnline' : 'result.footer'), {
+      fontSize: '16px',
       color: Theme.muted,
     }).setOrigin(0.5);
+    // Nút bấm được bằng chuột / chạm (điện thoại).
+    const button = (x: number, label: string, onClick: () => void) =>
+      text(x, GAME_HEIGHT - 66, label, {
+        fontSize: '22px',
+        backgroundColor: '#3a3550',
+        padding: { x: 20, y: 8 },
+      })
+        .setOrigin(0.5)
+        .setInteractive({ useHandCursor: true })
+        .on('pointerup', onClick);
     if (net) {
       // Online: rời phòng về menu (chơi tiếp cùng phòng: làm sau).
       const leave = () => {
@@ -182,6 +192,7 @@ export class ResultScene extends Phaser.Scene {
       };
       this.input.keyboard?.once('keydown-ENTER', leave);
       this.input.keyboard?.once('keydown-ESC', leave);
+      button(cx, t('pause.leave'), leave);
       new MenuInput(this, (a) => (a === 'confirm' || a === 'back') && leave(), undefined, false);
       return;
     }
@@ -189,6 +200,8 @@ export class ResultScene extends Phaser.Scene {
     const menu = () => this.scene.start(SceneKeys.LevelSelect);
     this.input.keyboard?.once('keydown-ENTER', replay);
     this.input.keyboard?.once('keydown-ESC', menu);
+    button(cx - 130, t('pause.restart'), replay);
+    button(cx + 130, t('pause.levels'), menu);
     // Tay cầm: A chơi lại, B về menu.
     new MenuInput(
       this,

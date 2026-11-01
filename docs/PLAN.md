@@ -509,7 +509,9 @@ Ví dụ câu thoại:
 7. **Kết quả:** bảng điểm, số sao, danh hiệu từng người, nút Chơi lại / Màn tiếp (host chọn)
 
 ### Yêu cầu giao diện
-- Hỗ trợ toàn màn hình, tự co giãn theo cửa sổ; tối thiểu 1280×720; điện thoại không phải mục tiêu chính.
+- Hỗ trợ toàn màn hình, tự co giãn theo cửa sổ; tối thiểu 1280×720.
+- **Điện thoại / máy tính bảng** (thêm 2026-11-01, ngoài 41 phase): chơi cầm ngang bằng cảm ứng — cần ảo nửa trái màn hình, nút Nắm / Ném / Lao / Ping bên phải, nút tạm dừng; mỗi điện thoại 1 người (chơi online bằng link mời); cầm dọc thì nhắc xoay ngang. Cảm ứng là một nguồn input như bàn phím/tay cầm (`touch0`) nên logic game và chơi online không đổi.
+  - 📝 *Kiểm tra (Chromium giả lập điện thoại Pixel 8, cảm ứng): cầm dọc → màn hình "Xoay ngang điện thoại để chơi"; cầm ngang 740×360 → menu chạm được, chọn màn bằng chạm, vào màn hiện cần ảo + 4 nút + ⏸; kéo cần ảo sang phải 1,5 giây → nhân vật đi 188 px; chạm Nắm cạnh thùng → nhặt/thả (6/6 lần, kể cả chạm rất nhanh); ⏸ → menu tạm dừng (ẩn nút cảm ứng), chơi tiếp → nút hiện lại; màn kết quả có nút "Chơi lại" / "Chọn màn"; vào phòng: chạm ô mã mở bàn phím ảo, gõ "ab3" → "AB3". Mở link mời trên điện thoại: người 1 tự dùng màn hình cảm ứng (ô lobby hiện 📱). 4 unit test. ⚠️ Chưa thử trên điện thoại thật (độ trễ cảm ứng, kích thước nút, Safari iOS). Chữ hướng dẫn trong màn vẫn ghi phím bàn phím.*
 - Font hỗ trợ tiếng Việt đầy đủ dấu.
 - **Song ngữ Anh/Việt:** đổi ngôn ngữ ngay trong menu, không cần tải lại trang; bố cục chừa đủ chỗ cho câu dài hơn ở một trong hai ngôn ngữ.
 - 8 màu nhân vật **phân biệt được cả với người mù màu** (mỗi màu kèm một ký hiệu hoặc mũ riêng).

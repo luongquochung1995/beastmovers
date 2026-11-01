@@ -212,7 +212,7 @@ export class OnlineScene extends Phaser.Scene {
 
   /** Người chơi chung máy trên máy này (chưa ai thì người dùng WASD tự vào). */
   private localSlots() {
-    if (this.inputs.slots.every((s) => s === null)) this.inputs.join('kb0');
+    if (this.inputs.slots.every((s) => s === null)) this.inputs.join(this.inputs.primarySourceId());
     return this.inputs.slots.filter((s) => s !== null);
   }
 
@@ -418,9 +418,36 @@ export class OnlineScene extends Phaser.Scene {
     this.button(cx, 240, t('online.create'), () => this.open(generateRoomCode(), 'host'));
     this.text(cx, 340, t('online.enterCode'), 24, Theme.muted);
     const boxes = Array.from({ length: ROOM_CODE_LENGTH }, (_, i) => this.typed[i] ?? '·');
-    this.text(cx, 400, boxes.join(' '), 52);
+    // Chạm vào ô mã: mở bàn phím ảo (điện thoại không có bàn phím thật).
+    this.clickable(this.text(cx, 400, boxes.join(' '), 52), () => this.typeOnScreen());
     this.text(cx, 470, t('online.codeHint'), 18, Theme.muted);
     this.text(cx, GAME_HEIGHT - 40, t('online.backHint'), 18, Theme.muted);
+    this.backButton();
+  }
+
+  /** Nút quay lại / rời phòng bấm được bằng chuột hoặc chạm (góc dưới trái). */
+  private backButton(label = t('settings.back')): void {
+    this.button(40, GAME_HEIGHT - 60, label, () => this.leave(), 18).setOrigin(0, 0.5);
+  }
+
+  /**
+   * Gõ mã phòng bằng bàn phím ảo của điện thoại: một ô `<input>` ẩn nhận chữ (gõ hoặc dán
+   * link), đủ 6 ký tự thì vào phòng như khi gõ bằng bàn phím thật.
+   */
+  private typeOnScreen(): void {
+    if (this.session) return;
+    const el = document.createElement('input');
+    el.value = this.typed;
+    el.autocapitalize = 'characters';
+    el.setAttribute('autocomplete', 'off');
+    el.setAttribute('aria-label', t('online.enterCode'));
+    Object.assign(el.style, { position: 'fixed', left: '0', top: '0', width: '1px', opacity: '0' });
+    document.body.appendChild(el);
+    el.focus();
+    el.addEventListener('input', () => this.typeCode(el.value, true));
+    el.addEventListener('keydown', (e) => e.stopPropagation());
+    el.addEventListener('blur', () => el.remove());
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => el.remove());
   }
 
   /** Đang kết nối, bị từ chối, bị đuổi, host rời… */
@@ -439,6 +466,7 @@ export class OnlineScene extends Phaser.Scene {
       this.button(cx + 150, 520, t('online.playLocal'), () => this.playLocal(), 22);
     }
     this.text(cx, GAME_HEIGHT - 40, this.footer(t('online.leaveHint')), 18, Theme.muted);
+    this.backButton(t('pause.leave'));
   }
 
   private failed(): boolean {
@@ -520,6 +548,7 @@ export class OnlineScene extends Phaser.Scene {
     }
     const help = `${t(lobby.isHost ? 'lobby.helpHost' : 'lobby.help')}  ·  ${t('online.leaveHint')}`;
     this.text(cx, GAME_HEIGHT - 18, this.footer(help), 15, Theme.muted);
+    this.backButton(t('pause.leave'));
     if (this.error) this.text(cx, fy - 44, t('online.error', { error: this.error }), 18, BAD);
   }
 
@@ -552,7 +581,7 @@ export class OnlineScene extends Phaser.Scene {
     const isHostSeat = seat.peer === lobby.state.hostId;
     const ping = this.pings.get(seat.peer);
     const info = [
-      seat.source === 'gamepad' ? '🎮' : '⌨️',
+      { gamepad: '🎮', touch: '📱', keyboard: '⌨️' }[seat.source],
       isHostSeat ? `👑 ${t('online.host')}` : '',
       mine ? t('online.you') : '',
       !mine && ping !== undefined ? `${ping} ms` : '',

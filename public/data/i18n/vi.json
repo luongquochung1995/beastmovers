@@ -133,7 +133,7 @@
   "online.title": "Chơi online",
   "online.create": "Tạo phòng",
   "online.enterCode": "…hoặc gõ mã phòng để vào",
-  "online.codeHint": "Gõ hoặc dán mã 6 ký tự (hoặc link mời)",
+  "online.codeHint": "Gõ hoặc dán mã 6 ký tự (hoặc link mời) · trên điện thoại: chạm vào ô mã",
   "online.backHint": "Esc / B: quay lại  ·  A: tạo phòng",
   "online.room": "Phòng",
   "online.copyLink": "Copy link mời",
@@ -269,5 +269,6 @@
   "tutorial.load": "Mang ra xe tải ngoài sân, bấm Nắm lần nữa để thả vào thùng xe",
   "tutorial.throw": "Mẹo: đang cầm đồ nhẹ thì bấm Ném (E · Shift phải · nút B). Ném trúng thùng xe cũng tính!",
   "tutorial.ping": "Đồ to cần nhiều người. Bấm Ping (F · nút Y) để gọi đồng đội; giữ Ping để mở vòng ping",
-  "tutorial.done": "Xong phần hướng dẫn — giờ bạn là dân chuyển nhà rồi!"
+  "tutorial.done": "Xong phần hướng dẫn — giờ bạn là dân chuyển nhà rồi!",
+  "source.touch": "Màn hình cảm ứng"
 }

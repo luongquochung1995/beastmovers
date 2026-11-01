@@ -15,6 +15,8 @@ import { snapshotWorld } from '../net/worldSnapshot';
 import type { LevelRuntime } from '../sim/LevelRuntime';
 import type { SimSlot, SlotSource } from '../sim/SimSlot';
 import { Btn, isDown } from '../systems/input/InputFrame';
+import { inTouchMode, onTouchMode } from '../systems/input/touch';
+import { touchControls } from '../ui/TouchControls';
 import type { InputManager } from '../systems/input/InputManager';
 import { Random } from '../systems/Random';
 import { Theme } from '../ui/theme';
@@ -91,7 +93,7 @@ export abstract class PlayScene extends Phaser.Scene {
     this.buildLevel();
 
     // Chưa ai tham gia thì người dùng WASD tự vào làm người chơi 1.
-    if (this.inputs.slots.every((s) => s === null)) this.inputs.join('kb0');
+    if (this.inputs.slots.every((s) => s === null)) this.inputs.join(this.inputs.primarySourceId());
     this.setupSlotSource();
 
     this.debugVisible = this.config.debug;
@@ -110,9 +112,14 @@ export abstract class PlayScene extends Phaser.Scene {
     this.input.keyboard?.once('keydown-ESC', () => this.onExit());
 
     this.scene.launch(SceneKeys.Hud, { playKey: this.scene.key });
+    // Điện thoại: hiện cần ảo và nút trên màn hình.
+    this.syncTouchControls();
+    const offTouch = onTouchMode(() => this.syncTouchControls());
     // Tạm dừng xong: không tính khoảng thời gian đã dừng vào vòng lặp logic.
     this.events.on(Phaser.Scenes.Events.RESUME, () => (this.lastNow = performance.now()));
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      offTouch();
+      touchControls().hide();
       this.scene.stop(SceneKeys.Hud);
       this.world.destroy();
     });
@@ -158,6 +165,19 @@ export abstract class PlayScene extends Phaser.Scene {
     }
     this.slotSource = new LocalSlotSource(this.inputs);
     for (const slot of this.slotSource.slots) if (slot) this.spawnPlayer(slot.index);
+  }
+
+  /** Hiện bảng điều khiển cảm ứng nếu đang chơi bằng cảm ứng. */
+  protected syncTouchControls(): void {
+    const tc = touchControls();
+    tc.onPause = () => this.touchPause();
+    if (inTouchMode()) tc.show();
+    else tc.hide();
+  }
+
+  /** Nút tạm dừng trên màn hình cảm ứng (mặc định như phím Esc). */
+  protected touchPause(): void {
+    this.onExit();
   }
 
   private setPhysicsDebug(on: boolean): void {
