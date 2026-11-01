@@ -6,6 +6,7 @@ import { type DamageState, tickCooldown } from '../systems/damage';
 import { rotate, type Vec } from '../systems/geometry';
 import { resolveGrabPoints } from '../systems/grabPoints';
 import { Theme } from '../ui/theme';
+import { hasItemArt } from './itemArt';
 import { ensureItemTexture } from './itemTextures';
 
 /** Đổi kg sang khối lượng Matter. Nhân vật (~75 kg) có khối lượng Matter khoảng 5. */
@@ -110,8 +111,11 @@ export class Item {
     this.shadow = scene.add.image(0, 0, texture).setTint(0x000000).setAlpha(0.3).setVisible(false);
     this.image = scene.add.image(0, 0, texture);
     const iconSize = Phaser.Math.Clamp(Math.min(w, h) * 0.6, 10, 40);
+    // Có hình vẽ riêng thì không cần emoji (vẫn giữ chỗ để hiện biểu tượng tạm, vd. 😺 trong thùng).
     this.icon = def.icon
-      ? scene.add.text(0, 0, def.icon, { fontSize: `${iconSize}px` }).setOrigin(0.5)
+      ? scene.add
+          .text(0, 0, hasItemArt(def.id) ? '' : def.icon, { fontSize: `${iconSize}px` })
+          .setOrigin(0.5)
       : null;
     this.cracks = scene.add.graphics();
     this.arms = scene.add.graphics();
@@ -216,7 +220,7 @@ export class Item {
   /** Đổi emoji trên món đồ (null = trở về emoji gốc trong data). */
   setIcon(text: string | null): void {
     this.iconOverride = text;
-    this.icon?.setText(text ?? this.def.icon ?? '');
+    this.icon?.setText(text ?? (hasItemArt(this.def.id) ? '' : (this.def.icon ?? '')));
   }
 
   /** Emoji đang đè lên emoji gốc (😺 khi có mèo trong lồng, 💨 khi máy chạy bộ chạy). */

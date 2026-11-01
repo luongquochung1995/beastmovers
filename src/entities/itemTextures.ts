@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import type { ItemDef } from '../data/types';
+import { drawItemArt } from './itemArt';
 
 const PAD = 4;
 
@@ -7,7 +8,10 @@ export const itemTextureKey = (id: string) => `item-${id}`;
 
 const toInt = (hex: string | undefined) => (hex ? parseInt(hex.slice(1), 16) : 0x9e9e9e);
 
-/** Hình tạm cho đồ chưa có sprite: khối màu bo góc (hoặc hình tròn) có viền đậm. */
+/**
+ * Hình món đồ: vẽ riêng theo `itemArt.ts`; món chưa có hình thì dùng khối màu bo góc
+ * (hoặc hình tròn) có viền đậm + emoji `icon`.
+ */
 export function ensureItemTexture(scene: Phaser.Scene, def: ItemDef): string {
   const key = itemTextureKey(def.id);
   if (scene.textures.exists(key)) return key;
@@ -18,7 +22,9 @@ export function ensureItemTexture(scene: Phaser.Scene, def: ItemDef): string {
   const g = scene.make.graphics({}, false);
   const cx = w / 2 + PAD;
   const cy = h / 2 + PAD;
-  if (def.shape === 'circle') {
+  if (drawItemArt(g, def.id, cx, cy, w, h)) {
+    // Hình vẽ riêng (itemArt.ts)
+  } else if (def.shape === 'circle') {
     g.fillStyle(color, 1).fillCircle(cx, cy, w / 2);
     g.fillStyle(light, 0.6).fillCircle(cx - w * 0.15, cy - w * 0.15, w * 0.18);
     g.lineStyle(2.5, dark, 1).strokeCircle(cx, cy, w / 2);
