@@ -271,5 +271,7 @@
   "tutorial.ping": "Đồ to cần nhiều người. Bấm Ping (F · nút Y) để gọi đồng đội; giữ Ping để mở vòng ping",
   "tutorial.done": "Xong phần hướng dẫn — giờ bạn là dân chuyển nhà rồi!",
   "source.touch": "Màn hình cảm ứng",
-  "settings.music": "Nhạc nền: {v}"
+  "settings.music": "Nhạc nền: {v}",
+  "settings.playtestLog": "📋  Xuất nhật ký chơi thử ({n} lần)",
+  "settings.playtestSaved": "Đã lưu {n} lần chơi ra file JSON (thư mục Tải về)."
 }

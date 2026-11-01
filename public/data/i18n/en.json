@@ -271,5 +271,7 @@
   "tutorial.ping": "Big items need several people. Tap Ping (F · Y) to call for help; hold Ping for the ping wheel",
   "tutorial.done": "Tutorial done — you're a mover now!",
   "source.touch": "Touch screen",
-  "settings.music": "Music: {v}"
+  "settings.music": "Music: {v}",
+  "settings.playtestLog": "📋  Export playtest log ({n} runs)",
+  "settings.playtestSaved": "Saved {n} runs to a JSON file (in your Downloads)."
 }

@@ -592,8 +592,8 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P36 | Thêm 2 chủ nhà và bộ thoại | F | | 3 ngày | ✅ | 2026-10-28 |
 | P37 | Âm thanh và hiệu ứng | G | | 4 ngày | 🟨 | |
 | P38 | Tối ưu hiệu năng và mạng | G | | 4 ngày | 🟨 | |
-| P39 | Cân bằng và playtest theo số người | G | | 5 ngày | ⬜ | |
-| P40 | Kiểm thử trình duyệt | G | | 2 ngày | ⬜ | |
+| P39 | Cân bằng và playtest theo số người | G | | 5 ngày | 🟨 | |
+| P40 | Kiểm thử trình duyệt | G | | 2 ngày | 🟨 | |
 | P41 | Phát hành | G | | 2 ngày | ⬜ | |
 
 **Tiến độ:** 28/41 phase · Mốc A 🟨 · B ✅ · C ✅ · D 🟨 · E ✅ · F 🟨 · G 🟨
@@ -1005,13 +1005,15 @@ _(ghi ở đây)_
 - [ ] Chỉnh `mass`, `friction`, `breakImpulse`, thời gian, mốc sao
 - [ ] Ghi lại các điểm gây bực mình và sửa
 - **✅ Xong khi:** mọi nhóm playtest đều muốn "chơi thêm một màn nữa".
+- 📝 *Đã chuẩn bị (chưa có buổi chơi với người thật): **nhật ký chơi thử** trong game — mỗi lần xong màn, mỗi máy ghi 1 dòng vào localStorage (màn, số người, chơi chung máy/host/máy khách, loại điều khiển, qua màn, sao, điểm, mốc sao, thời gian / thời gian màn, đồ bắt buộc, số đồ vỡ, số lần ném, độ hài lòng; giữ 300 lần gần nhất, không gửi đi đâu); **Cài đặt → 📋 Xuất nhật ký chơi thử** tải về file JSON kèm bảng tóm tắt theo màn × số người (tỉ lệ qua màn, sao, thời gian, đồ vỡ trung bình). Kiểm tra: bản build production ghi đúng 1 dòng sau màn kết quả; 2 unit test. **Quy trình chơi thử** ở `docs/PLAYTEST.md`: chuẩn bị, màn cho từng nhóm 1/2/4/6/8 người, cần quan sát gì, 5 câu hỏi sau mỗi màn, cách gom số liệu, bảng ghi buổi chơi, và **10 câu hỏi cân bằng còn mở** gom từ các phase trước (mèo 1 người, vấp ngã, ném bể cá, cửa 100 px, mốc sao, paparazzi, co giãn, vòng ping, cầu thang, nút cảm ứng) kèm chỗ chỉnh trong data/code. ⏳ Còn lại: tổ chức các buổi chơi, chỉnh số theo nhật ký.*
 
 #### P40 · Kiểm thử trình duyệt
-- [ ] Chrome, Edge, Firefox, Safari (2 phiên bản mới nhất)
-- [ ] Tay cầm Xbox, PlayStation, tay cầm thường
-- [ ] Màn hình 1280×720, 1920×1080, 2560×1440
+- [ ] Chrome, Edge, Firefox, Safari (2 phiên bản mới nhất) — *Chrome, Edge xong; Firefox, Safari chưa (máy thử không có)*
+- [ ] Tay cầm Xbox, PlayStation, tay cầm thường — *mới giả lập*
+- [x] Màn hình 1280×720, 1920×1080, 2560×1440
 - [ ] Online giữa các trình duyệt khác nhau (vd. Safari ↔ Chrome)
 - **✅ Xong khi:** không còn lỗi chặn chơi trên bất kỳ trình duyệt nào trong danh sách.
+- 📝 *Kiểm tra: bản build production (`vite preview`) chụp màn hình bằng **Edge 156** và **Chrome** chế độ headless ở 1280×720, 1920×1080, 2560×1440 → menu hiện đúng, chữ nét, đủ dấu tiếng Việt, co giãn giữ tỉ lệ 16:9. Trên bản production: vào lần lượt cả 16 màn rồi tới màn kết quả → 0 lỗi console, 0 lỗi chưa bắt. Rà soát code cho Safari/Firefox: cú pháp ES2022 (Safari 15+), `structuredClone` (Safari 15.4+), Web Audio không tiền tố, `StereoPanner` có kiểm tra trước khi dùng, toàn màn hình trên iPhone (không có API) → báo lỗi nhẹ thay vì hỏng; sửa 2 chỗ: (1) `crypto.randomUUID` chỉ có trên https/localhost → mở bằng IP mạng LAN (thử trên điện thoại khi dev) thì kênh thử giữa các tab bị lỗi → có dự phòng; (2) Safari iPhone chỉ mở tiếng khi có âm thanh thật phát trong cú chạm đầu tiên → phát một âm im lặng khi mở khóa. Điện thoại Android giả lập (Pixel 8) đã thử ở phần chơi trên điện thoại. ⏳ Còn lại: Firefox, Safari (macOS/iPhone), tay cầm thật (Xbox/PS — chú ý tay cầm PlayStation trên Firefox có thể không theo "standard mapping"), online giữa các trình duyệt khác nhau.*
 
 #### P41 · Phát hành
 - [ ] Build production, deploy GitHub Pages và itch.io

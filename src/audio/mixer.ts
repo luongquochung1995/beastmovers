@@ -20,6 +20,17 @@ export function masterVolume(): number {
 export function unlockAudioOnGesture(target: Window = window): void {
   const unlock = () => {
     const c = audioContext();
+    // Safari (iPhone) chỉ mở tiếng khi có một âm thanh thật được phát ngay trong cú chạm.
+    try {
+      if (c) {
+        const src = c.createBufferSource();
+        src.buffer = c.createBuffer(1, 1, c.sampleRate);
+        src.connect(c.destination);
+        src.start();
+      }
+    } catch {
+      // bỏ qua
+    }
     if (c?.state === 'running') {
       target.removeEventListener('pointerdown', unlock);
       target.removeEventListener('keydown', unlock);

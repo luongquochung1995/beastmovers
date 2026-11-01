@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { getLocale, t } from '../data/i18n';
 import { clearProgress, loadSettings, saveSettings, volumeOf } from '../data/settings';
+import { downloadPlaytestLog, loadPlaytestLog } from '../data/playtestLog';
 import { MenuInput } from '../ui/menuInput';
 import { MenuList } from '../ui/MenuList';
 import {
@@ -78,11 +79,19 @@ export class SettingsScene extends Phaser.Scene {
           label: () => t(this.confirmClear ? 'settings.clearConfirm' : 'settings.clear'),
           onConfirm: () => this.clear(),
         },
+        {
+          label: () => t('settings.playtestLog', { n: loadPlaytestLog().length }),
+          onConfirm: () => {
+            const n = downloadPlaytestLog();
+            this.note.setText(t('settings.playtestSaved', { n }));
+          },
+          fontSize: 20,
+        },
         { label: () => t('settings.back'), onConfirm: () => this.back(), gapBefore: 12 },
       ],
       cx,
-      172,
-      56,
+      160,
+      52,
     );
     this.note = this.add
       .text(cx, GAME_HEIGHT - 70, '', {

@@ -28,7 +28,7 @@ export class BroadcastTransport implements Transport {
   /** Giả lập mất mạng (kiểm thử): không gửi, không nhận; máy khác tự thấy máy này "rời đi". */
   private offline = false;
 
-  constructor(room: string, selfId: PeerId = crypto.randomUUID().slice(0, 8)) {
+  constructor(room: string, selfId: PeerId = randomId()) {
     this.selfId = selfId;
     this.channel = new BroadcastChannel(`beast-movers:${room}`);
     this.channel.onmessage = (e: MessageEvent<Wire>) => this.receive(e.data);
@@ -127,4 +127,11 @@ export class BroadcastTransport implements Transport {
     const now = performance.now();
     for (const [peer, t] of this.lastSeen) if (now - t > PEER_TIMEOUT_MS) this.drop(peer);
   }
+}
+
+/** Mã ngẫu nhiên 8 ký tự. `crypto.randomUUID` chỉ có trên https/localhost (mở qua IP mạng LAN thì không). */
+function randomId(): string {
+  return typeof crypto !== 'undefined' && 'randomUUID' in crypto
+    ? crypto.randomUUID().slice(0, 8)
+    : Math.random().toString(16).slice(2, 10).padEnd(8, '0');
 }

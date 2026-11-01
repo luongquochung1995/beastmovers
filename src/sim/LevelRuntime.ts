@@ -53,6 +53,8 @@ export interface LevelResult {
   score: ScoreBreakdown;
   /** Mốc 1/2/3 sao của lần chơi này (đã co giãn theo số người). */
   starGoals: number[];
+  /** Thời gian của màn lần chơi này (giây, đã co giãn). */
+  timeLimitSec: number;
   players: { slot: number; title: TitleKey; stats: PlayerStats }[];
 }
 
@@ -241,6 +243,7 @@ export class LevelRuntime {
       satisfaction: Math.round(this.landlord.satisfaction),
       score,
       starGoals: [...this.built.level.stars],
+      timeLimitSec: this.built.level.timeLimitSec,
       players: stats.map((st) => ({ slot: st.slot, title: titles.get(st.slot)!, stats: st })),
     };
   }

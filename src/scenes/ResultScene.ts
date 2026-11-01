@@ -5,7 +5,9 @@ import { PLAYER_STYLES, playerTextureKey } from '../entities/playerStyles';
 import type { NetContext } from '../net/netContext';
 import type { LevelResult } from '../sim/LevelRuntime';
 import { moodFace } from '../systems/dialogue';
+import { appendPlaytest } from '../data/playtestLog';
 import { loadSave, recordLevelResult } from '../data/settings';
+import type { InputManager } from '../systems/input/InputManager';
 import { MenuInput } from '../ui/menuInput';
 import { GAME_HEIGHT, GAME_WIDTH, Theme } from '../ui/theme';
 import { RegistryKeys, SceneKeys } from './keys';
@@ -81,6 +83,7 @@ export class ResultScene extends Phaser.Scene {
       });
     }
     const record = r.passed && (!prev || r.score.total > prev.bestScore);
+    this.logPlaytest(r);
     if (record || prev) {
       text(
         cx + 120,
@@ -209,6 +212,31 @@ export class ResultScene extends Phaser.Scene {
       undefined,
       false,
     );
+  }
+
+  /** Nhật ký chơi thử (P39): mỗi máy ghi lần chơi của mình, xuất ra trong Cài đặt. */
+  private logPlaytest(r: LevelResult): void {
+    const net = this.registry.get(RegistryKeys.Net) as NetContext | null | undefined;
+    const inputs = this.registry.get(RegistryKeys.Input) as InputManager | undefined;
+    appendPlaytest({
+      at: new Date().toISOString(),
+      version: __APP_VERSION__,
+      levelId: r.levelId,
+      players: r.players.length,
+      mode: net ? (net.session.isHost ? 'host' : 'client') : 'local',
+      inputs: [...new Set(inputs?.slots.flatMap((s) => (s ? [s.source.kind] : [])) ?? [])],
+      passed: r.passed,
+      stars: r.score.stars,
+      score: r.score.total,
+      starGoals: r.starGoals,
+      seconds: r.seconds,
+      timeLimitSec: r.timeLimitSec,
+      requiredLoaded: r.requiredLoaded,
+      requiredTotal: r.requiredTotal,
+      broken: r.players.reduce((s, p) => s + p.stats.broken, 0),
+      throws: r.players.reduce((s, p) => s + p.stats.throws, 0),
+      satisfaction: r.satisfaction,
+    });
   }
 }
 
