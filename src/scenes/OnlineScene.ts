@@ -16,10 +16,10 @@ import {
   nextFreeColor,
 } from '../net/lobby';
 import type { NetContext } from '../net/netContext';
-import { openTransport, type TransportKind } from '../net/openTransport';
+import { type OpenedTransport, openTransport, type TransportKind } from '../net/openTransport';
 import { generateRoomCode, inviteLink, normalizeRoomCode, ROOM_CODE_LENGTH } from '../net/room';
 import { RoomSession } from '../net/session';
-import { TrysteroTransport } from '../net/TrysteroTransport';
+import type { TrysteroTransport } from '../net/TrysteroTransport';
 import { Btn, isDown, justPressed } from '../systems/input/InputFrame';
 import type { InputManager } from '../systems/input/InputManager';
 import { isOpen, levelLock, TIER_ICONS } from '../systems/levelLock';
@@ -99,6 +99,7 @@ export class OnlineScene extends Phaser.Scene {
     this.handedOff = false;
     this.localKey = '';
     this.error = null;
+    this.opening = false;
     this.ui = this.add.container(0, 0);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.cleanup());
 
@@ -144,14 +145,33 @@ export class OnlineScene extends Phaser.Scene {
     );
   }
 
+  /** Đang tải thư viện mạng / mở kênh truyền cho phòng `code`. */
+  private opening = false;
+
   private open(code: string, role: 'host' | 'client'): void {
     this.code = code;
-    const { transport, kind, fallback } = openTransport(
-      this.config.net,
-      code,
-      window.location.search,
-      role,
+    this.opening = true;
+    this.redraw();
+    openTransport(this.config.net, code, window.location.search, role).then(
+      (opened) => {
+        // Đã rời màn này (hoặc đổi phòng) trong lúc tải: đóng kênh vừa mở.
+        if (!this.sys.isActive() || this.code !== code || this.session) {
+          opened.transport.close();
+          return;
+        }
+        this.opening = false;
+        this.attach(opened, code, role);
+      },
+      (err: unknown) => {
+        this.opening = false;
+        this.error = String(err);
+        this.redraw();
+      },
     );
+  }
+
+  private attach(opened: OpenedTransport, code: string, role: 'host' | 'client'): void {
+    const { transport, kind, fallback, trystero } = opened;
     this.kind = kind;
     // Máy khách: Trystero không tìm được host sau một lúc thì thử PeerJS.
     if (fallback) {
@@ -176,15 +196,15 @@ export class OnlineScene extends Phaser.Scene {
       if (this.session?.state.kind === 'joined' && !this.lobby) this.startLobby();
       this.redraw();
     });
-    if (transport instanceof TrysteroTransport) {
-      transport.onError((err) => {
+    if (trystero) {
+      trystero.onError((err) => {
         this.error = err;
         this.redraw();
       });
       this.pingTimer = this.time.addEvent({
         delay: 2000,
         loop: true,
-        callback: () => this.measurePings(transport),
+        callback: () => this.measurePings(trystero),
       });
     }
     // Đưa mã phòng lên thanh địa chỉ để tải lại trang vẫn về đúng phòng.
@@ -360,7 +380,8 @@ export class OnlineScene extends Phaser.Scene {
 
   private redraw(): void {
     if (!this.scene.isActive() || this.handedOff) return;
-    if (!this.session) this.drawChoose();
+    if (this.opening && !this.session) this.drawOpening();
+    else if (!this.session) this.drawChoose();
     else if (this.lobby && this.session.state.kind === 'joined' && !this.lobby.kicked)
       this.drawLobby();
     else this.drawStatus();
@@ -437,7 +458,7 @@ export class OnlineScene extends Phaser.Scene {
    * link), đủ 6 ký tự thì vào phòng như khi gõ bằng bàn phím thật.
    */
   private typeOnScreen(): void {
-    if (this.session) return;
+    if (this.session || this.opening) return;
     const el = document.createElement('input');
     el.value = this.typed;
     el.autocapitalize = 'characters';
@@ -450,6 +471,15 @@ export class OnlineScene extends Phaser.Scene {
     el.addEventListener('keydown', (e) => e.stopPropagation());
     el.addEventListener('blur', () => el.remove());
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => el.remove());
+  }
+
+  /** Đang tải thư viện mạng (lần đầu chơi online). */
+  private drawOpening(): void {
+    this.clear();
+    const cx = GAME_WIDTH / 2;
+    this.text(cx, 125, this.code.split('').join(' '), 64, Theme.accent);
+    this.text(cx, 300, t('online.connecting'), 24, Theme.text);
+    this.backButton();
   }
 
   /** Đang kết nối, bị từ chối, bị đuổi, host rời… */
@@ -709,7 +739,7 @@ export class OnlineScene extends Phaser.Scene {
       actions[e.code]?.();
       return;
     }
-    if (this.session) return;
+    if (this.session || this.opening) return;
     if (e.key === 'Backspace') {
       this.typed = this.typed.slice(0, -1);
       this.drawChoose();
@@ -726,7 +756,7 @@ export class OnlineScene extends Phaser.Scene {
 
   /** Gõ hoặc dán mã; đủ 6 ký tự hợp lệ thì vào phòng ngay. */
   private typeCode(input: string, replace: boolean): void {
-    if (this.session) return;
+    if (this.session || this.opening) return;
     // Dán cả link mời cũng được.
     const fromLink = /[?&]room=([^&#\s]+)/.exec(input)?.[1];
     const raw = (replace ? '' : this.typed) + (fromLink ?? input);

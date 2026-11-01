@@ -14,5 +14,15 @@ export default defineConfig({
   build: {
     target: 'es2022',
     chunkSizeWarningLimit: 2000,
+    rollupOptions: {
+      output: {
+        // Thư viện lớn tách file riêng: trình duyệt giữ cache khi chỉ code game thay đổi.
+        manualChunks(id) {
+          if (id.includes('node_modules/phaser')) return 'phaser';
+          if (/node_modules\/(trystero|peerjs|@noble|@nostr)/.test(id)) return 'net';
+          return undefined;
+        },
+      },
+    },
   },
 });

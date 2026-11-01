@@ -2,9 +2,9 @@ import type { GameConfig } from '../data/types';
 import { BroadcastTransport } from './BroadcastTransport';
 import { FallbackTransport, MultiTransport } from './combinedTransports';
 import { LaggedTransport } from './LaggedTransport';
-import { PeerJsTransport, type PeerServerOptions } from './PeerJsTransport';
+import type { PeerServerOptions } from './PeerJsTransport';
 import type { Transport } from './Transport';
-import { TrysteroTransport } from './TrysteroTransport';
+import type { TrysteroTransport } from './TrysteroTransport';
 
 export type TransportKind = 'trystero' | 'peerjs' | 'broadcast';
 
@@ -13,6 +13,8 @@ export interface OpenedTransport {
   kind: TransportKind;
   /** Máy khách: chuyển sang PeerJS khi Trystero không tìm được host (null nếu không có). */
   fallback: FallbackTransport | null;
+  /** Kênh Trystero (đo ping, báo lỗi relay); null khi dùng kênh khác. */
+  trystero: TrysteroTransport | null;
 }
 
 /**
@@ -22,15 +24,18 @@ export interface OpenedTransport {
  * `?transport=broadcast`: các tab cùng trình duyệt (không cần mạng);
  * `?relay=wss://a,wss://b`: relay nostr khác; `?peerserver=localhost:9000`: máy chủ PeerJS khác;
  * `?fallback=0`: tắt dự phòng; `?lag=150&jitter=30`: thêm độ trễ cho mọi gói gửi đi.
+ *
+ * Thư viện Trystero / PeerJS tải khi cần (lần đầu vào chơi online), không nằm trong gói tải
+ * ban đầu của game.
  */
-export function openTransport(
+export async function openTransport(
   net: GameConfig['net'],
   roomCode: string,
   search: string,
   role: 'host' | 'client',
-): OpenedTransport {
+): Promise<OpenedTransport> {
   const p = new URLSearchParams(search);
-  const opened = openRaw(net, roomCode, p, role);
+  const opened = await openRaw(net, roomCode, p, role);
   const lag = Number(p.get('lag') ?? 0);
   const jitter = Number(p.get('jitter') ?? 0);
   if (lag > 0 || jitter > 0) {
@@ -39,31 +44,45 @@ export function openTransport(
   return opened;
 }
 
-function openRaw(
+async function openRaw(
   net: GameConfig['net'],
   roomCode: string,
   p: URLSearchParams,
   role: 'host' | 'client',
-): OpenedTransport {
+): Promise<OpenedTransport> {
   if (p.get('transport') === 'broadcast') {
-    return { transport: new BroadcastTransport(roomCode), kind: 'broadcast', fallback: null };
+    return {
+      transport: new BroadcastTransport(roomCode),
+      kind: 'broadcast',
+      fallback: null,
+      trystero: null,
+    };
   }
+  const [{ TrysteroTransport }, { PeerJsTransport }] = await Promise.all([
+    import('./TrysteroTransport'),
+    import('./PeerJsTransport'),
+  ]);
   const relay = p.get('relay');
   const urls = relay ? relay.split(',').filter((u) => /^wss?:\/\//.test(u)) : undefined;
   const trystero = new TrysteroTransport(net, roomCode, urls?.length ? urls : undefined);
   const useFallback = net.fallbackTransport === 'peerjs' && p.get('fallback') !== '0';
-  if (!useFallback) return { transport: trystero, kind: 'trystero', fallback: null };
+  if (!useFallback) return { transport: trystero, kind: 'trystero', fallback: null, trystero };
   const server = peerServer(net, p.get('peerserver'));
   if (role === 'host') {
     // Host nghe trên cả hai kênh; PeerJS lỗi (máy chủ không với tới) thì chỉ còn Trystero.
     const peerjs = new PeerJsTransport(net, roomCode, 'host', trystero.selfId, server);
-    return { transport: new MultiTransport([trystero, peerjs]), kind: 'trystero', fallback: null };
+    return {
+      transport: new MultiTransport([trystero, peerjs]),
+      kind: 'trystero',
+      fallback: null,
+      trystero,
+    };
   }
   const fallback = new FallbackTransport(
     trystero,
     () => new PeerJsTransport(net, roomCode, 'client', trystero.selfId, server),
   );
-  return { transport: fallback, kind: 'trystero', fallback };
+  return { transport: fallback, kind: 'trystero', fallback, trystero };
 }
 
 /** Máy chủ PeerJS: `?peerserver=host:port[/path]` (http), hoặc theo config, mặc định của PeerJS. */

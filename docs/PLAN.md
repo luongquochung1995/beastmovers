@@ -591,7 +591,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P35 | Co giãn theo số người (scaling) | F | | 3 ngày | 🟨 | |
 | P36 | Thêm 2 chủ nhà và bộ thoại | F | | 3 ngày | ✅ | 2026-10-28 |
 | P37 | Âm thanh và hiệu ứng | G | | 4 ngày | 🟨 | |
-| P38 | Tối ưu hiệu năng và mạng | G | | 4 ngày | ⬜ | |
+| P38 | Tối ưu hiệu năng và mạng | G | | 4 ngày | 🟨 | |
 | P39 | Cân bằng và playtest theo số người | G | | 5 ngày | ⬜ | |
 | P40 | Kiểm thử trình duyệt | G | | 2 ngày | ⬜ | |
 | P41 | Phát hành | G | | 2 ngày | ⬜ | |
@@ -994,10 +994,11 @@ _(ghi ở đây)_
 - 📝 *Cách làm: không có file âm thanh — mọi tiếng tổng hợp bằng Web Audio (`src/audio/synth.ts`: nốt có đường bao, tiếng ồn có lọc) nên không tăng dung lượng tải. ~30 tiếng riêng (`sfx.ts`), mỗi sự kiện một kiểu: nắm "bóp", ném vút gió, rơi "thình" trầm theo khối lượng, đụng tường cộc, kéo lê rè rè, nứt tách, vỡ kính xoảng + leng keng (đồ không phải kính: rắc rắc), nước ào, đất lạo xạo, va piano ra hợp âm, bi/tạ lộc cộc, máy chạy bộ rè, mèo kêu / khè, lên xe ting-ting, rơi khỏi xe tụt giọng, xe đầy bíp, phanh tay cạch cạch, còi xe đầu màn, xe nổ máy chạy đi cuối màn, nhấc đồ to "hự" đi lên, buông giữa chừng "uầy", vấp "oái", ping chuông (cao độ theo loại), còn 1 phút chuông báo, chủ nhà đổi ý "ơ?", paparazzi chụp ảnh. Tiếng lệch trái/phải theo vị trí trên màn hình, cùng tiếng không lặp quá dày. `GameAudio` nghe `world.bus` — online máy khách phát lại sự kiện của host đúng lúc nên mọi máy nghe giống nhau. **Nhạc nền** tổng hợp kiểu chiptune (`music.ts`, lên lịch trước 0,2 giây theo đồng hồ Web Audio): menu 92 bpm nhẹ nhàng, màn chơi 124 bpm có trống, còn 60 giây chuyển sang 158 bpm; hết giờ tắt nhạc, nổ máy xe. Cài đặt có "Nhạc nền: Bật/Tắt" (lưu lại), âm lượng chung áp cho mọi tiếng; trình duyệt chỉ cho phát tiếng sau lần chạm/bấm đầu tiên. **Hạt** (`Particles.ts`): bụi khi rơi (nhiều theo khối lượng) / đụng tường / kéo lê / vấp, mảnh vỡ theo màu món đồ (+ mảnh kính nếu dễ vỡ), giọt nước, đất, kính, lấp lánh khi đồ lên xe. Kiểm tra (Chromium, đếm số nút âm thanh tạo ra vì máy thử không có loa): nhạc menu chạy (13 nốt / 2 giây sau cú bấm đầu), 10 loại sự kiện đều phát tiếng (vỡ kính 8 nút, đàn 4, nước 5…), còn 60 giây đổi bài; hạt bung ra (24–36 hạt) và tan sau 1 giây. ⚠️ Chưa nghe bằng tai — tiêu chí "chỉ nghe tiếng đoán được chuyện gì" cần người nghe thử; chưa có sprite chính thức.*
 
 #### P38 · Tối ưu hiệu năng và mạng
-- [ ] Cho vật đứng yên "ngủ" (sleeping), đơn giản hóa hình va chạm
-- [ ] Gộp sprite (atlas), nén asset, lazy-load từng màn
-- [ ] Giảm kích thước snapshot; đo lại băng thông
+- [x] Cho vật đứng yên "ngủ" (sleeping), đơn giản hóa hình va chạm — *đo rồi quyết định không bật (xem dưới)*
+- [x] Gộp sprite (atlas), nén asset, lazy-load từng màn — *không có ảnh để gộp; tách gói JS và tải thư viện mạng khi cần*
+- [x] Giảm kích thước snapshot; đo lại băng thông — *đã đạt mục tiêu, không cần giảm thêm*
 - **✅ Xong khi:** đạt toàn bộ mục tiêu ở mục 12 (FPS, băng thông, thời gian tải < 5 giây).
+- 📝 *Đo (Chromium, 8 người bot đi/nắm/ném ngẫu nhiên, 600–1200 bước): **mô phỏng** 0,10–0,30 ms/bước trung bình, p95 ≤ 0,9 ms (≈ 2–5% ngân sách 16,7 ms) ở màn 1 (8 người, 31 món, 56 vật thể), 8, 12, 16; chỉ một lần > 4 ms trong 1800 bước (khởi động/GC). Vì vật lý chỉ tốn vài % nên **không bật sleeping** của Matter.js: lợi rất ít mà rủi ro món đồ đang ngủ không thức khi có người nắm (ràng buộc không đánh thức vật thể). **Băng thông** mỗi máy khách: 3,95 KB/s (màn 1, 31 món), 4,71 KB/s (màn 8, 6 mèo chạy), 3,96 KB/s (màn 16); gói trung bình ~200–240 B, gói đầy đủ lớn nhất 735 B → host 7 máy khách ≈ 33 KB/s (mục tiêu ≤ 15 KB/s và ≤ 100 KB/s). **Tải trang**: game không có file ảnh/âm thanh (hình vẽ bằng code, tiếng tổng hợp); tách gói JS: Phaser 332 KB gzip (file riêng, giữ cache khi game cập nhật), code game 77 KB, data JSON 345 KB (chưa nén), font Nunito; thư viện mạng Trystero + PeerJS (51 KB gzip) chỉ tải khi vào chơi online (kiểm tra: mở game không tải, tạo phòng mới tải; tạo phòng + máy khách vào bằng link vẫn chạy). Tổng tải ban đầu ~0,5 MB nén (mục tiêu < 20 MB, < 5 giây). ⚠️ Chưa đo được **FPS vẽ hình** của host 8 người (khung trình duyệt thử nghiệm không vẽ — cần máy thật có GPU), và thời gian tải qua mạng thật (chờ GitHub Pages).*
 
 #### P39 · Cân bằng và playtest theo số người
 - [ ] Playtest các nhóm 1, 2, 4, 6, 8 người, mỗi nhóm ít nhất 2 buổi
