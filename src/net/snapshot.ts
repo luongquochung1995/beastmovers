@@ -16,6 +16,8 @@ export interface PlayerSnap {
   fy: number;
   mode: MotorMode;
   run: boolean;
+  /** Mana (làm tròn). */
+  mana: number;
   /** uid món đang nắm, -1 nếu không. */
   hold: number;
   /** Vận tốc (px/bước logic), để máy khách dự đoán nhân vật của mình. */
@@ -60,7 +62,7 @@ export interface SnapshotSource {
   players: readonly {
     slotIndex: number;
     position: { x: number; y: number };
-    motor: { mode: MotorMode; running: boolean; facing: { x: number; y: number } };
+    motor: { mode: MotorMode; running: boolean; facing: { x: number; y: number }; mana: number };
     body: { velocity: { x: number; y: number } };
   }[];
   holding(slotIndex: number): number;
@@ -103,6 +105,7 @@ export function captureSnapshot(src: SnapshotSource): Snapshot {
       fy: r3(p.motor.facing.y),
       mode: p.motor.mode,
       run: p.motor.running,
+      mana: Math.round(p.motor.mana),
       hold: src.holding(p.slotIndex),
       vx: r3(p.body.velocity.x),
       vy: r3(p.body.velocity.y),

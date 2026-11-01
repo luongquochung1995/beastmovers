@@ -5,6 +5,9 @@
   "runTripChance": 0.03,
   "throwSpeed": 11,
   "grabRange": 40,
+  "maxMana": 100,
+  "dashManaCost": 40,
+  "manaRegenPerSec": 20,
   "net": {
     "transport": "trystero",
     "fallbackTransport": "peerjs",

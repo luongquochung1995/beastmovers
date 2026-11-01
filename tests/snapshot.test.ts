@@ -7,7 +7,7 @@ const src: SnapshotSource = {
     {
       slotIndex: 0,
       position: { x: 100.123, y: 200.456 },
-      motor: { mode: 'normal', running: true, facing: { x: 0.70711, y: -0.70711 } },
+      motor: { mode: 'normal', running: true, facing: { x: 0.70711, y: -0.70711 }, mana: 37.6 },
       body: { velocity: { x: 1.23456, y: 0 } },
     },
   ],
@@ -47,6 +47,7 @@ describe('snapshot', () => {
       fy: -0.707,
       mode: 'normal',
       run: true,
+      mana: 38,
       hold: 7,
       vx: 1.235,
       vy: 0,

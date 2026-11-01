@@ -36,6 +36,10 @@ export class Player {
   /** Hướng nhìn ngang gần nhất (1 phải, -1 trái) để vẽ mặt nghiêng khi đi lên/xuống. */
   private side = 1;
   private readonly label: Phaser.GameObjects.Text;
+  /** Thanh mana dưới chân (ẩn khi đầy). */
+  private readonly manaBar: Phaser.GameObjects.Graphics;
+  /** Còn bao lâu thanh mana nháy đỏ (vừa bấm Lao mà không đủ mana). */
+  private manaFlashMs = 0;
   private prevPos: Vec;
   private wobble = 0;
 
@@ -76,7 +80,13 @@ export class Player {
         padding: { x: 5, y: 1 },
       })
       .setOrigin(0.5);
-    const parts: Phaser.GameObjects.GameObject[] = [this.sprite, this.eyes, this.label];
+    this.manaBar = scene.add.graphics();
+    const parts: Phaser.GameObjects.GameObject[] = [
+      this.sprite,
+      this.eyes,
+      this.manaBar,
+      this.label,
+    ];
     if (hat) {
       parts.push(
         scene.add
@@ -146,6 +156,7 @@ export class Player {
     this.view.setPosition(x, y).setDepth(y);
 
     const m = this.motor;
+    this.drawManaBar(dtMs);
     this.eyes.clear();
     const hy = HEAD_OFFSET_Y;
     if (m.mode === 'fallen') {
@@ -194,6 +205,39 @@ export class Player {
 
   private onEvent(e: MotorEvent): void {
     if (e === 'tripped') this.popText({ key: 'player.trip' });
+    if (e === 'noMana') {
+      this.manaFlashMs = 450;
+      this.popText('💤');
+    }
+  }
+
+  /**
+   * Thanh mana dưới chân: chỉ hiện khi chưa đầy (hoặc đang nháy đỏ vì thiếu mana). Vạch trắng
+   * là mức đủ cho một lần lao.
+   */
+  private drawManaBar(dtMs: number): void {
+    const g = this.manaBar.clear();
+    const { maxMana, dashManaCost } = this.params;
+    const mana = this.motor.mana;
+    this.manaFlashMs = Math.max(0, this.manaFlashMs - dtMs);
+    if (mana >= maxMana - 0.01 && this.manaFlashMs <= 0) return;
+    const w = 34;
+    const h = 5;
+    const x = -w / 2;
+    const y = PLAYER_RADIUS + 1;
+    const flash = this.manaFlashMs > 0 && Math.floor(this.manaFlashMs / 90) % 2 === 0;
+    g.fillStyle(0x16120f, 0.85).fillRoundedRect(x - 1, y - 1, w + 2, h + 2, 3);
+    const k = Math.max(0, Math.min(1, mana / maxMana));
+    const enough = mana >= dashManaCost;
+    g.fillStyle(flash ? 0xff5a5a : enough ? 0x4fc3f7 : 0x2f6f8f, 1).fillRoundedRect(
+      x,
+      y,
+      w * k,
+      h,
+      2,
+    );
+    const tick = x + (w * dashManaCost) / maxMana;
+    g.fillStyle(0xffffff, 0.8).fillRect(tick - 0.5, y - 1, 1, h + 2);
   }
 
   /**
@@ -209,12 +253,19 @@ export class Player {
     fy: number;
     mode: MotorState['mode'];
     run: boolean;
+    mana: number;
   }): void {
     const mb = this.scene.matter.body;
     mb.setVelocity(this.body, { x: s.vx, y: s.vy });
     mb.setPosition(this.body, { x: s.x, y: s.y }, false);
     this.prevPos = { x: s.x, y: s.y };
-    this.motor = { ...this.motor, mode: s.mode, running: s.run, facing: { x: s.fx, y: s.fy } };
+    this.motor = {
+      ...this.motor,
+      mode: s.mode,
+      running: s.run,
+      facing: { x: s.fx, y: s.fy },
+      mana: s.mana,
+    };
   }
 
   /** Máy khách: đứng yên ở vị trí hiện tại (không nội suy tiếp). */

@@ -27,6 +27,7 @@ export interface ServerPlayer {
   run: boolean;
   fx: number;
   fy: number;
+  mana: number;
 }
 
 /** Lệch quá mức này (dịch chuyển, bị đẩy mạnh) thì nhảy thẳng tới, không trượt từ từ. */
@@ -157,6 +158,7 @@ export class Predictor {
         mode: s.mode,
         running: s.run,
         facing: { x: s.fx, y: s.fy },
+        mana: s.mana,
         modeMs: motor.mode === s.mode ? motor.modeMs : 0,
       },
     };

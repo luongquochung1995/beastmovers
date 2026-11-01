@@ -20,6 +20,10 @@ export interface MotorParams {
   fallMs: number;
   /** Xác suất vấp ngã cho mỗi giây đang chạy. */
   tripChancePerSec: number;
+  /** Mana tối đa; mỗi lần lao tốn `dashManaCost`, hồi `manaRegenPerSec` mỗi giây. */
+  maxMana: number;
+  dashManaCost: number;
+  manaRegenPerSec: number;
 }
 
 export const DEFAULT_MOTOR: MotorParams = {
@@ -32,6 +36,9 @@ export const DEFAULT_MOTOR: MotorParams = {
   dashCooldownMs: 800,
   fallMs: 1000,
   tripChancePerSec: 0.03,
+  maxMana: 100,
+  dashManaCost: 40,
+  manaRegenPerSec: 20,
 };
 
 export interface Vec {
@@ -49,6 +56,8 @@ export interface MotorState {
   running: boolean;
   /** Hướng đang nhìn (độ dài 1). */
   facing: Vec;
+  /** Mana hiện có (lao tốn mana). */
+  mana: number;
 }
 
 export interface MotorInput {
@@ -59,7 +68,8 @@ export interface MotorInput {
   carrying?: boolean;
 }
 
-export type MotorEvent = 'dashed' | 'tripped' | 'gotUp';
+/** `noMana`: bấm Lao nhưng không đủ mana. */
+export type MotorEvent = 'dashed' | 'tripped' | 'gotUp' | 'noMana';
 
 export interface MotorResult {
   state: MotorState;
@@ -75,6 +85,7 @@ export function createMotorState(): MotorState {
     holdMs: 0,
     running: false,
     facing: { x: 0, y: 1 },
+    mana: DEFAULT_MOTOR.maxMana,
   };
 }
 
@@ -101,6 +112,11 @@ export function stepMotor(
     ...state,
     modeMs: state.modeMs + dtMs,
     dashCooldownMs: Math.max(0, state.dashCooldownMs - dtMs),
+    // Hồi mana (trừ lúc đang lao).
+    mana:
+      state.mode === 'dashing'
+        ? state.mana
+        : Math.min(params.maxMana, state.mana + (params.manaRegenPerSec * dtMs) / 1000),
   };
 
   // Đang ngã: không điều khiển được, trượt chậm dần.
@@ -139,7 +155,10 @@ export function stepMotor(
   }
   s.running = !input.carrying && moving && mag > 0.9 && s.holdMs >= params.runAfterMs;
 
-  if (input.dashPressed && !input.carrying && s.dashCooldownMs <= 0) {
+  if (input.dashPressed && !input.carrying && s.dashCooldownMs <= 0 && s.mana < params.dashManaCost)
+    events.push('noMana');
+  else if (input.dashPressed && !input.carrying && s.dashCooldownMs <= 0) {
+    s.mana -= params.dashManaCost;
     s.mode = 'dashing';
     s.modeMs = 0;
     s.dashCooldownMs = params.dashCooldownMs;

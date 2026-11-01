@@ -289,6 +289,7 @@ export function encodeSnapshot(
     w.i16(qPos(p.y));
     w.i8(qAngle(Math.atan2(p.fy, p.fx)));
     w.u8(MODES.indexOf(p.mode) | (p.run ? 4 : 0));
+    w.u8(Math.max(0, Math.min(255, p.mana)));
     w.i16(p.hold);
     w.i16(qVel(p.vx));
     w.i16(qVel(p.vy));
@@ -340,7 +341,7 @@ export function snapshotChecksum(s: Snapshot): number {
   };
   mix(s.tick);
   for (const p of s.players) {
-    for (const v of [p.s, p.x, p.y, p.fx, p.fy, p.hold, p.vx, p.vy, p.ack]) mix(v);
+    for (const v of [p.s, p.x, p.y, p.fx, p.fy, p.mana, p.hold, p.vx, p.vy, p.ack]) mix(v);
     str(p.mode);
     mix(p.run ? 1 : 0);
   }
@@ -412,6 +413,7 @@ export function decodeSnapshot(
       fy: Math.sin(fa),
       mode: MODES[flags & 3] ?? 'normal',
       run: (flags & 4) !== 0,
+      mana: r.u8(),
       hold: r.i16(),
       vx: dqVel(r.i16()),
       vy: dqVel(r.i16()),

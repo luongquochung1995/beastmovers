@@ -227,7 +227,7 @@
   "help.action.move": "Move",
   "help.action.grab": "Grab / drop",
   "help.action.throw": "Throw",
-  "help.action.dash": "Dash / tackle",
+  "help.action.dash": "Dash / tackle (costs mana)",
   "help.action.ping": "Ping (hold + direction: wheel)",
   "help.action.pause": "Pause",
   "help.howTitle": "The job",

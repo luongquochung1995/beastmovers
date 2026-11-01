@@ -147,4 +147,25 @@ describe('PlayerMotor', () => {
     );
     expect(dash.events).not.toContain('dashed');
   });
+
+  it('lao tốn mana; thiếu mana thì không lao được (báo noMana)', () => {
+    const dash = { ...right, dashPressed: true };
+    const a = simulate(1, dash);
+    expect(a.events).toContain('dashed');
+    expect(a.state.mana).toBeCloseTo(DEFAULT_MOTOR.maxMana - DEFAULT_MOTOR.dashManaCost);
+    const low = { ...createMotorState(), mana: DEFAULT_MOTOR.dashManaCost - 1 };
+    const b = simulate(1, dash, { state: low });
+    expect(b.events).toEqual(['noMana']);
+    expect(b.state.mode).toBe('normal');
+  });
+
+  it('mana hồi theo thời gian (không quá tối đa), không hồi trong lúc lao', () => {
+    const empty = { ...createMotorState(), mana: 0 };
+    const oneSec = simulate(60, right, { state: empty });
+    expect(oneSec.state.mana).toBeCloseTo(DEFAULT_MOTOR.manaRegenPerSec, 0);
+    expect(simulate(600, right, { state: empty }).state.mana).toBe(DEFAULT_MOTOR.maxMana);
+    const dashing = { ...createMotorState(), mode: 'dashing' as const, mana: 10 };
+    const r = stepMotor(dashing, right, { x: 0, y: 0 }, DT, DEFAULT_MOTOR, never);
+    expect(r.state.mana).toBe(10);
+  });
 });

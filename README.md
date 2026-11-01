@@ -79,7 +79,9 @@ Tối đa 4 người trên một máy: 2 người chung bàn phím + tay cầm (
 | Ping           | F          | Numpad 3              | Y                |
 
 Giữ một hướng khoảng 0,6 giây thì nhân vật chuyển sang chạy (chạy có thể vấp ngã). Lao vào người khác làm họ ngã.
-Giữ **Ping** + một hướng để mở vòng ping.
+Giữ **Ping** + một hướng để mở vòng ping. **Lao tốn mana**: thanh xanh dưới chân, mỗi lần lao tốn 40/100,
+hồi 20 mỗi giây (vạch trắng = đủ cho một lần lao); thiếu mana thì không lao được (💤). Chỉnh trong
+`config.json` (`maxMana`, `dashManaCost`, `manaRegenPerSec`).
 
 **Điện thoại / máy tính bảng** (cầm ngang): đặt ngón tay ở nửa trái màn hình là có cần ảo; nút
 **Nắm / Ném / Lao / Ping** bên phải, nút ⏸ góc trên. Mỗi điện thoại một người — rủ bạn chơi online

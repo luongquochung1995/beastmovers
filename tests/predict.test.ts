@@ -10,7 +10,20 @@ const DT = 1000 / 60;
 const snap = (tick: number, x: number, itemX: number, angle = 0): Snapshot => ({
   tick,
   players: [
-    { s: 0, x, y: 0, fx: 1, fy: 0, mode: 'normal', run: false, hold: -1, vx: 0, vy: 0, ack: 0 },
+    {
+      s: 0,
+      x,
+      y: 0,
+      fx: 1,
+      fy: 0,
+      mode: 'normal',
+      run: false,
+      mana: 100,
+      hold: -1,
+      vx: 0,
+      vy: 0,
+      ack: 0,
+    },
   ],
   items: [
     {
@@ -116,7 +129,10 @@ describe('dự đoán nhân vật của mình', () => {
 
   it('đi ngay khi bấm, khớp với host khi snapshot (trễ 9 bước) tới', () => {
     const pred = new Predictor(DEFAULT_MOTOR, 20, () => []);
-    pred.reconcile({ x: 0, y: 0, vx: 0, vy: 0, mode: 'normal', run: false, fx: 1, fy: 0 }, 0);
+    pred.reconcile(
+      { x: 0, y: 0, vx: 0, vy: 0, mode: 'normal', run: false, fx: 1, fy: 0, mana: 100 },
+      0,
+    );
     const frames: InputFrame[] = [];
     let maxErr = 0;
     for (let i = 1; i <= 60; i++) {
@@ -134,6 +150,7 @@ describe('dự đoán nhân vật của mình', () => {
           run: t.motor.running,
           fx: 1,
           fy: 0,
+          mana: Math.round(t.motor.mana),
         };
         pred.reconcile(s, i - 9);
       }
@@ -147,11 +164,17 @@ describe('dự đoán nhân vật của mình', () => {
   it('không đi xuyên tường; phần lệch được kéo về từ từ', () => {
     const wall: Obstacle = { cx: 100, cy: 0, w: 20, h: 200, angle: 0 };
     const pred = new Predictor(DEFAULT_MOTOR, 20, () => [wall]);
-    pred.reconcile({ x: 0, y: 0, vx: 0, vy: 0, mode: 'normal', run: false, fx: 1, fy: 0 }, 0);
+    pred.reconcile(
+      { x: 0, y: 0, vx: 0, vy: 0, mode: 'normal', run: false, fx: 1, fy: 0, mana: 100 },
+      0,
+    );
     for (let i = 1; i <= 120; i++) pred.tick(right, right, i, DT);
     expect(pred.position!.x).toBeCloseTo(70, 0);
     // Host nói mình đang ở 60 (lệch 10px): hình vẽ không nhảy ngay mà trượt về.
-    pred.reconcile({ x: 60, y: 0, vx: 0, vy: 0, mode: 'normal', run: false, fx: 1, fy: 0 }, 120);
+    pred.reconcile(
+      { x: 60, y: 0, vx: 0, vy: 0, mode: 'normal', run: false, fx: 1, fy: 0, mana: 100 },
+      120,
+    );
     const d0 = pred.display(0)!.x;
     expect(d0).toBeCloseTo(70, 0);
     pred.display(600);

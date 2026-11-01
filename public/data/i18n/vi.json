@@ -227,7 +227,7 @@
   "help.action.move": "Di chuyển",
   "help.action.grab": "Nắm / thả",
   "help.action.throw": "Ném",
-  "help.action.dash": "Lao / chụp",
+  "help.action.dash": "Lao / chụp (tốn mana)",
   "help.action.ping": "Ping (giữ + hướng: vòng ping)",
   "help.action.pause": "Tạm dừng",
   "help.howTitle": "Công việc",

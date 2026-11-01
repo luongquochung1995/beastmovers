@@ -50,6 +50,7 @@ describe('mô phỏng chơi online với mạng trễ 150 ms', () => {
           fy: motor.facing.y,
           mode: motor.mode,
           run: motor.running,
+          mana: Math.round(motor.mana),
           hold: -1,
           vx: vel.x,
           vy: vel.y,

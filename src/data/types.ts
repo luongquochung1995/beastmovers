@@ -86,6 +86,10 @@ export const configSchema = obj({
   runTripChance: num({ min: 0, max: 1 }),
   throwSpeed: num({ min: 0 }),
   grabRange: num({ min: 0 }),
+  /** Mana để lao: tối đa, tốn mỗi lần lao, hồi mỗi giây (bỏ trống = mặc định 100 / 40 / 20). */
+  maxMana: optional(num({ min: 1 })),
+  dashManaCost: optional(num({ min: 0 })),
+  manaRegenPerSec: optional(num({ min: 0 })),
   net: obj({
     transport: str({ minLen: 1 }),
     fallbackTransport: str({ minLen: 1 }),

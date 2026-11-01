@@ -399,6 +399,7 @@ export class OnlineGame {
         fy: motor.facing.y,
         mode: motor.mode,
         run: motor.running,
+        mana: motor.mana,
       });
     }
   }

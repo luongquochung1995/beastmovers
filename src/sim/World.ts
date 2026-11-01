@@ -145,7 +145,13 @@ export class World {
     readonly config: GameConfig,
     readonly random: Random,
   ) {
-    this.motorParams = { ...DEFAULT_MOTOR, tripChancePerSec: config.runTripChance };
+    this.motorParams = {
+      ...DEFAULT_MOTOR,
+      tripChancePerSec: config.runTripChance,
+      maxMana: config.maxMana ?? DEFAULT_MOTOR.maxMana,
+      dashManaCost: config.dashManaCost ?? DEFAULT_MOTOR.dashManaCost,
+      manaRegenPerSec: config.manaRegenPerSec ?? DEFAULT_MOTOR.manaRegenPerSec,
+    };
     this.grab = new GrabSystem(this);
     this.overlay = scene.add.graphics().setDepth(9_000);
     this.pingLayer = new PingLayer(scene);
