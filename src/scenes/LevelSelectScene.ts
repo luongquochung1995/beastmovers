@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { music } from '../audio/music';
 import { getLocale, t } from '../data/i18n';
 import { loadSave, totalStars } from '../data/settings';
 import { TIERS, type LevelDef } from '../data/types';
@@ -49,6 +50,7 @@ export class LevelSelectScene extends Phaser.Scene {
 
   create(): void {
     this.cameras.main.setBackgroundColor(Theme.bg);
+    music.play('menu');
     this.inputs = this.registry.get(RegistryKeys.Input) as InputManager;
     this.data$ = this.registry.get(RegistryKeys.Data) as GameData;
     const save = loadSave();

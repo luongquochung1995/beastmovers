@@ -482,6 +482,7 @@ const paparazziAI: BehaviorFactory = ({ world, item, params }) => {
       const near = Math.hypot(target.x - pos.x, target.y - pos.y) < 260;
       if (near && sinceFlash >= flashEvery) {
         sinceFlash = 0;
+        world.bus.emit({ type: 'behavior', item: item.uid, itemId: item.id, name: 'paparazziAI' });
         world.pop(pos, '📸 ✨');
         world.shake(120, 0.002);
       }

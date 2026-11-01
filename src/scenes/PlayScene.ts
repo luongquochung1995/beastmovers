@@ -1,4 +1,6 @@
 import Phaser from 'phaser';
+import { GameAudio } from '../audio/GameAudio';
+import { music } from '../audio/music';
 import { CONFIG_KEY } from '../data/config';
 import type { GameConfig } from '../data/types';
 import type { GameData } from '../data/validate';
@@ -16,6 +18,7 @@ import type { LevelRuntime } from '../sim/LevelRuntime';
 import type { SimSlot, SlotSource } from '../sim/SimSlot';
 import { Btn, isDown } from '../systems/input/InputFrame';
 import { inTouchMode, onTouchMode } from '../systems/input/touch';
+import { GameParticles } from '../ui/Particles';
 import { touchControls } from '../ui/TouchControls';
 import type { InputManager } from '../systems/input/InputManager';
 import { Random } from '../systems/Random';
@@ -91,6 +94,10 @@ export abstract class PlayScene extends Phaser.Scene {
 
     this.world = new World(this, this.gameData, this.config, new Random());
     this.buildLevel();
+    new GameAudio(this.world, this.cameras.main);
+    new GameParticles(this, this.world);
+    // Nhạc màn chơi bắt đầu khi màn bắt đầu (sự kiện levelStart); sandbox thì yên lặng.
+    music.stop();
 
     // Chưa ai tham gia thì người dùng WASD tự vào làm người chơi 1.
     if (this.inputs.slots.every((s) => s === null)) this.inputs.join(this.inputs.primarySourceId());

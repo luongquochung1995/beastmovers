@@ -16,6 +16,8 @@ export interface Settings {
   screenShake?: boolean;
   /** Âm lượng chung 0..1 (mặc định 0,8). */
   volume?: number;
+  /** Nhạc nền (mặc định bật). */
+  music?: boolean;
   /** Phím đã đổi, mỗi phần tử là một bố cục (P1, P2); bỏ trống = mặc định. */
   keys?: KeyBindings;
 }
@@ -70,6 +72,7 @@ export function migrate(raw: unknown): SaveData {
 
   if (typeof settings.language === 'string') out.settings.language = settings.language;
   if (typeof settings.screenShake === 'boolean') out.settings.screenShake = settings.screenShake;
+  if (typeof settings.music === 'boolean') out.settings.music = settings.music;
   if (typeof settings.volume === 'number' && settings.volume >= 0 && settings.volume <= 1)
     out.settings.volume = settings.volume;
   if (Array.isArray(settings.keys)) {

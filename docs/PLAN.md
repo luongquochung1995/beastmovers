@@ -590,13 +590,13 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P34 | Màn Đại đội và Full nhà còn lại | F | | 5 ngày | 🟨 | |
 | P35 | Co giãn theo số người (scaling) | F | | 3 ngày | 🟨 | |
 | P36 | Thêm 2 chủ nhà và bộ thoại | F | | 3 ngày | ✅ | 2026-10-28 |
-| P37 | Âm thanh và hiệu ứng | G | | 4 ngày | ⬜ | |
+| P37 | Âm thanh và hiệu ứng | G | | 4 ngày | 🟨 | |
 | P38 | Tối ưu hiệu năng và mạng | G | | 4 ngày | ⬜ | |
 | P39 | Cân bằng và playtest theo số người | G | | 5 ngày | ⬜ | |
 | P40 | Kiểm thử trình duyệt | G | | 2 ngày | ⬜ | |
 | P41 | Phát hành | G | | 2 ngày | ⬜ | |
 
-**Tiến độ:** 28/41 phase · Mốc A 🟨 · B ✅ · C ✅ · D 🟨 · E ✅ · F 🟨 · G ⬜
+**Tiến độ:** 28/41 phase · Mốc A 🟨 · B ✅ · C ✅ · D 🟨 · E ✅ · F 🟨 · G 🟨
 
 ---
 
@@ -986,11 +986,12 @@ _(ghi ở đây)_
 ### 🅶 Mốc G — Hoàn thiện và phát hành
 
 #### P37 · Âm thanh và hiệu ứng
-- [ ] Hiệu ứng âm thanh: va chạm, vỡ kính, mèo kêu, xe tải, tiếng phím đàn khi va vào piano
-- [ ] Nhạc nền menu và trong màn; nhạc dồn dập khi còn 60 giây
-- [ ] Hiệu ứng hạt: bụi, mảnh vỡ, nước, đất
-- [ ] Sprite và hoạt ảnh chính thức thay sprite tạm
+- [x] Hiệu ứng âm thanh: va chạm, vỡ kính, mèo kêu, xe tải, tiếng phím đàn khi va vào piano
+- [x] Nhạc nền menu và trong màn; nhạc dồn dập khi còn 60 giây
+- [x] Hiệu ứng hạt: bụi, mảnh vỡ, nước, đất
+- [ ] Sprite và hoạt ảnh chính thức thay sprite tạm — *cần họa sĩ / bộ hình; vẫn dùng khối màu + emoji*
 - **✅ Xong khi:** tắt hình chỉ nghe tiếng vẫn đoán được chuyện gì đang xảy ra.
+- 📝 *Cách làm: không có file âm thanh — mọi tiếng tổng hợp bằng Web Audio (`src/audio/synth.ts`: nốt có đường bao, tiếng ồn có lọc) nên không tăng dung lượng tải. ~30 tiếng riêng (`sfx.ts`), mỗi sự kiện một kiểu: nắm "bóp", ném vút gió, rơi "thình" trầm theo khối lượng, đụng tường cộc, kéo lê rè rè, nứt tách, vỡ kính xoảng + leng keng (đồ không phải kính: rắc rắc), nước ào, đất lạo xạo, va piano ra hợp âm, bi/tạ lộc cộc, máy chạy bộ rè, mèo kêu / khè, lên xe ting-ting, rơi khỏi xe tụt giọng, xe đầy bíp, phanh tay cạch cạch, còi xe đầu màn, xe nổ máy chạy đi cuối màn, nhấc đồ to "hự" đi lên, buông giữa chừng "uầy", vấp "oái", ping chuông (cao độ theo loại), còn 1 phút chuông báo, chủ nhà đổi ý "ơ?", paparazzi chụp ảnh. Tiếng lệch trái/phải theo vị trí trên màn hình, cùng tiếng không lặp quá dày. `GameAudio` nghe `world.bus` — online máy khách phát lại sự kiện của host đúng lúc nên mọi máy nghe giống nhau. **Nhạc nền** tổng hợp kiểu chiptune (`music.ts`, lên lịch trước 0,2 giây theo đồng hồ Web Audio): menu 92 bpm nhẹ nhàng, màn chơi 124 bpm có trống, còn 60 giây chuyển sang 158 bpm; hết giờ tắt nhạc, nổ máy xe. Cài đặt có "Nhạc nền: Bật/Tắt" (lưu lại), âm lượng chung áp cho mọi tiếng; trình duyệt chỉ cho phát tiếng sau lần chạm/bấm đầu tiên. **Hạt** (`Particles.ts`): bụi khi rơi (nhiều theo khối lượng) / đụng tường / kéo lê / vấp, mảnh vỡ theo màu món đồ (+ mảnh kính nếu dễ vỡ), giọt nước, đất, kính, lấp lánh khi đồ lên xe. Kiểm tra (Chromium, đếm số nút âm thanh tạo ra vì máy thử không có loa): nhạc menu chạy (13 nốt / 2 giây sau cú bấm đầu), 10 loại sự kiện đều phát tiếng (vỡ kính 8 nút, đàn 4, nước 5…), còn 60 giây đổi bài; hạt bung ra (24–36 hạt) và tan sau 1 giây. ⚠️ Chưa nghe bằng tai — tiêu chí "chỉ nghe tiếng đoán được chuyện gì" cần người nghe thử; chưa có sprite chính thức.*
 
 #### P38 · Tối ưu hiệu năng và mạng
 - [ ] Cho vật đứng yên "ngủ" (sleeping), đơn giản hóa hình va chạm

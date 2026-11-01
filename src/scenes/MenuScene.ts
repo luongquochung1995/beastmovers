@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { music } from '../audio/music';
 import { t } from '../data/i18n';
 import { MenuInput } from '../ui/menuInput';
 import { MenuList } from '../ui/MenuList';
@@ -16,6 +17,7 @@ export class MenuScene extends Phaser.Scene {
 
   create(): void {
     this.cameras.main.setBackgroundColor(Theme.bg);
+    music.play('menu');
     const cx = GAME_WIDTH / 2;
 
     this.add

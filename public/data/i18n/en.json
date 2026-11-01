@@ -270,5 +270,6 @@
   "tutorial.throw": "Tip: holding something light? Press Throw (E · Right Shift · B). Throwing it into the truck counts too!",
   "tutorial.ping": "Big items need several people. Tap Ping (F · Y) to call for help; hold Ping for the ping wheel",
   "tutorial.done": "Tutorial done — you're a mover now!",
-  "source.touch": "Touch screen"
+  "source.touch": "Touch screen",
+  "settings.music": "Music: {v}"
 }

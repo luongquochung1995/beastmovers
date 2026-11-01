@@ -1,4 +1,5 @@
 import { setMasterVolume } from '../audio/mixer';
+import { music } from '../audio/music';
 import { getLocale, nextLocale, setLocale } from '../data/i18n';
 import { loadSettings, saveSettings, volumeOf } from '../data/settings';
 import { applyKeyBindings } from '../systems/input/keyboard';
@@ -7,6 +8,7 @@ import { applyKeyBindings } from '../systems/input/keyboard';
 export function applySavedSettings(): void {
   const s = loadSettings();
   setMasterVolume(volumeOf(s));
+  music.enabled = s.music !== false;
   applyKeyBindings(s.keys);
 }
 
@@ -24,6 +26,11 @@ export function stepVolume(dir: -1 | 1): number {
   saveSettings({ volume: v });
   setMasterVolume(v);
   return v;
+}
+
+export function toggleMusic(): void {
+  music.enabled = !music.enabled;
+  saveSettings({ music: music.enabled });
 }
 
 export function isFullscreen(): boolean {

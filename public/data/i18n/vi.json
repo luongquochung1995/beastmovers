@@ -270,5 +270,6 @@
   "tutorial.throw": "Mẹo: đang cầm đồ nhẹ thì bấm Ném (E · Shift phải · nút B). Ném trúng thùng xe cũng tính!",
   "tutorial.ping": "Đồ to cần nhiều người. Bấm Ping (F · nút Y) để gọi đồng đội; giữ Ping để mở vòng ping",
   "tutorial.done": "Xong phần hướng dẫn — giờ bạn là dân chuyển nhà rồi!",
-  "source.touch": "Màn hình cảm ứng"
+  "source.touch": "Màn hình cảm ứng",
+  "settings.music": "Nhạc nền: {v}"
 }

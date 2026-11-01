@@ -3,7 +3,13 @@ import { getLocale, t } from '../data/i18n';
 import { clearProgress, loadSettings, saveSettings, volumeOf } from '../data/settings';
 import { MenuInput } from '../ui/menuInput';
 import { MenuList } from '../ui/MenuList';
-import { isFullscreen, stepVolume, switchLanguage, toggleFullscreen } from '../ui/prefs';
+import {
+  isFullscreen,
+  stepVolume,
+  switchLanguage,
+  toggleFullscreen,
+  toggleMusic,
+} from '../ui/prefs';
 import { GAME_HEIGHT, GAME_WIDTH, Theme } from '../ui/theme';
 import { SceneKeys } from './keys';
 
@@ -45,6 +51,10 @@ export class SettingsScene extends Phaser.Scene {
           onAdjust: (dir) => stepVolume(dir),
         },
         {
+          label: () => t('settings.music', { v: onOff(loadSettings().music !== false) }),
+          onAdjust: () => toggleMusic(),
+        },
+        {
           label: () => t('settings.shake', { v: onOff(loadSettings().screenShake !== false) }),
           onAdjust: () => saveSettings({ screenShake: loadSettings().screenShake === false }),
         },
@@ -71,8 +81,8 @@ export class SettingsScene extends Phaser.Scene {
         { label: () => t('settings.back'), onConfirm: () => this.back(), gapBefore: 12 },
       ],
       cx,
-      190,
-      62,
+      172,
+      56,
     );
     this.note = this.add
       .text(cx, GAME_HEIGHT - 70, '', {

@@ -13,6 +13,22 @@ export function masterVolume(): number {
   return master;
 }
 
+/**
+ * Trình duyệt chỉ cho phát tiếng sau khi người chơi bấm phím / chạm / bấm chuột: lần đầu có
+ * thao tác thì đánh thức AudioContext (nhạc menu bắt đầu nghe được từ lúc đó).
+ */
+export function unlockAudioOnGesture(target: Window = window): void {
+  const unlock = () => {
+    const c = audioContext();
+    if (c?.state === 'running') {
+      target.removeEventListener('pointerdown', unlock);
+      target.removeEventListener('keydown', unlock);
+    }
+  };
+  target.addEventListener('pointerdown', unlock);
+  target.addEventListener('keydown', unlock);
+}
+
 /** AudioContext dùng chung; null nếu trình duyệt không có Web Audio. */
 export function audioContext(): AudioContext | null {
   try {

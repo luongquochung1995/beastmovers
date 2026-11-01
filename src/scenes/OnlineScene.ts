@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { music } from '../audio/music';
 import { CONFIG_KEY } from '../data/config';
 import { getLocale, t } from '../data/i18n';
 import { loadProfile, loadSave, saveProfile, totalStars } from '../data/settings';
@@ -86,6 +87,7 @@ export class OnlineScene extends Phaser.Scene {
 
   create(data: OnlineSceneData): void {
     this.cameras.main.setBackgroundColor(Theme.bg);
+    music.play('menu');
     this.config = this.registry.get(CONFIG_KEY) as GameConfig;
     this.gameData = this.registry.get(RegistryKeys.Data) as GameData;
     this.inputs = this.registry.get(RegistryKeys.Input) as InputManager;
