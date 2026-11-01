@@ -12,7 +12,16 @@ import {
 import { t } from '../data/i18n';
 import { popText } from '../ui/popText';
 import { Theme } from '../ui/theme';
-import { PLAYER_RADIUS, PLAYER_STYLES, playerTextureKey } from './playerStyles';
+import {
+  drawEar,
+  drawEye,
+  HEAD_OFFSET_Y,
+  HEAD_R,
+  PLAYER_ORIGIN,
+  PLAYER_RADIUS,
+  PLAYER_STYLES,
+  playerBodyTextureKey,
+} from './playerStyles';
 
 /**
  * Nhân vật: thân vật lý Matter (hình tròn, không xoay) + phần hình ảnh vẽ riêng.
@@ -24,6 +33,8 @@ export class Player {
   private readonly view: Phaser.GameObjects.Container;
   private readonly sprite: Phaser.GameObjects.Image;
   private readonly eyes: Phaser.GameObjects.Graphics;
+  /** Hướng nhìn ngang gần nhất (1 phải, -1 trái) để vẽ mặt nghiêng khi đi lên/xuống. */
+  private side = 1;
   private readonly label: Phaser.GameObjects.Text;
   private prevPos: Vec;
   private wobble = 0;
@@ -51,10 +62,12 @@ export class Player {
     this.prevPos = { x, y };
 
     const style = PLAYER_STYLES[styleIndex]!;
-    this.sprite = scene.add.image(0, 0, playerTextureKey(styleIndex));
+    this.sprite = scene.add
+      .image(0, 0, playerBodyTextureKey(styleIndex))
+      .setOrigin(PLAYER_ORIGIN.x, PLAYER_ORIGIN.y);
     this.eyes = scene.add.graphics();
     this.label = scene.add
-      .text(0, -PLAYER_RADIUS - (hat ? 30 : 16), name, {
+      .text(0, HEAD_OFFSET_Y - HEAD_R - (hat ? 26 : 12), name, {
         fontFamily: Theme.font,
         fontSize: '15px',
         fontStyle: 'bold',
@@ -66,7 +79,9 @@ export class Player {
     const parts: Phaser.GameObjects.GameObject[] = [this.sprite, this.eyes, this.label];
     if (hat) {
       parts.push(
-        scene.add.text(0, -PLAYER_RADIUS + 1, hat, { fontSize: '20px' }).setOrigin(0.5, 0.8),
+        scene.add
+          .text(0, HEAD_OFFSET_Y - HEAD_R + 6, hat, { fontSize: '22px' })
+          .setOrigin(0.5, 0.8),
       );
     }
     this.view = scene.add.container(x, y, parts).setDepth(y);
@@ -132,13 +147,14 @@ export class Player {
 
     const m = this.motor;
     this.eyes.clear();
+    const hy = HEAD_OFFSET_Y;
     if (m.mode === 'fallen') {
       // Nằm bẹp, xám đi, mắt chữ x.
-      this.sprite.setAngle(0).setScale(1.25, 0.7).setTint(0xb0b0b0);
-      this.eyes.lineStyle(2.5, 0x1d1b26, 1);
-      for (const s of [-1, 1]) {
-        const cx = s * 7;
-        const cy = -3;
+      this.sprite.setAngle(0).setScale(1.2, 0.75).setTint(0xb0b0b0);
+      this.eyes.lineStyle(3, 0x16120f, 1);
+      for (const sx of [-1, 1]) {
+        const cx = sx * 6;
+        const cy = hy * 0.75;
         this.eyes.lineBetween(cx - 3, cy - 3, cx + 3, cy + 3);
         this.eyes.lineBetween(cx - 3, cy + 3, cx + 3, cy - 3);
       }
@@ -148,27 +164,32 @@ export class Player {
 
     const speed = Math.hypot(this.body.velocity.x, this.body.velocity.y);
     this.wobble += dtMs * (m.running ? 0.025 : 0.016) * Math.min(1, speed);
-    const amp = m.mode === 'dashing' ? 0 : m.running ? 12 : 7;
+    const amp = m.mode === 'dashing' ? 0 : m.running ? 10 : 6;
     const bob = speed > 0.2 ? Math.sin(this.wobble) : 0;
+    const angle = bob * amp;
     this.sprite
-      .setAngle(bob * amp)
+      .setAngle(angle)
       .setScale(
-        m.mode === 'dashing' ? 1.15 : 1,
-        m.mode === 'dashing' ? 0.85 : 1 + Math.abs(bob) * 0.04,
+        m.mode === 'dashing' ? 1.12 : 1,
+        m.mode === 'dashing' ? 0.88 : 1 + Math.abs(bob) * 0.04,
       );
+    this.eyes.setAngle(angle);
 
-    // Mắt nhìn theo hướng đi.
-    const ex = m.facing.x * 7;
-    const ey = m.facing.y * 6 - 5;
-    const side = { x: -m.facing.y, y: m.facing.x };
-    for (const s of [-1, 1]) {
-      const px = ex + side.x * 6 * s;
-      const py = ey + side.y * 4 * s;
-      this.eyes.fillStyle(0xffffff, 1).fillCircle(px, py, 4.5);
-      this.eyes
-        .fillStyle(0x1d1b26, 1)
-        .fillCircle(px + m.facing.x * 1.5, py + m.facing.y * 1.5, 2.2);
+    // Nhìn nghiêng theo hướng đi (tai phía sau, mắt phía trước); đi lên thì thấy gáy.
+    const f = m.facing;
+    if (Math.abs(f.x) > 0.35) this.side = f.x > 0 ? 1 : -1;
+    const away = f.y < -0.6 && Math.abs(f.x) < 0.5;
+    const front = f.y > 0.6 && Math.abs(f.x) < 0.5;
+    if (front || away) {
+      for (const sx of [-1, 1]) drawEar(this.eyes, sx * (HEAD_R - 1), hy + 2);
+      if (front) for (const sx of [-1, 1]) drawEye(this.eyes, sx * 5, hy + 1);
+      return;
     }
+    const sd = this.side;
+    drawEar(this.eyes, -sd * (HEAD_R - 1), hy + 2);
+    const ey = hy + f.y * 4;
+    drawEye(this.eyes, sd * 4, ey);
+    drawEye(this.eyes, sd * 11, ey, 9);
   }
 
   private onEvent(e: MotorEvent): void {

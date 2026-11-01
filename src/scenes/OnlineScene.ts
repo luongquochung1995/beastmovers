@@ -600,7 +600,7 @@ export class OnlineScene extends Phaser.Scene {
     // Hình nhân vật theo màu + mũ; bấm để đổi (chỉ ô của mình).
     const img = this.add.image(x + 62, cy + 6, playerTextureKey(seat.color));
     this.ui.add(img);
-    const hat = this.text(x + 62, cy - 20, HATS[seat.hat] || (mine ? '＋' : ''), 22, Theme.muted);
+    const hat = this.text(x + 62, cy - 30, HATS[seat.hat] || (mine ? '＋' : ''), 22, Theme.muted);
     if (mine) {
       this.clickable(img, () => this.cycleColor(seat.local));
       this.clickable(hat, () => this.cycleHat(seat.local));
