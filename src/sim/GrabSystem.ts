@@ -8,8 +8,15 @@ import { Btn, EMPTY_FRAME, frameAxis, justPressed } from '../systems/input/Input
 import type { SimSlot } from './SimSlot';
 import type { World } from './World';
 
+/** Đồ chỉ cần 1 người (thùng, gương, chậu cây, mèo…): cầm thì đỡ lên trên đầu bằng hai tay. */
+export function isOverhead(item: Pick<Item, 'def'>): boolean {
+  return item.def.requiredGrabbers === 1;
+}
+
 /** Độ cứng của "cánh tay" nối người với điểm nắm. Thấp thì mềm, đồ lắc lư. */
 const ARM_STIFFNESS = 0.25;
+/** Đồ một người cầm được đỡ trên đầu: dính chặt vào người (gần như không lắc). */
+const OVERHEAD_STIFFNESS = 0.9;
 /** Bị kéo xa điểm nắm quá mức này thì tuột tay. */
 const ARM_BREAK = 55;
 /** Sau khi ném, người ném xuyên qua vật vừa ném trong chốc lát (vật có thể đang ở sau lưng). */
@@ -50,6 +57,11 @@ export class GrabSystem {
   private readonly passThrough = new Map<Player, number>();
 
   constructor(private readonly world: World) {}
+
+  /** Điểm trên món đồ mà người cầm bám vào: đồ đỡ trên đầu thì ở chính giữa. */
+  private offsetFor(item: Item, point: number) {
+    return isOverhead(item) ? { x: 0, y: 0 } : item.grabOffset(point);
+  }
 
   holding(p: Player): Item | undefined {
     return this.holds.get(p)?.item;
@@ -103,19 +115,29 @@ export class GrabSystem {
   }
 
   attach(p: Player, item: Item, point: number): void {
-    const offset = item.grabOffset(point);
-    const length = Phaser.Math.Clamp(
-      dist(p.position, item.grabWorld(point)),
-      PLAYER_RADIUS * 0.8,
-      PLAYER_RADIUS + 10,
-    );
+    const overhead = isOverhead(item);
+    const offset = this.offsetFor(item, point);
+    const length = overhead
+      ? 0.5
+      : Phaser.Math.Clamp(
+          dist(p.position, item.grabWorld(point)),
+          PLAYER_RADIUS * 0.8,
+          PLAYER_RADIUS + 10,
+        );
     const constraint = this.world.scene.matter.add.constraint(
       p.body,
       item.body,
       length,
-      ARM_STIFFNESS,
+      overhead ? OVERHEAD_STIFFNESS : ARM_STIFFNESS,
       { pointA: { x: 0, y: 0 }, pointB: offset, damping: 0.1, label: 'arm' },
     );
+    if (overhead) {
+      // Nhấc lên đầu: món đồ về ngay trên người cầm, đứng yên không xoay.
+      const mb = this.world.scene.matter.body;
+      mb.setPosition(item.body, p.position, false);
+      mb.setVelocity(item.body, p.body.velocity);
+      mb.setAngularVelocity(item.body, 0);
+    }
     item.carriers.set(point, p);
     item.lastHandler = p.slotIndex;
     item.handlers.add(p.slotIndex);
@@ -134,9 +156,22 @@ export class GrabSystem {
     const hold = this.holds.get(p);
     if (!hold) return;
     this.world.scene.matter.world.removeConstraint(hold.constraint);
+    if (isOverhead(hold.item) && reason !== 'thrown' && reason !== 'removed') {
+      // Đặt món đồ đang đỡ trên đầu xuống trước mặt (không rơi đè lên người cầm).
+      const f = p.motor.facing;
+      const d = PLAYER_RADIUS + hold.item.boundingRadius * 0.8 + 2;
+      const mb = this.world.scene.matter.body;
+      mb.setPosition(
+        hold.item.body,
+        { x: p.position.x + f.x * d, y: p.position.y + f.y * d },
+        false,
+      );
+      mb.setVelocity(hold.item.body, { x: 0, y: 0 });
+      this.passThrough.set(p, THROW_PASS_THROUGH_MS);
+    }
     hold.item.carriers.delete(hold.point);
     hold.item.lastReleasedBy = p.slotIndex;
-    p.setCollisionGroup(0);
+    if (!this.passThrough.has(p)) p.setCollisionGroup(0);
     this.holds.delete(p);
     const ref = { item: hold.item.uid, itemId: hold.item.id };
     if (reason === 'dropped') this.world.bus.emit({ type: 'itemDropped', ...ref });
@@ -196,7 +231,7 @@ export class GrabSystem {
         massKg: item.def.mass,
         walkSpeed: this.world.motorParams.walkSpeed,
         carriers: entries.map(([point, pl]) => ({
-          r: item.grabOffset(point),
+          r: this.offsetFor(item, point),
           move: frameAxis(slots[pl.slotIndex]?.cur ?? EMPTY_FRAME),
         })),
       });
@@ -218,7 +253,7 @@ export class GrabSystem {
       matterBody.setVelocity(item.body, v);
       matterBody.setAngularVelocity(item.body, w);
       for (const [point, pl] of entries)
-        pl.setVelocity(pointVelocity(v, w, item.grabOffset(point)));
+        pl.setVelocity(pointVelocity(v, w, this.offsetFor(item, point)));
 
       if (res.scraping) {
         const ms = (this.scrapeMs.get(item) ?? 0) + dtMs;
@@ -233,7 +268,8 @@ export class GrabSystem {
 
     // Bị kéo quá xa điểm nắm (kẹt tường, bị đẩy) thì tuột tay.
     for (const [p, hold] of this.holds) {
-      if (dist(p.position, hold.item.grabWorld(hold.point)) > PLAYER_RADIUS + ARM_BREAK) {
+      const at = isOverhead(hold.item) ? hold.item.position : hold.item.grabWorld(hold.point);
+      if (dist(p.position, at) > PLAYER_RADIUS + ARM_BREAK) {
         this.release(p, 'stretched');
       }
     }
@@ -262,6 +298,8 @@ export class GrabSystem {
       const color = PLAYER_STYLES[p.styleIndex]!.color;
       const hold = this.holds.get(p);
       if (hold) {
+        // Đồ đỡ trên đầu: tay vẽ cùng món đồ (Item.render).
+        if (isOverhead(hold.item)) continue;
         const gp = hold.item.grabWorld(hold.point);
         g.lineStyle(6, color, 0.9).lineBetween(p.position.x, p.position.y, gp.x, gp.y);
         continue;

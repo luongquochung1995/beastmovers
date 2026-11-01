@@ -17,6 +17,8 @@ export function floorFrictionAir(friction: number): number {
 }
 
 const LIFT_HEIGHT = 6;
+/** Đáy món đồ đỡ trên đầu cao hơn tâm người cầm bấy nhiêu px (ngang đỉnh đầu). */
+const OVERHEAD_TOP = 36;
 const AIRBORNE_FRICTION = 0.012;
 
 /** Một món đồ trong nhà: thân vật lý Matter + phần hình ảnh vẽ riêng (nội suy giữa hai bước logic). */
@@ -60,6 +62,8 @@ export class Item {
   protected readonly view: Phaser.GameObjects.Container;
   protected readonly image: Phaser.GameObjects.Image;
   private readonly shadow: Phaser.GameObjects.Image;
+  /** Hai cánh tay của người đang đỡ món đồ trên đầu. */
+  private readonly arms: Phaser.GameObjects.Graphics;
   private readonly icon: Phaser.GameObjects.Text | null;
   private readonly counter: Phaser.GameObjects.Text;
   private readonly cracks: Phaser.GameObjects.Graphics;
@@ -110,8 +114,10 @@ export class Item {
       ? scene.add.text(0, 0, def.icon, { fontSize: `${iconSize}px` }).setOrigin(0.5)
       : null;
     this.cracks = scene.add.graphics();
+    this.arms = scene.add.graphics();
     this.view = scene.add.container(x, y, [
       this.shadow,
+      this.arms,
       this.image,
       ...(this.icon ? [this.icon] : []),
       this.cracks,
@@ -256,17 +262,23 @@ export class Item {
     const x = Phaser.Math.Linear(this.prevPos.x, p.x, alpha);
     const y = Phaser.Math.Linear(this.prevPos.y, p.y, alpha);
     const angle = this.prevAngle + (this.body.angle - this.prevAngle) * alpha;
+    // Đồ 1 người đang được cầm: đỡ trên đầu người cầm bằng hai tay.
+    const held = (this.remoteCarriers ?? this.carriers.size) > 0;
+    const overhead = held && this.def.requiredGrabbers === 1 && !this.hidden;
     this.view
       .setPosition(x, y)
       .setRotation(angle)
-      .setDepth(y + (this.lifted ? 30 : 0));
+      .setDepth(y + (overhead ? 60 : this.lifted ? 30 : 0));
 
     // Nhấc lên: hình nhích lên trên màn hình (không theo góc xoay), bóng ở dưới.
-    const up = this.lifted ? rotate({ x: 0, y: -LIFT_HEIGHT }, -angle) : { x: 0, y: 0 };
+    const lift = overhead ? OVERHEAD_TOP + this.def.size.h / 2 : this.lifted ? LIFT_HEIGHT : 0;
+    const up = lift ? rotate({ x: 0, y: -lift }, -angle) : { x: 0, y: 0 };
     this.image.setPosition(up.x, up.y);
     this.icon?.setPosition(up.x, up.y);
+    this.cracks.setPosition(up.x, up.y);
     const down = rotate({ x: 0, y: 3 }, -angle);
-    this.shadow.setVisible(this.lifted).setPosition(down.x, down.y);
+    this.shadow.setVisible(this.lifted && !overhead).setPosition(down.x, down.y);
+    this.drawArms(overhead, angle);
 
     if (this.drawnDurability !== this.damage.durability) this.drawDamage();
     if (this.hidden) return;
@@ -281,6 +293,22 @@ export class Item {
         .setPosition(x, y);
     } else {
       this.counter.setVisible(false);
+    }
+  }
+
+  /** Hai tay từ vai người cầm (ngay dưới món đồ) vươn lên đỡ hai bên đáy món đồ. */
+  private drawArms(overhead: boolean, angle: number): void {
+    const g = this.arms.clear();
+    if (!overhead) return;
+    const hand = Math.min(this.def.size.w / 2 - 2, 16);
+    const handY = -OVERHEAD_TOP + 2;
+    for (const s of [-1, 1]) {
+      const shoulder = rotate({ x: s * 11, y: -12 }, -angle);
+      const h = rotate({ x: s * Math.max(6, hand), y: handY }, -angle);
+      g.lineStyle(9, 0x2a2320, 1).lineBetween(shoulder.x, shoulder.y, h.x, h.y);
+      g.lineStyle(5, 0xf2b48c, 1).lineBetween(shoulder.x, shoulder.y, h.x, h.y);
+      g.fillStyle(0xf2b48c, 1).fillCircle(h.x, h.y, 4.5);
+      g.lineStyle(2, 0x2a2320, 1).strokeCircle(h.x, h.y, 4.5);
     }
   }
 

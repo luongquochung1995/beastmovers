@@ -94,7 +94,14 @@ export class GameScene extends PlayScene {
     this.rain = this.levelDef.modifiers.includes('rain')
       ? new RainView(hud, GAME_WIDTH, GAME_HEIGHT)
       : null;
-    this.hud = new GameHud(hud, this.runtime, this.world, this.cameras.main);
+    const canFinish = !this.online || this.online.isHost;
+    this.hud = new GameHud(
+      hud,
+      this.runtime,
+      this.world,
+      this.cameras.main,
+      canFinish ? () => this.runtime.finishNow() : null,
+    );
     hud.add
       .text(
         GAME_WIDTH / 2,

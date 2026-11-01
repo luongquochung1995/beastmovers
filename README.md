@@ -79,6 +79,7 @@ Tối đa 4 người trên một máy: 2 người chung bàn phím + tay cầm (
 | Ping           | F          | Numpad 3              | Y                |
 
 Giữ một hướng khoảng 0,6 giây thì nhân vật chuyển sang chạy (chạy có thể vấp ngã). Lao vào người khác làm họ ngã.
+Đồ một người cầm được (thùng, gương, mèo…) thì **đỡ lên đầu bằng hai tay**; đồ to vẫn khiêng nhiều người. Đưa hết đồ bắt buộc lên xe thì hiện nút **🚚 Đủ đồ rồi — cho xe chạy!** để kết thúc sớm (online: chỉ host).
 Giữ **Ping** + một hướng để mở vòng ping. **Lao tốn mana**: thanh xanh dưới chân, mỗi lần lao tốn 40/100,
 hồi 20 mỗi giây (vạch trắng = đủ cho một lần lao); thiếu mana thì không lao được (💤). Chỉnh trong
 `config.json` (`maxMana`, `dashManaCost`, `manaRegenPerSec`).

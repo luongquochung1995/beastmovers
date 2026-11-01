@@ -280,5 +280,7 @@
   "tutorial.throw.touch": "Tip: holding something light? Tap Throw. Throwing it into the truck counts too!",
   "tutorial.ping.touch": "Big items need several people. Tap Ping to call for help; hold Ping and slide for the ping wheel",
   "game.hintTouch": "Left half: move  ·  Grab / Throw / Dash / Ping on the right  ·  ⏸ top right: pause",
-  "levels.hintTouch": "Tap a level to play  ·  tap the tabs to filter  ·  ◀ Back top left"
+  "levels.hintTouch": "Tap a level to play  ·  tap the tabs to filter  ·  ◀ Back top left",
+  "hud.finish": "🚚 All set — send the truck!  (or Esc → End level)",
+  "hud.finishWait": "✓ All required items loaded — waiting for the host to send the truck"
 }

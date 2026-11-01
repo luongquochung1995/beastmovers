@@ -280,5 +280,7 @@
   "tutorial.throw.touch": "Mẹo: đang cầm đồ nhẹ thì chạm Ném. Ném trúng thùng xe cũng tính!",
   "tutorial.ping.touch": "Đồ to cần nhiều người. Chạm Ping để gọi đồng đội; giữ Ping và kéo cần ảo để mở vòng ping",
   "game.hintTouch": "Nửa trái: di chuyển  ·  Nắm / Ném / Lao / Ping bên phải  ·  ⏸ góc trên: tạm dừng",
-  "levels.hintTouch": "Chạm vào màn để chơi  ·  chạm hàng trên để lọc theo cấp  ·  ◀ Quay lại góc trên"
+  "levels.hintTouch": "Chạm vào màn để chơi  ·  chạm hàng trên để lọc theo cấp  ·  ◀ Quay lại góc trên",
+  "hud.finish": "🚚 Đủ đồ rồi — cho xe chạy!  (hoặc Esc → Kết thúc màn)",
+  "hud.finishWait": "✓ Đủ đồ bắt buộc — chờ host cho xe chạy"
 }

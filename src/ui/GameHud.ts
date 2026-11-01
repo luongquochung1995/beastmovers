@@ -60,6 +60,8 @@ export class GameHud {
     private readonly runtime: LevelRuntime,
     private readonly world: World,
     private readonly camera: Phaser.Cameras.Scene2D.Camera,
+    /** Cho xe chạy ngay (null: máy khách online — chỉ host quyết định). */
+    private readonly onFinish: (() => void) | null = null,
   ) {
     const text = (
       x: number,
@@ -120,6 +122,44 @@ export class GameHud {
       world.bus.onAny((e) => this.advanceTutorial(e.type));
       this.showStep();
     }
+  }
+
+  /** Nút "đủ đồ rồi — cho xe chạy", tạo khi cần lần đầu. */
+  private finishButton: Phaser.GameObjects.Text | null = null;
+
+  /** Đã đưa hết đồ bắt buộc lên xe: hiện nút kết thúc sớm (không phải chờ hết giờ). */
+  private updateFinishButton(show: boolean): void {
+    if (!show) {
+      this.finishButton?.setVisible(false);
+      return;
+    }
+    if (!this.finishButton) {
+      const host = this.onFinish !== null;
+      this.finishButton = this.scene.add
+        .text(GAME_WIDTH / 2, HUD_TOP + 26, t(host ? 'hud.finish' : 'hud.finishWait'), {
+          fontFamily: Theme.font,
+          fontSize: host ? '20px' : '16px',
+          fontStyle: 'bold',
+          color: host ? '#1d1b26' : Theme.text,
+          backgroundColor: host ? '#7CFC8A' : '#000000aa',
+          padding: { x: 14, y: 7 },
+        })
+        .setOrigin(0.5)
+        .setDepth(200);
+      if (host) {
+        this.finishButton
+          .setInteractive({ useHandCursor: true })
+          .on('pointerup', () => this.onFinish?.());
+        this.scene.tweens.add({
+          targets: this.finishButton,
+          scale: { from: 1, to: 1.06 },
+          yoyo: true,
+          repeat: -1,
+          duration: 600,
+        });
+      }
+    }
+    this.finishButton.setVisible(true);
   }
 
   private setBanner(s: string): void {
@@ -258,6 +298,7 @@ ${t('hud.objective')}`);
         .setPosition(20, 96 + i * 22);
     });
     const done = status.filter((s) => s.loaded).length;
+    this.updateFinishButton(status.length > 0 && done === status.length && !rt.locked);
     this.reqTitle.setText(`${t('hud.required')}  ${done}/${status.length}`);
     this.reqPanel.setSize(250, 36 + status.length * 22);
 
