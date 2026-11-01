@@ -63,8 +63,13 @@ export class BootScene extends Phaser.Scene {
     ensurePlayerTextures(this);
     // Mở bằng link mời `?room=ABC123` thì vào thẳng phòng đó.
     const room = roomFromUrl(window.location.search);
+    // `?play=lv04_townhouse`: vào thẳng màn đó (thử nhanh, chụp ảnh giới thiệu).
+    const play = new URLSearchParams(window.location.search).get('play');
     if (room) this.scene.start(SceneKeys.Online, { mode: 'join', code: room });
-    else this.scene.start(SceneKeys.Menu);
+    else if (play && data.levels.some((l) => l.id === play)) {
+      this.registry.set(RegistryKeys.LevelId, play);
+      this.scene.start(SceneKeys.Game);
+    } else this.scene.start(SceneKeys.Menu);
   }
 
   private async loadDictionariesBestEffort(): Promise<void> {

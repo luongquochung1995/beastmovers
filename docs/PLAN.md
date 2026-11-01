@@ -594,7 +594,7 @@ Cột **MVP**: ✔ là phase cần cho bản MVP (mục 15).
 | P38 | Tối ưu hiệu năng và mạng | G | | 4 ngày | 🟨 | |
 | P39 | Cân bằng và playtest theo số người | G | | 5 ngày | 🟨 | |
 | P40 | Kiểm thử trình duyệt | G | | 2 ngày | 🟨 | |
-| P41 | Phát hành | G | | 2 ngày | ⬜ | |
+| P41 | Phát hành | G | | 2 ngày | 🟨 | |
 
 **Tiến độ:** 28/41 phase · Mốc A 🟨 · B ✅ · C ✅ · D 🟨 · E ✅ · F 🟨 · G 🟨
 
@@ -1016,10 +1016,11 @@ _(ghi ở đây)_
 - 📝 *Kiểm tra: bản build production (`vite preview`) chụp màn hình bằng **Edge 156** và **Chrome** chế độ headless ở 1280×720, 1920×1080, 2560×1440 → menu hiện đúng, chữ nét, đủ dấu tiếng Việt, co giãn giữ tỉ lệ 16:9. Trên bản production: vào lần lượt cả 16 màn rồi tới màn kết quả → 0 lỗi console, 0 lỗi chưa bắt. Rà soát code cho Safari/Firefox: cú pháp ES2022 (Safari 15+), `structuredClone` (Safari 15.4+), Web Audio không tiền tố, `StereoPanner` có kiểm tra trước khi dùng, toàn màn hình trên iPhone (không có API) → báo lỗi nhẹ thay vì hỏng; sửa 2 chỗ: (1) `crypto.randomUUID` chỉ có trên https/localhost → mở bằng IP mạng LAN (thử trên điện thoại khi dev) thì kênh thử giữa các tab bị lỗi → có dự phòng; (2) Safari iPhone chỉ mở tiếng khi có âm thanh thật phát trong cú chạm đầu tiên → phát một âm im lặng khi mở khóa. Điện thoại Android giả lập (Pixel 8) đã thử ở phần chơi trên điện thoại. ⏳ Còn lại: Firefox, Safari (macOS/iPhone), tay cầm thật (Xbox/PS — chú ý tay cầm PlayStation trên Firefox có thể không theo "standard mapping"), online giữa các trình duyệt khác nhau.*
 
 #### P41 · Phát hành
-- [ ] Build production, deploy GitHub Pages và itch.io
-- [ ] Trang giới thiệu: ảnh, GIF, hướng dẫn chơi, link mời bạn bè
-- [ ] Changelog phiên bản 1.0
+- [ ] Build production, deploy GitHub Pages và itch.io — *workflow build + đẩy nhánh `gh-pages` + gói zip cho itch.io đã chạy; chờ bật Pages trong cài đặt repo và upload lên itch.io (cần tài khoản)*
+- [x] Trang giới thiệu: ảnh, GIF, hướng dẫn chơi, link mời bạn bè — *ảnh chụp, chưa có GIF*
+- [x] Changelog phiên bản 1.0
 - **✅ Xong khi:** người lạ mở link, rủ bạn vào phòng và chơi được mà không cần hỏi gì.
+- 📝 *Đã làm: phiên bản **1.0.0-rc.1** (bản ứng viên, chờ playtest P39 và kiểm thử P40); `CHANGELOG.md`; README có link "Chơi ngay", ảnh chụp (menu, màn mưa, biệt thự), cách chơi 30 giây, cách mời bạn; ảnh xem trước khi chia sẻ link (`og:image` 1200×630, tiêu đề, mô tả cho Messenger/Discord/Zalo); `docs/ITCH.md`: cách đưa lên itch.io (HTML, 1280×720, mobile friendly) + mô tả tiếng Anh / tiếng Việt; workflow tạo thêm gói `beast-movers-web` (zip) ở mục Artifacts của mỗi lần chạy. Thêm tham số `?play=<id màn>` để vào thẳng một màn (thử nhanh, chụp ảnh). Ảnh chụp bằng Edge headless từ bản build production. ⏳ Còn: bật GitHub Pages (Settings → Pages → nhánh `gh-pages`), upload itch.io, GIF, và thử "người lạ mở link rủ bạn chơi" khi trang đã chạy.*
 
 **🏁 Hoàn thành dự án.**
 

@@ -5,7 +5,26 @@ Hỗ trợ **tiếng Anh** và **tiếng Việt**.
 
 _Co-op moving chaos for 1–8 players, right in your browser. Available in English and Vietnamese._
 
-Kế hoạch và tiến độ từng phase: [docs/PLAN.md](docs/PLAN.md).
+### ▶ [Chơi ngay / Play now](https://luongquochung1995.github.io/beastmovers/)
+
+![Ngày mưa — sân trơn, mưa rơi](docs/images/level-rain.png)
+
+|                                  |                                                          |
+| -------------------------------- | -------------------------------------------------------- |
+| ![Menu](docs/images/menu-en.png) | ![Biệt thự người nổi tiếng](docs/images/level-villa.png) |
+
+**Cách chơi trong 30 giây**
+
+1. Mở link, chọn **Chơi chung máy** (1–4 người: bàn phím + tay cầm) hoặc **Tạo phòng online**
+   (tối đa 8 người) rồi bấm **Copy link mời** gửi cho bạn bè — bạn mở link là vào phòng.
+2. Đưa hết **Đồ bắt buộc** lên xe tải trước khi hết giờ. Đồ to ghi `👐 4` là cần 4 người cùng nắm.
+3. Đừng làm vỡ đồ — chủ nhà đang nhìn. Gọi đồng đội bằng **Ping** (giữ để mở vòng ping).
+
+16 màn từ 1 tới 8 người · 5 chủ nhà lắm lời · mèo chạy trốn · tủ lạnh trượt · mưa, dốc, cầu thang,
+paparazzi · chơi được trên điện thoại (cầm ngang) · không cần tài khoản, không có server riêng.
+
+Thay đổi theo phiên bản: [CHANGELOG.md](CHANGELOG.md) · Kế hoạch và tiến độ: [docs/PLAN.md](docs/PLAN.md) ·
+Chơi thử và cân bằng: [docs/PLAYTEST.md](docs/PLAYTEST.md) · Trang itch.io: [docs/ITCH.md](docs/ITCH.md).
 
 ## Yêu cầu
 

@@ -28,6 +28,12 @@ jobs:
       - run: npm run lint
       - run: npm test
       - run: npm run build
+      # Gói web cho itch.io (index.html ở gốc file zip): tải ở mục Artifacts của lần chạy.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: beast-movers-web
+          path: dist/
+          retention-days: 30
       - name: Publish dist/ to gh-pages
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
